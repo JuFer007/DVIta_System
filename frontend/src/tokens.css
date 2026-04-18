@@ -1,0 +1,87 @@
+/* =============================================
+   HOSPEDAJE D'VITA — Design Tokens & Palette
+   ============================================= */
+
+:root {
+  /* ── Primary Brand (warm terracotta/brown from logo) ── */
+  --color-brand-900: #3D1F0A;
+  --color-brand-800: #5C2E0F;
+  --color-brand-700: #7A3D14;
+  --color-brand-600: #9A5020;
+  --color-brand-500: #B8622A;   /* main brand */
+  --color-brand-400: #C97B45;
+  --color-brand-300: #D99B6E;
+  --color-brand-200: #E8BFAA;
+  --color-brand-100: #F4DDD0;
+  --color-brand-50:  #FBF3EE;
+
+  /* ── Accent (warm gold) ── */
+  --color-accent-600: #8B6914;
+  --color-accent-500: #B08620;
+  --color-accent-400: #C9A030;
+  --color-accent-300: #D4B355;
+  --color-accent-100: #F0E4B8;
+
+  /* ── Neutrals ── */
+  --color-neutral-950: #0F0E0D;
+  --color-neutral-900: #1C1A18;
+  --color-neutral-800: #2E2B27;
+  --color-neutral-700: #44403A;
+  --color-neutral-600: #5C5751;
+  --color-neutral-500: #77716A;
+  --color-neutral-400: #9A948D;
+  --color-neutral-300: #BDB8B2;
+  --color-neutral-200: #D8D4CF;
+  --color-neutral-100: #EDEBE8;
+  --color-neutral-50:  #F7F5F3;
+  --color-white:       #FFFFFF;
+
+  /* ── Semantic ── */
+  --color-success: #2D7A4F;
+  --color-warning: #B08620;
+  --color-danger:  #A33030;
+  --color-info:    #2A5F8B;
+
+  /* ── Surfaces ── */
+  --surface-bg:        var(--color-neutral-50);
+  --surface-card:      var(--color-white);
+  --surface-sidebar:   var(--color-brand-900);
+  --surface-topbar:    var(--color-white);
+
+  /* ── Typography ── */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* ── Spacing ── */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+
+  /* ── Radii ── */
+  --radius-sm:  0.375rem;
+  --radius-md:  0.625rem;
+  --radius-lg:  1rem;
+  --radius-xl:  1.5rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:  0 1px 3px rgba(61,31,10,.08), 0 1px 2px rgba(61,31,10,.06);
+  --shadow-md:  0 4px 12px rgba(61,31,10,.10), 0 2px 6px rgba(61,31,10,.06);
+  --shadow-lg:  0 12px 32px rgba(61,31,10,.13), 0 4px 12px rgba(61,31,10,.08);
+  --shadow-xl:  0 24px 56px rgba(61,31,10,.16), 0 8px 20px rgba(61,31,10,.10);
+
+  /* ── Transitions ── */
+  --ease-out: cubic-bezier(0.16,1,0.3,1);
+  --ease-in:  cubic-bezier(0.7,0,0.84,0);
+  --t-fast:   150ms;
+  --t-base:   250ms;
+  --t-slow:   400ms;
+}
