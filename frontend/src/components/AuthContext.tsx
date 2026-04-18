@@ -1,3 +1,4 @@
+// frontend/src/components/AuthContext.tsx
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface User {
@@ -18,26 +19,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const login = (credentials: any): boolean => {
-    // Mock login
-    setUser({ nombre: "Cristian Huamán", rol: "Administrador", ...credentials });
+    setUser({
+      nombre: credentials.nombre || "Usuario",
+      rol: credentials.rol || "Administrador",
+      ...credentials,
+    });
     return true;
   };
 
   const logout = () => setUser(null);
 
-  const value: AuthContextType = { user, login, logout };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth debe usarse dentro de AuthProvider");
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth debe usarse dentro de AuthProvider");
+  return ctx;
 };

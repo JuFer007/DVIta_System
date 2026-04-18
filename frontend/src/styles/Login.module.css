@@ -1,3 +1,4 @@
+/* frontend/src/styles/Login.module.css */
 .root {
   display: flex;
   min-height: 100vh;
@@ -102,6 +103,24 @@
   animation: fadeUp var(--t-slow) 80ms var(--ease-out) both;
 }
 
+/* Back button */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-neutral-500);
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: var(--sp-6);
+  transition: color 0.15s;
+}
+
+.backBtn:hover { color: var(--color-brand-600); }
+
 .formHeader {
   text-align: center;
   margin-bottom: var(--sp-8);
@@ -117,7 +136,6 @@
   border-radius: var(--radius-lg);
   color: white;
   margin-bottom: var(--sp-5);
-  box-shadow: 0 8px 24px rgba(184,98,42,.30);
 }
 
 .formTitle {
@@ -176,7 +194,7 @@
   font-size: .95rem;
   color: var(--color-neutral-900);
   background: var(--color-neutral-50);
-  transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  transition: border-color var(--t-fast), background var(--t-fast);
   outline: none;
 }
 
@@ -185,7 +203,6 @@
 .input:focus {
   border-color: var(--color-brand-400);
   background: white;
-  box-shadow: 0 0 0 3px rgba(184,98,42,.12);
 }
 
 .error {
@@ -202,30 +219,21 @@
   align-items: center;
   justify-content: center;
   height: 48px;
-  background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+  background: linear-gradient(135deg, var(--color-brand-600), var(--color-brand-800));
   color: white;
   border-radius: var(--radius-md);
   font-size: .95rem;
   font-weight: 600;
   letter-spacing: .02em;
-  transition: transform var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast);
-  box-shadow: 0 4px 16px rgba(184,98,42,.30);
+  transition: transform var(--t-fast), opacity var(--t-fast);
   margin-top: var(--sp-2);
+  border: none;
+  cursor: pointer;
 }
 
-.btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(184,98,42,.38);
-}
-
-.btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn:disabled {
-  opacity: .7;
-  cursor: not-allowed;
-}
+.btn:hover:not(:disabled) { transform: translateY(-1px); }
+.btn:active:not(:disabled) { transform: translateY(0); }
+.btn:disabled { opacity: .7; cursor: not-allowed; }
 
 .spinner {
   display: inline-block;

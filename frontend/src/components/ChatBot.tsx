@@ -31,7 +31,7 @@ export default function ChatBot() {
           <div className={styles.message}>
             <div className={styles.botMsg}>
               <BotIcon size={14} />
-              <span>Puedo ayudarte con reservas, información de habitaciones y más. 🏨</span>
+              <span>Puedo ayudarte con reservas, información de habitaciones y más.</span>
             </div>
           </div>
         </div>

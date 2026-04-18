@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "tipo_habitacion")
 @Data
@@ -28,5 +30,5 @@ public class TipoHabitacion {
     @DecimalMin(value = "0.01", message = "El precio debe ser mayor a 0")
     @Digits(integer = 8, fraction = 2, message = "El precio debe tener máximo 8 dígitos enteros y 2 decimales")
     @Column(name = "precio", nullable = false, precision = 10, scale = 2)
-    private Double precio;
+    private BigDecimal precio;
 }
