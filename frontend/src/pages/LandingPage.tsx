@@ -137,7 +137,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
         {/* Logo */}
         <div className="flex items-center gap-3.5">
           <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0">
-            <img src="/public/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
+            <img src="/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col leading-none">
             <span className="font-display font-semibold text-white text-lg tracking-wide">D'Vita Hospedaje</span>
@@ -466,7 +466,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
       <footer className="bg-brand-900 border-t border-[#C9A96E]/15 py-10 px-10 flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full border border-[#C9A96E]/40 flex items-center justify-center">
-            <img src="/public/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
+            <img src="/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <span className="font-display text-[14px] font-semibold text-white">Hospedaje D'Vita</span>
         </div>
