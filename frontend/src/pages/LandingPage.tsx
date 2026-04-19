@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Phone, Mail, MapPin, Wifi, Coffee, Car, Shield } from "lucide-react";
+import ReservaModal from "./ReservaModal";
+import ChatBot from "../components/ChatBot";
 
 /* ─── DATA ─── */
-
 const ROOMS = [
   {
     name: "Habitación Estándar",
@@ -54,7 +55,7 @@ const SERVICES = [
 const CONTACTS = [
   { Icon: Phone,  label: "Teléfono",  value: "+51 922 626 148" },
   { Icon: Mail,   label: "Correo",    value: "DVitaHospedaje@gmail.com" },
-  { Icon: MapPin, label: "Ubicación", value: "Chiclayo, Victor Raul Haya de la Torre N° 281" },
+  { Icon: MapPin, label: "Ubicación", value: "Chiclayo, Victor Raúl Haya de la Torre N° 281" },
 ];
 
 /* ─── REVEAL HOOK ─── */
@@ -103,8 +104,10 @@ function Reveal({
 /* ─── COMPONENT ─── */
 export default function LandingPage({ onLogin }: { onLogin: () => void }) {
   const [currentImage, setCurrentImage] = useState(0);
-  const [scrolled, setScrolled] = useState(false);
-
+  const [scrolled, setScrolled]         = useState(false);
+  const [modalOpen, setModalOpen]       = useState(false);
+  const [modalRoom, setModalRoom]       = useState("estandar");
+ 
   useEffect(() => {
     const interval = setInterval(
       () => setCurrentImage((p) => (p + 1) % HERO_IMAGES.length),
@@ -112,15 +115,20 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
     );
     return () => clearInterval(interval);
   }, []);
-
+ 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
+ 
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+ 
+  const openModal = (room = "estandar") => {
+    setModalRoom(room);
+    setModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-white font-body">
@@ -128,46 +136,51 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
       {/* ── Navbar ──*/}
       <nav
         className={`fixed top-0 inset-x-0 z-50 flex items-center justify-between px-10 transition-all duration-300 ${
-          scrolled
-            ? "h-20 bg-brand-900 shadow-xl"
-            : "h-[68px] bg-brand-900/92"
+          scrolled ? "h-20 bg-brand-900 shadow-xl" : "h-[68px] bg-brand-900/92"
         }`}
         style={{ backdropFilter: scrolled ? "none" : "blur(16px)" }}
       >
-        {/* Logo */}
         <div className="flex items-center gap-3.5">
           <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0">
             <img src="/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col leading-none">
             <span className="font-display font-semibold text-white text-lg tracking-wide">D'Vita Hospedaje</span>
-            <span className="text-[10px] font-medium text-brand-200 tracking-[0.25em] uppercase mt-0.5">
+            <span className="text-[10px] font-medium text-brand-50 tracking-[0.25em] uppercase mt-0.5">
               Victor Raul Haya de la Torre N° 281
             </span>
           </div>
         </div>
-
-        {/* Links */}
+ 
         <div className="hidden md:flex items-center gap-9">
           {["habitaciones", "servicios", "contacto"].map((id) => (
             <button
               key={id}
               onClick={() => scrollTo(id)}
-              className="text-[13px] font-bold text-white/90 hover:text-brand-600 transition-colors uppercase tracking-[0.06em] relative group"
+              className="text-[13px] font-bold text-white/90 hover:text-brand-200 transition-colors uppercase tracking-[0.06em] relative group"
             >
               {id.charAt(0).toUpperCase() + id.slice(1)}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-400 transition-all duration-300 group-hover:w-full" />
             </button>
           ))}
         </div>
-
-        {/* Botón Reserva */}
-        <button
-          onClick={onLogin}
-          className="px-7 py-3 bg-brand-600 text-white text-[12px] font-bold tracking-[0.12em] uppercase rounded-sm hover:bg-brand-500 hover:-translate-y-px transition-all duration-200 shadow-md"
-        >
-          Reservar
-        </button>
+ 
+        <div className="flex items-center gap-3">
+          {/* Iniciar sesión */}
+          <button
+            onClick={onLogin}
+            className="hidden md:flex items-center gap-1.5 px-4 py-2.5 border border-white/25 text-white/80 text-[11px] font-semibold tracking-[0.1em] uppercase rounded-sm hover:border-white/50 hover:text-white hover:bg-white/10 transition-all duration-200"
+          >
+            Iniciar sesión
+          </button>
+          {/* Reservar */}
+          <button
+            onClick={() => openModal()}
+            className="px-6 py-2.5 bg-brand-600 text-white text-[12px] font-bold tracking-[0.12em] uppercase rounded-sm hover:bg-brand-500 hover:-translate-y-px transition-all duration-200 shadow-md"
+          >
+            Reservar
+          </button>
+        </div>
       </nav>
 
       {/* ── Hero ── */}
@@ -370,6 +383,48 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
         </div>
       </div>
 
+      {/* ── Services Section ── */}
+      <section id="servicios" className="py-24 bg-brand-900 relative overflow-hidden">
+        {/* Elemento decorativo sutil con la paleta brand */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-800/30 skew-x-12 translate-x-24" />
+        
+        <div className="max-w-5xl mx-auto px-8 relative z-10">
+          <Reveal>
+            <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-brand-300 mb-3.5">
+              <span className="inline-block w-6 h-px bg-brand-400" />
+              Experiencia D'Vita
+            </p>
+          </Reveal>
+          
+          <Reveal delay={120}>
+            <h2 className="font-display text-[clamp(30px,3.5vw,44px)] font-bold text-white leading-[1.15] mb-12">
+              Servicios pensados<br />en tu comodidad
+            </h2>
+          </Reveal>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {SERVICES.map(({ Icon, title, desc }, i) => (
+              <Reveal key={i} delay={i * 100}>
+                <div className="group">
+                  {/* Contenedor del Icono usando brand-800 y bordes brand-300 */}
+                  <div className="mb-6 w-14 h-14 rounded-sm border border-brand-300/20 flex items-center justify-center bg-brand-800/50 group-hover:bg-brand-500 group-hover:border-brand-400 transition-all duration-500 ease-out">
+                    <Icon className="w-6 h-6 text-brand-200 group-hover:text-white transition-colors" />
+                  </div>
+                  
+                  <h3 className="text-white font-display font-bold text-[19px] mb-3 tracking-wide">
+                    {title}
+                  </h3>
+                  
+                  <p className="text-brand-100/60 text-[13px] font-light leading-relaxed">
+                    {desc}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>      
+
       {/* ── Contact ──*/}
       <section id="contacto" className="grid md:grid-cols-2">
         <div className="bg-brand-800 px-14 py-20 flex flex-col justify-center">
@@ -487,6 +542,18 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           © 2026 · Chiclayo, Perú · Todos los derechos reservados
         </p>
       </footer>
+
+      {/* ── Modal de Reserva ── */}
+      <ReservaModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onLogin={onLogin}
+        initialRoom={modalRoom}
+      />
+      
+      {/* ── ChatBot flotante ── */}
+      <ChatBot />
+
     </div>
   );
 }
