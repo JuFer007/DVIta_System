@@ -1,57 +1,48 @@
-import { useAuth } from "./AuthContext";
-import styles from "../styles/Topbar.module.css";
+import { LogOut, ChevronRight } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
-const PAGE_NAMES = {
-  dashboard: "Dashboard",
-  clientes: "Clientes",
-  empleados: "Empleados",
-  habitaciones: "Habitaciones",
-  tipos: "Tipos de Habitación",
-  reservas: "Reservas",
-  pagos: "Pagos",
-  usuarios: "Usuarios",
-  recepcionistas: "Recepcionistas",
+const PAGE_NAMES: Record<string, string> = {
+  dashboard:       "Dashboard",
+  clientes:        "Clientes",
+  empleados:       "Empleados",
+  habitaciones:    "Habitaciones",
+  tipos:           "Tipos de Habitación",
+  reservas:        "Reservas",
+  pagos:           "Pagos",
+  usuarios:        "Usuarios",
+  recepcionistas:  "Recepcionistas",
   administradores: "Administradores",
 };
 
-interface TopbarProps {
-  page: keyof typeof PAGE_NAMES | string;
-}
-
-export default function Topbar({ page }: TopbarProps) {
+export default function Topbar({ page }: { page: string }) {
   const { user, logout } = useAuth();
+
   return (
-    <header className={styles.topbar}>
-      <div className={styles.left}>
-        <span className={styles.crumb}>Inicio</span>
-        <ChevronRight />
-        <span className={styles.page}>{(PAGE_NAMES as Record<string, string>)[page] || page}</span>
+    <header className="flex items-center justify-between px-6 h-14 bg-white border-b border-gray-100 sticky top-0 z-10 gap-4">
+      <div className="flex items-center gap-1.5 text-sm text-gray-400">
+        <span>Inicio</span>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <span className="text-gray-700 font-medium">{PAGE_NAMES[page] ?? page}</span>
       </div>
 
-      <div className={styles.right}>
-        <div className={styles.userBadge}>
-          <div className={styles.avatar}>{user?.nombre?.charAt(0) ?? "U"}</div>
-          <div className={styles.userInfo}>
-            <span className={styles.userName}>{user?.nombre}</span>
-            <span className={styles.userRole}>Administrador</span>
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-400 to-brand-700 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+            {user?.nombre?.charAt(0) ?? "U"}
+          </div>
+          <div className="flex flex-col leading-tight">
+            <span className="text-sm font-semibold text-gray-800">{user?.nombre}</span>
+            <span className="text-xs text-gray-400">Administrador</span>
           </div>
         </div>
-        <button className={styles.logoutBtn} onClick={logout} title="Cerrar sesión">
-          <LogoutIcon />
+        <button
+          onClick={logout}
+          title="Cerrar sesión"
+          className="w-8 h-8 flex items-center justify-center text-gray-400 border border-gray-200 rounded-lg hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
         </button>
       </div>
     </header>
   );
 }
-
-const ChevronRight = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <path d="M9 18l6-6-6-6"/>
-  </svg>
-);
-
-const LogoutIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-  </svg>
-);

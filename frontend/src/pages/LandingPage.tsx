@@ -1,328 +1,492 @@
 import { useState, useEffect, useRef } from "react";
-import styles from "../styles/LandingPage.module.css";
-import { Hotel, Send, Bot } from "lucide-react";
-import logo from "../assets/DVita_Logo.png";
+import { Phone, Mail, MapPin, Wifi, Coffee, Car, Shield } from "lucide-react";
 
-/* ─── Types ─────────────────────────────────── */
-interface Message {
-  role: "bot" | "user";
-  text: string;
+/* ─── DATA ─── */
+
+const ROOMS = [
+  {
+    name: "Habitación Estándar",
+    price: 60,
+    badge: "Estándar",
+    featured: true,
+    desc: "Cómoda y equipada para una estadía ideal para viajes de negocio o descanso.",
+    features: ["TV Cable", "Baño privado", "WiFi", "Agua caliente"],
+    img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=700&q=80",
+  },
+  {
+    name: "Suite Deluxe",
+    price: 120,
+    badge: "Más popular",
+    featured: true,
+    desc: "Suite amplia con sala de estar separada. Perfecta para una estadía especial.",
+    features: ['TV 50"', "Sala de estar", "Mini bar", "Vista exterior"],
+    img: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=700&q=80",
+  },
+  {
+    name: "Habitación Familiar",
+    price: 180,
+    badge: "Familiar",
+    featured: true,
+    desc: "Espacio ideal para familias con 3 camas y área adicional para el descanso de todos.",
+    features: ["3 camas", "Área adicional", "TV Cable", "Frigobar"],
+    img: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=700&q=80",
+  },
+];
+
+const HERO_IMAGES = [
+  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80",
+  "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1600&q=80",
+  "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1600&q=80",
+  "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1600&q=80",
+  "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=1600&q=80",
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80",
+  "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1600&q=80",
+
+];
+
+const SERVICES = [
+  { Icon: Coffee, title: "Desayuno incluido",      desc: "Desayuno completo a la peruana cada mañana, sin costo adicional." },
+  { Icon: Shield, title: "Seguridad 24/7",         desc: "Personal y cámaras en todas las áreas del hospedaje." },
+  { Icon: Car,    title: "Estacionamiento",        desc: "Cochera techada y gratuita para todos nuestros huéspedes." },
+  { Icon: Wifi,   title: "WiFi de alta velocidad", desc: "Conexión estable en habitaciones y áreas comunes." },
+];
+
+const CONTACTS = [
+  { Icon: Phone,  label: "Teléfono",  value: "+51 922 626 148" },
+  { Icon: Mail,   label: "Correo",    value: "DVitaHospedaje@gmail.com" },
+  { Icon: MapPin, label: "Ubicación", value: "Chiclayo, Victor Raul Haya de la Torre N° 281" },
+];
+
+/* ─── REVEAL HOOK ─── */
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.12 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, visible };
 }
 
-/* ─── Chatbot panel ──────────────────────────── */
-function ChatBot() {
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "bot", text: "¡Hola! Soy el asistente de Hospedaje D'Vita. ¿En qué puedo ayudarte hoy?" },
-    { role: "bot", text: "Puedo ayudarte con consultas sobre habitaciones, tarifas y disponibilidad. 🏨" },
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const bodyRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (bodyRef.current) {
-      bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-    }
-  }, [messages, open]);
-
-  const send = async () => {
-    const text = input.trim();
-    if (!text || loading) return;
-    setInput("");
-    setMessages(m => [...m, { role: "user", text }]);
-    setLoading(true);
-
-    try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 400,
-          system:
-            "Eres el asistente virtual de Hospedaje D'Vita, un hospedaje acogedor en Perú. " +
-            "Respondes preguntas sobre habitaciones (Estándar S/.60, Suite S/.120, Familiar S/.180), " +
-            "disponibilidad, reservas, servicios y políticas del hotel. " +
-            "Sé amable, conciso y en español. Si no sabes algo, pide que llamen al hospedaje.",
-          messages: [{ role: "user", content: text }],
-        }),
-      });
-      const data = await res.json();
-      const reply =
-        data?.content?.map((b: any) => b.text || "").join("") ||
-        "Lo siento, no pude procesar tu consulta. ¿Puedo ayudarte con algo más?";
-      setMessages(m => [...m, { role: "bot", text: reply }]);
-    } catch {
-      setMessages(m => [
-        ...m,
-        { role: "bot", text: "Hubo un problema de conexión. Por favor intenta de nuevo." },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+/* ─── REVEAL WRAPPER ─── */
+function Reveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const { ref, visible } = useReveal();
   return (
-    <>
-      {/* Panel */}
-      <div className={`${styles.chatPanel} ${open ? styles.chatOpen : ""}`}>
-        <div className={styles.chatHeader}>
-          <div className={styles.chatHeaderLeft}>
-            <div className={styles.chatAvatar}><BotIcon size={18} /></div>
-            <div>
-              <p className={styles.chatName}>Asistente D'Vita</p>
-              <span className={styles.chatStatus}><span className={styles.statusDot} />En línea</span>
-            </div>
-          </div>
-          <button className={styles.chatClose} onClick={() => setOpen(false)}>✕</button>
-        </div>
-
-        <div className={styles.chatBody} ref={bodyRef}>
-          {messages.map((m, i) => (
-            <div key={i} className={m.role === "bot" ? styles.botMsg : styles.userMsg}>
-              {m.role === "bot" && <BotIcon size={13} />}
-              <span>{m.text}</span>
-            </div>
-          ))}
-          {loading && (
-            <div className={styles.botMsg}>
-              <BotIcon size={13} />
-              <span className={styles.typing}><span /><span /><span /></span>
-            </div>
-          )}
-        </div>
-
-        <div className={styles.chatFooter}>
-          <input
-            className={styles.chatInput}
-            placeholder="Escribe tu consulta…"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && send()}
-            disabled={loading}
-          />
-          <button className={styles.chatSend} onClick={send} disabled={loading || !input.trim()}>
-            <SendIcon />
-          </button>
-        </div>
-      </div>
-
-      {/* FAB */}
-      <button
-        className={`${styles.fab} ${open ? styles.fabActive : ""}`}
-        onClick={() => setOpen(o => !o)}
-        aria-label="Abrir asistente"
-      >
-        {open ? <span style={{ fontSize: 20 }}>✕</span> : <BotIcon size={22} />}
-        {!open && <span className={styles.fabPing} />}
-      </button>
-    </>
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(28px)",
+        transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
   );
 }
 
-/* ─── Landing page ───────────────────────────── */
+/* ─── COMPONENT ─── */
 export default function LandingPage({ onLogin }: { onLogin: () => void }) {
+  const [currentImage, setCurrentImage] = useState(0);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handler);
-    return () => window.removeEventListener("scroll", handler);
+    const interval = setInterval(
+      () => setCurrentImage((p) => (p + 1) % HERO_IMAGES.length),
+      5000
+    );
+    return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
   return (
-    <div className={styles.root}>
-      {/* Navbar */}
-      <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ""}`}>
-        <div className={styles.navBrand}>
-            <img src={logo} alt="D'Vita" style={{ width: 28, height: 28 }} />
-            <span>D'Vita</span>
+    <div className="min-h-screen bg-white font-body">
+
+      {/* ── Navbar ──*/}
+      <nav
+        className={`fixed top-0 inset-x-0 z-50 flex items-center justify-between px-10 transition-all duration-300 ${
+          scrolled
+            ? "h-20 bg-brand-900 shadow-xl"
+            : "h-[68px] bg-brand-900/92"
+        }`}
+        style={{ backdropFilter: scrolled ? "none" : "blur(16px)" }}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0">
+            <img src="/public/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
+          </div>
+          <div className="flex flex-col leading-none">
+            <span className="font-display font-semibold text-white text-lg tracking-wide">D'Vita Hospedaje</span>
+            <span className="text-[10px] font-medium text-brand-200 tracking-[0.25em] uppercase mt-0.5">
+              Victor Raul Haya de la Torre N° 281
+            </span>
+          </div>
         </div>
-        <div className={styles.navLinks}>
-          <a href="#habitaciones">Habitaciones</a>
-          <a href="#servicios">Servicios</a>
-          <a href="#contacto">Contacto</a>
+
+        {/* Links */}
+        <div className="hidden md:flex items-center gap-9">
+          {["habitaciones", "servicios", "contacto"].map((id) => (
+            <button
+              key={id}
+              onClick={() => scrollTo(id)}
+              className="text-[13px] font-bold text-white/90 hover:text-brand-600 transition-colors uppercase tracking-[0.06em] relative group"
+            >
+              {id.charAt(0).toUpperCase() + id.slice(1)}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-400 transition-all duration-300 group-hover:w-full" />
+            </button>
+          ))}
         </div>
-        <button className={styles.navLoginBtn} onClick={onLogin}>
-          Iniciar sesión
+
+        {/* Botón Reserva */}
+        <button
+          onClick={onLogin}
+          className="px-7 py-3 bg-brand-600 text-white text-[12px] font-bold tracking-[0.12em] uppercase rounded-sm hover:bg-brand-500 hover:-translate-y-px transition-all duration-200 shadow-md"
+        >
+          Reservar
         </button>
       </nav>
 
-      {/* Hero */}
-      <section className={styles.hero}>
-        <div className={styles.heroOverlay} />
-        <div className={styles.heroContent}>
-          <span className={styles.heroBadge}>Hospedaje de confianza en Perú</span>
-          <h1 className={styles.heroTitle}>
-            Tu descanso,<br />nuestra prioridad
-          </h1>
-          <p className={styles.heroSub}>
-            Disfruta de habitaciones cómodas, atención personalizada y un ambiente que te hace sentir en casa.
-          </p>
-          <div className={styles.heroCtas}>
-            <button className={styles.ctaPrimary} onClick={onLogin}>Reservar ahora</button>
-            <a href="#habitaciones" className={styles.ctaSecondary}>Ver habitaciones</a>
+      {/* ── Hero ── */}
+      <section className="relative h-screen min-h-[700px] flex items-end overflow-hidden">
+        <div className="absolute inset-0">
+          {HERO_IMAGES.map((img, i) => (
+            <div
+              key={i}
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${img})`,
+                opacity: i === currentImage ? 1 : 0,
+                transform: i === currentImage ? "scale(1)" : "scale(1.04)",
+                transition: "opacity 1.4s ease-in-out, transform 6s ease-in-out",
+              }}
+            />
+          ))}
+        </div>
+
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(29,13,4,0.93) 0%, rgba(29,13,4,0.46) 45%, rgba(29,13,4,0.14) 100%)",
+          }}
+        />
+
+        <div className="relative z-10 w-full px-10 pb-28 flex justify-between items-end max-w-[1300px] mx-auto">
+          <div className="max-w-[600px]">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-px bg-[#C9A96E]" />
+              <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[#C9A96E]">
+                Chiclayo, Perú · Desde 2018
+              </span>
+            </div>
+
+            <h1 className="font-display text-[clamp(48px,6vw,76px)] font-bold text-white leading-[1.05] mb-5 tracking-[-0.01em]">
+              Tu descanso,<br />
+              <em className="font-display italic text-[#E8D5A0]">nuestra pasión.</em>
+            </h1>
+
+            <p className="text-white/65 text-[15px] font-light leading-[1.75] max-w-[400px] mb-10 text-justify">
+              Un refugio de confort en el corazón de Chiclayo. Habitaciones
+              diseñadas con calidez, atención personalizada y todo lo que
+              necesitas para sentirte en casa.
+            </p>
+
+            <div className="flex gap-3.5 flex-wrap">
+              <button
+                onClick={onLogin}
+                className="px-9 py-[15px] bg-[#C9A96E] text-brand-950 text-[12px] font-bold tracking-[0.12em] uppercase rounded-sm hover:bg-[#E8D5A0] transition-all duration-200 hover:-translate-y-px"
+              >
+                Reservar ahora
+              </button>
+              <button
+                onClick={() => scrollTo("habitaciones")}
+                className="px-9 py-[15px] border border-white/35 text-white/85 text-[12px] font-medium tracking-[0.1em] uppercase rounded-sm hover:bg-white/10 hover:border-white/70 transition-all duration-200"
+              >
+                Ver habitaciones
+              </button>
+            </div>
+          </div>
+
+          <div className="text-right pb-1 hidden md:block">
+            <div className="font-display text-[52px] font-bold text-[#C9A96E] leading-none">95%</div>
+            <div className="text-[11px] font-medium text-white/50 tracking-[0.15em] uppercase mt-1">Satisfacción</div>
           </div>
         </div>
-        <div className={styles.heroScroll}>
-          <span>Descubre más</span>
-          <span className={styles.scrollArrow}>↓</span>
+
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {HERO_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentImage(i)}
+              className="h-[2px] transition-all duration-300 border-none cursor-pointer"
+              style={{
+                width: i === currentImage ? "44px" : "28px",
+                background: i === currentImage ? "#C9A96E" : "rgba(255,255,255,0.3)",
+              }}
+            />
+          ))}
         </div>
       </section>
 
-      {/* Habitaciones */}
-      <section id="habitaciones" className={styles.section}>
-        <div className={styles.sectionInner}>
-          <span className={styles.sectionTag}>Nuestras habitaciones</span>
-          <h2 className={styles.sectionTitle}>Elige tu espacio ideal</h2>
-          <div className={styles.roomsGrid}>
-            {ROOMS.map((r, i) => (
-              <div key={i} className={styles.roomCard} style={{ animationDelay: `${i * 80}ms` }}>
-                <div className={styles.roomEmoji}>{r.emoji}</div>
-                <div className={styles.roomInfo}>
-                  <h3 className={styles.roomName}>{r.name}</h3>
-                  <p className={styles.roomDesc}>{r.desc}</p>
-                  <div className={styles.roomFeatures}>
-                    {r.features.map((f, j) => <span key={j}>{f}</span>)}
+      {/* ── Rooms ── */}
+      <section id="habitaciones" className="py-24 bg-white">
+        <div className="max-w-5xl mx-auto px-8">
+          <Reveal>
+            <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-brand-500 mb-3.5">
+              <span className="inline-block w-6 h-px bg-brand-400" />
+              Alojamiento
+            </p>
+          </Reveal>
+          <Reveal delay={120}>
+            <h2 className="font-display text-[clamp(30px,3.5vw,44px)] font-bold text-brand-900 leading-[1.15] mb-3">
+              Habitaciones para<br />cada necesidad
+            </h2>
+          </Reveal>
+          <Reveal delay={240}>
+            <div className="w-14 h-px bg-[#C9A96E] mb-5" />
+            <p className="text-gray-500 text-[15px] font-light leading-relaxed mb-12 max-w-lg">
+              Espacios diseñados con calidez peruana, con todos los servicios que necesitas para un descanso perfecto.
+            </p>
+          </Reveal>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {ROOMS.map((room, i) => (
+              <Reveal key={i} delay={i * 120}>
+                <div
+                  className={`rounded-sm overflow-hidden border flex flex-col transition-all duration-300 hover:-translate-y-1.5 ${
+                    room.featured
+                      ? "border-[#C9A96E] shadow-[0_0_0_1px_rgba(201,169,110,0.4)]"
+                      : "border-brand-100 hover:border-brand-200 hover:shadow-[0_24px_60px_rgba(61,31,10,0.10)]"
+                  }`}
+                >
+                  <div
+                    className="relative h-52 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${room.img})` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-900/40 to-transparent" />
+                    <span
+                      className={`absolute top-4 left-4 z-10 text-[10px] font-bold tracking-[0.14em] uppercase px-3 py-[5px] rounded-sm ${
+                        room.featured
+                          ? "bg-[#C9A96E] text-brand-950"
+                          : "bg-white/90 text-brand-700"
+                      }`}
+                    >
+                      {room.badge}
+                    </span>
                   </div>
-                  <div className={styles.roomPrice}>
-                    <strong>S/.{r.price}</strong>
-                    <span>/ noche</span>
+
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="font-display font-bold text-brand-900 text-[20px] mb-2">{room.name}</h3>
+                    <p className="text-gray-500 text-[13px] font-light leading-relaxed mb-4 flex-1">{room.desc}</p>
+
+                    <div className="flex flex-wrap gap-1.5 mb-5">
+                      {room.features.map((f) => (
+                        <span
+                          key={f}
+                          className="text-[11px] font-medium bg-brand-50 text-brand-600 px-2.5 py-1 rounded-sm tracking-[0.04em]"
+                        >
+                          {f}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-brand-100 pt-5">
+                      <div>
+                        <span className="font-display font-bold text-brand-700 text-[24px]">S/. {room.price}</span>
+                        <span className="text-gray-400 text-xs ml-1 font-light">/ noche</span>
+                      </div>
+                      <button
+                        onClick={onLogin}
+                        className={`px-5 py-2.5 text-[11px] font-bold tracking-[0.1em] uppercase rounded-sm transition-all duration-200 ${
+                          room.featured
+                            ? "bg-[#C9A96E] text-brand-950 hover:bg-[#E8D5A0]"
+                            : "bg-brand-600 text-white hover:bg-brand-500"
+                        }`}
+                      >
+                        Reservar
+                      </button>
+                    </div>
                   </div>
-                  <button className={styles.roomBtn} onClick={onLogin}>Reservar</button>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA Band ── */}
+      <div className="py-20 px-10 bg-brand-50 border-y border-brand-100">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-10 flex-wrap">
+          <div>
+            <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-brand-500 mb-3">
+              <span className="inline-block w-6 h-px bg-brand-400" />
+              Oferta directa
+            </p>
+            <h3 className="font-display text-[34px] font-bold text-brand-900 leading-[1.2] mb-2.5">
+              ¿Listo para reservar<br />tu estadía ideal?
+            </h3>
+            <p className="text-gray-500 text-[14px] font-light leading-relaxed max-w-md">
+              Reserva directamente con nosotros y obtén la mejor tarifa garantizada. Sin intermediarios ni comisiones.
+            </p>
+          </div>
+          <div className="flex gap-3 flex-wrap">
+            <button
+              onClick={onLogin}
+              className="px-9 py-[15px] bg-brand-600 text-white text-[12px] font-bold tracking-[0.12em] uppercase rounded-sm hover:bg-brand-500 hover:-translate-y-px transition-all duration-200"
+            >
+              Reservar directamente
+            </button>
+            <a
+              href="tel:+51987654321"
+              className="px-9 py-[15px] border border-brand-300 text-brand-600 text-[12px] font-medium tracking-[0.1em] uppercase rounded-sm hover:border-brand-500 hover:text-brand-500 transition-all duration-200"
+            >
+              Llamar ahora
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Contact ──*/}
+      <section id="contacto" className="grid md:grid-cols-2">
+        <div className="bg-brand-800 px-14 py-20 flex flex-col justify-center">
+          <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#C9A96E] mb-3.5">
+            <span className="inline-block w-6 h-px bg-[#C9A96E]" />
+            Contáctanos
+          </p>
+          <h2 className="font-display text-[38px] font-bold text-white leading-[1.15] mb-3">
+            Hablemos de<br />tu estadía
+          </h2>
+          <div className="w-14 h-px bg-[#C9A96E] mb-5" />
+          <p className="text-white text-[15px] font-light leading-relaxed max-w-xs mb-11">
+            Respondemos rápido. Reserva con confianza directamente con nosotros.
+          </p>
+
+          <div className="flex flex-col gap-6">
+            {CONTACTS.map(({ Icon, label, value }, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full border border-[#C9A96E]/40 flex items-center justify-center flex-shrink-0 bg-brand-700/50">
+                  <Icon className="w-4 h-4 text-[#C9A96E]" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-[#C9A96E] mb-0.5">{label}</p>
+                  <p className="text-white text-[14px] font-medium">{value}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* Servicios */}
-      <section id="servicios" className={styles.sectionAlt}>
-        <div className={styles.sectionInner}>
-          <span className={styles.sectionTag}>¿Por qué elegirnos?</span>
-          <h2 className={styles.sectionTitle}>Servicios incluidos</h2>
-          <div className={styles.servicesGrid}>
-            {SERVICES.map((s, i) => (
-              <div key={i} className={styles.serviceCard}>
-                <span className={styles.serviceIcon}>{s.icon}</span>
-                <h4>{s.title}</h4>
-                <p>{s.desc}</p>
+        <div className="bg-white px-14 py-20 flex items-center justify-center">
+          <div className="w-full max-w-sm">
+            <h3 className="font-display text-[24px] font-bold text-brand-900 mb-1.5">
+              Verificar disponibilidad
+            </h3>
+            <p className="text-[13px] text-gray-400 mb-8">Completa los datos y te contactamos en minutos</p>
+
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {[
+                { label: "Llegada", type: "date" },
+                { label: "Salida",  type: "date" },
+              ].map(({ label, type }) => (
+                <div key={label}>
+                  <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-1.5">
+                    {label}
+                  </label>
+                  <input
+                    type={type}
+                    className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px] text-brand-900 outline-none focus:border-brand-400 transition-colors"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {[
+              { label: "Habitación", isSelect: true },
+              { label: "Tu nombre",  type: "text",  placeholder: "Nombre completo" },
+              { label: "WhatsApp / Teléfono", type: "tel", placeholder: "+51 9xx xxx xxx" },
+            ].map(({ label, isSelect, type, placeholder }) => (
+              <div key={label} className="mb-4">
+                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-1.5">
+                  {label}
+                </label>
+                {isSelect ? (
+                  <select className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px] text-brand-900 outline-none focus:border-brand-400 transition-colors bg-white appearance-none cursor-pointer">
+                    <option>Estándar — S/. 60 / noche</option>
+                    <option>Suite Deluxe — S/. 120 / noche</option>
+                    <option>Familiar — S/. 180 / noche</option>
+                  </select>
+                ) : (
+                  <input
+                    type={type}
+                    placeholder={placeholder}
+                    className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px] text-brand-900 outline-none focus:border-brand-400 transition-colors placeholder:text-gray-300"
+                  />
+                )}
               </div>
             ))}
+
+            <button
+              onClick={onLogin}
+              className="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-[15px] rounded-sm text-[12px] tracking-[0.14em] uppercase transition-all duration-200 hover:-translate-y-px mt-2"
+            >
+              Consultar disponibilidad
+            </button>
+            <p className="text-[11px] text-gray-300 text-center mt-3 leading-relaxed">
+              Sin cargos al consultar · Confirmación en menos de 2 horas
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Contacto */}
-      <section id="contacto" className={styles.contactSection}>
-        <div className={styles.sectionInner}>
-          <h2 className={styles.contactTitle}>¿Necesitas más información?</h2>
-          <p className={styles.contactSub}>
-            Usa nuestro asistente virtual o contáctanos directamente.
-          </p>
-          <div className={styles.contactCards}>
-            <div className={styles.contactCard}>
-              <span>📞</span>
-              <div>
-                <strong>Teléfono</strong>
-                <p>+51 987 654 321</p>
-              </div>
-            </div>
-            <div className={styles.contactCard}>
-              <span>📧</span>
-              <div>
-                <strong>Correo</strong>
-                <p>info@dvita.pe</p>
-              </div>
-            </div>
-            <div className={styles.contactCard}>
-              <span>📍</span>
-              <div>
-                <strong>Ubicación</strong>
-                <p>Chiclayo, Lambayeque</p>
-              </div>
-            </div>
+      {/* ── Footer ──*/}
+      <footer className="bg-brand-900 border-t border-[#C9A96E]/15 py-10 px-10 flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full border border-[#C9A96E]/40 flex items-center justify-center">
+            <img src="/public/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
+          <span className="font-display text-[14px] font-semibold text-white">Hospedaje D'Vita</span>
         </div>
-      </section>
 
-      {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.footerBrand}>
-          <HotelIcon size={20} />
-          <span>Hospedaje D'Vita © 2025</span>
+        <div className="flex gap-7">
+          {["habitaciones", "servicios", "contacto"].map((id) => (
+            <button
+              key={id}
+              onClick={() => scrollTo(id)}
+              className="text-[11px] font-medium text-white hover:text-[#C9A96E] tracking-[0.1em] uppercase transition-colors"
+            >
+              {id.charAt(0).toUpperCase() + id.slice(1)}
+            </button>
+          ))}
         </div>
-        <p className={styles.footerSub}>Todos los derechos reservados</p>
+
+        <p className="text-white text-[11px] tracking-[0.06em]">
+          © 2026 · Chiclayo, Perú · Todos los derechos reservados
+        </p>
       </footer>
-
-      {/* Chatbot flotante */}
-      <ChatBot />
     </div>
-  );
-}
-
-/* ─── Data ───────────────────────────────────── */
-const ROOMS = [
-  {
-    name: "Habitación Estándar",
-    emoji: "🛏️",
-    desc: "Cómoda y acogedora, perfecta para viajeros individuales o parejas.",
-    features: ["TV Cable", "Baño privado", "WiFi", "Agua caliente"],
-    price: 60,
-  },
-  {
-    name: "Suite",
-    emoji: "🌟",
-    desc: "Espacio amplio con sala de estar y vista panorámica al exterior.",
-    features: ["TV 50\"", "Sala de estar", "Mini bar", "Vista panorámica"],
-    price: 120,
-  },
-  {
-    name: "Habitación Familiar",
-    emoji: "👨‍👩‍👧‍👦",
-    desc: "Diseñada para familias, con 3 camas y espacio adicional de juegos.",
-    features: ["3 camas", "Espacio adicional", "TV Cable", "Frigobar"],
-    price: 180,
-  },
-];
-
-const SERVICES = [
-  { icon: "🍳", title: "Desayuno incluido", desc: "Empieza el día con un desayuno completo a la peruana." },
-  { icon: "🔒", title: "Seguridad 24/7", desc: "Personal de seguridad y cámaras en todo el hospedaje." },
-  { icon: "🅿️", title: "Estacionamiento", desc: "Cochera gratuita para todos nuestros huéspedes." },
-  { icon: "🌐", title: "WiFi de alta velocidad", desc: "Conexión estable en todas las habitaciones y áreas comunes." },
-  { icon: "🧹", title: "Limpieza diaria", desc: "Servicio de limpieza y cambio de ropa de cama cada día." },
-  { icon: "📞", title: "Recepción 24h", desc: "Atención al cliente disponible las 24 horas del día." },
-];
-
-/* ─── Icons ──────────────────────────────────── */
-function HotelIcon({ size = 32 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-      <rect x="4" y="12" width="28" height="20" rx="2" fill="currentColor" opacity=".15" />
-      <rect x="8" y="8" width="20" height="24" rx="2" fill="currentColor" opacity=".3" />
-      <rect x="12" y="4" width="12" height="28" rx="2" fill="currentColor" />
-      <rect x="15" y="20" width="6" height="12" rx="1" fill="white" opacity=".8" />
-      <rect x="14" y="11" width="3" height="3" rx=".5" fill="white" opacity=".7" />
-      <rect x="19" y="11" width="3" height="3" rx=".5" fill="white" opacity=".7" />
-    </svg>
-  );
-}
-function BotIcon({ size = 20 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" />
-      <path d="M12 2a3 3 0 013 3v6H9V5a3 3 0 013-3z" />
-      <path d="M8 11V7M16 11V7M9 16h.01M15 16h.01" />
-    </svg>
-  );
-}
-function SendIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-    </svg>
   );
 }

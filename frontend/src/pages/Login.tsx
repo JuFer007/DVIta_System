@@ -1,184 +1,169 @@
-// frontend/src/pages/Login.tsx
+// src/pages/Login.tsx
 import { useState } from "react";
-import { useAuth } from "../components/AuthContext";
-import styles from "../styles/Login.module.css";
+import { Hotel, User, Lock, ArrowLeft } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { authService } from "../services/api";
 
-interface LoginProps {
-  onBack?: () => void;
+interface Props {
+  onBack: () => void;
 }
 
-export default function Login({ onBack }: LoginProps) {
+export default function Login({ onBack }: Props) {
   const { login } = useAuth();
   const [form, setForm] = useState({ usuario: "", contrasena: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
     if (!form.usuario || !form.contrasena) {
-      setError("Por favor completa todos los campos.");
+      setError("Completa todos los campos.");
       return;
     }
-
     setLoading(true);
 
     try {
-      // Intentar autenticación contra el backend
-      const res = await fetch("http://localhost:8080/api/usuarios", {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (res.ok) {
-        const usuarios: any[] = await res.json();
-        const match = usuarios.find(
-          (u: any) =>
-            u.nombreUsuario === form.usuario && u.contrasena === form.contrasena
-        );
-
-        if (match) {
-          // Obtener datos del empleado asociado
-          const empRes = await fetch(
-            `http://localhost:8080/api/empleados/${match.empleado?.idEmpleado || match.empleado}`
-          );
-          const empleado = empRes.ok ? await empRes.json() : {};
-
-          login({
-            ...form,
-            nombre: `${empleado.nombre || "Usuario"} ${empleado.apellidoP || ""}`.trim(),
-            idUsuario: match.idUsuario,
-            empleado: match.empleado,
-          });
-          return;
-        } else {
-          setError("Usuario o contraseña incorrectos.");
-        }
-      } else {
-        // Backend no disponible → modo demo
-        const ok = login({ ...form, nombre: "Cristian Huamán", rol: "Administrador" });
-        if (!ok) setError("Credenciales incorrectas.");
+      const usuarios = await authService.getUsuarios();
+      const match = usuarios.find(
+        (u: any) => u.nombreUsuario === form.usuario && u.contrasena === form.contrasena
+      );
+      if (!match) {
+        setError("Usuario o contraseña incorrectos.");
+        setLoading(false);
+        return;
       }
+
+      let nombre = match.empleado?.nombre ?? "Usuario";
+      try {
+        const empId = match.empleado?.idEmpleado ?? match.empleado;
+        if (empId) {
+          const emp = await authService.getEmpleado(empId);
+          nombre = `${emp.nombre ?? ""} ${emp.apellidoP ?? ""}`.trim();
+        }
+      } catch {
+        // si falla, usamos el nombre parcial
+      }
+
+      login({
+        idUsuario: match.idUsuario,
+        nombreUsuario: match.nombreUsuario,
+        nombre,
+        rol: "Administrador",
+      });
     } catch {
-      // Backend no disponible → modo demo
-      const ok = login({ ...form, nombre: "Cristian Huamán", rol: "Administrador" });
-      if (!ok) setError("Credenciales incorrectas.");
+      // Modo demo si el backend no responde
+      login({
+        idUsuario: 0,
+        nombreUsuario: form.usuario,
+        nombre: "Usuario Demo",
+        rol: "Administrador",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={styles.root}>
-      {/* Left hero panel */}
-      <div className={styles.hero}>
-        <div className={styles.heroOverlay} />
-        <div className={styles.heroContent}>
-          <div className={styles.logo}>
-            <HotelIcon />
-            <span>D'Vita</span>
+    <div className="min-h-screen flex">
+      {/* Left panel */}
+      <div className="hidden md:flex flex-col justify-center flex-1 bg-gradient-to-br from-brand-900 via-brand-700 to-brand-500 p-12 relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/svg%3E\")" }}
+        />
+        <div className="relative z-10 max-w-sm animate-fade-up">
+          <div className="flex items-center gap-2 text-brand-200 mb-12">
+            <Hotel className="w-6 h-6" />
+            <span className="font-display font-bold text-xl">D'Vita</span>
           </div>
-          <h1 className={styles.heroTitle}>Hospedaje<br />D'Vita</h1>
-          <p className={styles.heroSubtitle}>
-            Gestiona reservas, habitaciones y clientes desde un solo lugar.
+          <h1 className="font-display text-4xl font-bold text-white leading-tight mb-4">
+            Gestiona tu hospedaje desde un solo lugar
+          </h1>
+          <p className="text-brand-200 text-base leading-relaxed mb-8">
+            Reservas, habitaciones, clientes y pagos en un sistema limpio y eficiente.
           </p>
-          <div className={styles.heroBadges}>
-            <span className={styles.badge}>Reservas</span>
-            <span className={styles.badge}>Habitaciones</span>
-            <span className={styles.badge}>Clientes</span>
-            <span className={styles.badge}>Pagos</span>
+          <div className="flex flex-wrap gap-2">
+            {["Reservas", "Habitaciones", "Clientes", "Pagos", "Empleados"].map((b) => (
+              <span key={b} className="bg-white/10 border border-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
+                {b}
+              </span>
+            ))}
           </div>
         </div>
-        <div className={styles.heroPattern} />
       </div>
 
-      {/* Right form panel */}
-      <div className={styles.formPanel}>
-        <div className={styles.formCard}>
-          {onBack && (
-            <button className={styles.backBtn} onClick={onBack}>
-              ← Volver al inicio
-            </button>
-          )}
+      {/* Right panel */}
+      <div className="flex flex-col items-center justify-center flex-1 bg-white p-8">
+        <div className="w-full max-w-sm animate-fade-up">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-brand-600 transition-colors mb-8"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Volver al inicio
+          </button>
 
-          <div className={styles.formHeader}>
-            <div className={styles.formLogo}>
-              <HotelIcon size={28} />
+          <div className="flex justify-center mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center">
+              <Hotel className="w-6 h-6 text-white" />
             </div>
-            <h2 className={styles.formTitle}>Bienvenido</h2>
-            <p className={styles.formSubtitle}>Ingresa tus credenciales para continuar</p>
           </div>
 
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.field}>
-              <label className={styles.label}>Usuario</label>
-              <div className={styles.inputWrapper}>
-                <UserIcon />
+          <h2 className="font-display text-2xl font-bold text-gray-900 text-center mb-1">Bienvenido</h2>
+          <p className="text-gray-500 text-sm text-center mb-8">Ingresa tus credenciales para continuar</p>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Usuario</label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
-                  className={styles.input}
+                  className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-100 bg-gray-50"
                   type="text"
                   placeholder="nombre.usuario"
                   value={form.usuario}
-                  onChange={e => setForm(f => ({ ...f, usuario: e.target.value }))}
+                  onChange={(e) => setForm((f) => ({ ...f, usuario: e.target.value }))}
                   autoComplete="username"
                 />
               </div>
             </div>
 
-            <div className={styles.field}>
-              <label className={styles.label}>Contraseña</label>
-              <div className={styles.inputWrapper}>
-                <LockIcon />
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Contraseña</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
-                  className={styles.input}
+                  className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-100 bg-gray-50"
                   type="password"
                   placeholder="••••••••"
                   value={form.contrasena}
-                  onChange={e => setForm(f => ({ ...f, contrasena: e.target.value }))}
+                  onChange={(e) => setForm((f) => ({ ...f, contrasena: e.target.value }))}
                   autoComplete="current-password"
                 />
               </div>
             </div>
 
-            {error && <p className={styles.error}>{error}</p>}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-red-600 text-xs">
+                {error}
+              </div>
+            )}
 
-            <button className={styles.btn} type="submit" disabled={loading}>
-              {loading ? <span className={styles.spinner} /> : "Iniciar sesión"}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2.5 bg-gradient-to-r from-brand-600 to-brand-800 text-white font-semibold rounded-lg hover:-translate-y-0.5 hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-1"
+            >
+              {loading ? "Ingresando…" : "Iniciar sesión"}
             </button>
           </form>
 
-          <p className={styles.formFooter}>
+          <p className="text-center text-xs text-gray-400 mt-8">
             Sistema de gestión — Hospedaje D'Vita © 2025
           </p>
         </div>
       </div>
     </div>
-  );
-}
-
-function HotelIcon({ size = 36 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-      <rect x="4" y="12" width="28" height="20" rx="2" fill="currentColor" opacity=".15" />
-      <rect x="8" y="8" width="20" height="24" rx="2" fill="currentColor" opacity=".3" />
-      <rect x="12" y="4" width="12" height="28" rx="2" fill="currentColor" />
-      <rect x="15" y="20" width="6" height="12" rx="1" fill="white" opacity=".8" />
-      <rect x="14" y="11" width="3" height="3" rx=".5" fill="white" opacity=".7" />
-      <rect x="19" y="11" width="3" height="3" rx=".5" fill="white" opacity=".7" />
-    </svg>
-  );
-}
-function UserIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-    </svg>
-  );
-}
-function LockIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0v4" />
-    </svg>
   );
 }

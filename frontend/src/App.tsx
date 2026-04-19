@@ -1,34 +1,23 @@
-// frontend/src/App.tsx
 import { useState } from "react";
-import { AuthProvider, useAuth } from "./components/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
 import {
-  ClientesPage,
-  EmpleadosPage,
-  HabitacionesPage,
-  TiposPage,
-  ReservasPage,
-  PagosPage,
-  UsuariosPage,
-  RecepcionistasPage,
-  AdministradoresPage,
+  ClientesPage, EmpleadosPage, HabitacionesPage, TiposPage,
+  ReservasPage, PagosPage, UsuariosPage, RecepcionistasPage, AdministradoresPage,
 } from "./pages/EntityPages";
-import "./index.css";
-import styles from "./App.module.css";
 
-type AppView = "landing" | "login" | "dashboard";
+type View = "landing" | "login";
 
 function AppContent() {
   const { user } = useAuth();
-  const [view, setView] = useState<AppView>("landing");
+  const [view, setView] = useState<View>("landing");
   const [page, setPage] = useState("dashboard");
   const [collapsed, setCollapsed] = useState(false);
 
-  // Si el usuario está autenticado, mostrar dashboard siempre
   if (user) {
     const renderPage = () => {
       switch (page) {
@@ -45,39 +34,21 @@ function AppContent() {
         default:                return <Dashboard />;
       }
     };
-
     return (
-      <div className={styles.layout}>
-        <Sidebar
-          active={page}
-          onNavigate={setPage}
-          collapsed={collapsed}
-          onToggle={() => setCollapsed(c => !c)}
-        />
-        <div className={styles.main}>
+      <div className="flex min-h-screen bg-gray-50">
+        <Sidebar active={page} onNavigate={setPage} collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
+        <div className="flex flex-col flex-1 min-w-0">
           <Topbar page={page} />
-          <div className={styles.content}>
-            {renderPage()}
-          </div>
+          <main className="flex-1 p-6 overflow-y-auto">{renderPage()}</main>
         </div>
       </div>
     );
   }
 
-  // Vistas públicas
-  if (view === "login") {
-    return <Login onBack={() => setView("landing")} />;
-  }
-
-  return (
-    <LandingPage onLogin={() => setView("login")} />
-  );
+  if (view === "login") return <Login onBack={() => setView("landing")} />;
+  return <LandingPage onLogin={() => setView("login")} />;
 }
 
 export default function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
+  return <AuthProvider><AppContent /></AuthProvider>;
 }

@@ -1,125 +1,104 @@
+import { CalendarCheck, BedDouble, Users, CreditCard } from "lucide-react";
 import StatsCard from "../components/StatsCard";
-import styles from "../styles/Dashboard.module.css";
-
-function CalIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>;
-}
-function BedIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9v11M21 9v11M3 14h18M3 9a2 2 0 012-2h14a2 2 0 012 2"/></svg>;
-}
-function UsersIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>;
-}
-function MoneyIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>;
-}
+import StatusBadge from "../components/StatusBadge";
 
 const STATS = [
-  { title: "Reservas activas",   value: "24",  sub: "+3 hoy",   color: "brand",   icon: CalIcon },
-  { title: "Habitaciones disp.", value: "12",  sub: "de 30",    color: "success", icon: BedIcon },
-  { title: "Clientes registr.",  value: "187", sub: "+12 mes",  color: "info",    icon: UsersIcon },
-  { title: "Ingresos del mes",   value: "S/.8,420", sub: "+18%", color: "accent", icon: MoneyIcon },
+  { title: "Reservas activas",     value: "24",      sub: "+3 hoy",  icon: CalendarCheck, color: "brand"  as const },
+  { title: "Habitaciones disp.",   value: "12",      sub: "de 30",   icon: BedDouble,     color: "green"  as const },
+  { title: "Clientes registrados", value: "187",     sub: "+12 mes", icon: Users,         color: "blue"   as const },
+  { title: "Ingresos del mes",     value: "S/.8,420",sub: "+18%",    icon: CreditCard,    color: "yellow" as const },
 ];
 
 const RECENT = [
-  { id: 1, cliente: "María López",     habitacion: "101 - Estándar",  fecha: "2025-07-09", estado: "CONFIRMADA" },
-  { id: 2, cliente: "Carlos Ruiz",     habitacion: "205 - Suite",     fecha: "2025-07-08", estado: "PENDIENTE"  },
-  { id: 3, cliente: "Ana Torres",      habitacion: "312 - Familiar",  fecha: "2025-07-08", estado: "CONFIRMADA" },
-  { id: 4, cliente: "José Mamani",     habitacion: "108 - Estándar",  fecha: "2025-07-07", estado: "COMPLETADA" },
-  { id: 5, cliente: "Lucía Vargas",    habitacion: "220 - Suite",     fecha: "2025-07-06", estado: "CANCELADA"  },
+  { id: 1, cliente: "María López",  habitacion: "101 - Estándar", fecha: "2025-07-09", estado: "CONFIRMADA" },
+  { id: 2, cliente: "Carlos Ruiz",  habitacion: "205 - Suite",    fecha: "2025-07-08", estado: "PENDIENTE"  },
+  { id: 3, cliente: "Ana Torres",   habitacion: "312 - Familiar", fecha: "2025-07-08", estado: "CONFIRMADA" },
+  { id: 4, cliente: "José Mamani",  habitacion: "108 - Estándar", fecha: "2025-07-07", estado: "COMPLETADA" },
+  { id: 5, cliente: "Lucía Vargas", habitacion: "220 - Suite",    fecha: "2025-07-06", estado: "CANCELADA"  },
 ];
 
 const ROOMS = [
-  { n: "101", tipo: "Estándar",  estado: "OCUPADA",       precio: 60  },
-  { n: "102", tipo: "Estándar",  estado: "DISPONIBLE",    precio: 60  },
+  { n: "101", tipo: "Estándar",  estado: "OCUPADA",       precio: 60 },
+  { n: "102", tipo: "Estándar",  estado: "DISPONIBLE",    precio: 60 },
   { n: "201", tipo: "Suite",     estado: "DISPONIBLE",    precio: 120 },
   { n: "202", tipo: "Suite",     estado: "MANTENIMIENTO", precio: 120 },
   { n: "301", tipo: "Familiar",  estado: "OCUPADA",       precio: 180 },
   { n: "302", tipo: "Familiar",  estado: "DISPONIBLE",    precio: 180 },
 ];
 
-const STATUS_COLORS = {
-  CONFIRMADA:  { bg: "#edf7f2", color: "#2D7A4F" },
-  PENDIENTE:   { bg: "#fff8e1", color: "#B08620" },
-  COMPLETADA:  { bg: "#eaf1f8", color: "#2A5F8B" },
-  CANCELADA:   { bg: "#fdf0f0", color: "#A33030" },
-  DISPONIBLE:  { bg: "#edf7f2", color: "#2D7A4F" },
-  OCUPADA:     { bg: "#fdf0f0", color: "#A33030" },
-  MANTENIMIENTO: { bg: "#fff8e1", color: "#B08620" },
-};
-
 export default function Dashboard() {
   return (
-    <div className={styles.page}>
-      <div className={styles.welcome}>
+    <div className="flex flex-col gap-6">
+      {/* Bienvenida */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className={styles.welcomeTitle}>Buenos días 👋</h1>
-          <p className={styles.welcomeSub}>Aquí tienes el resumen de hoy en Hospedaje D'Vita</p>
+          <h1 className="font-display text-2xl font-bold text-gray-900">Buenos días 👋</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Resumen del día en Hospedaje D'Vita</p>
         </div>
-        <div className={styles.dateChip}>
-          <CalIcon />
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-500">
+          <CalendarCheck className="w-4 h-4 text-brand-500" />
           {new Date().toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long" })}
         </div>
       </div>
 
-      {/* Stats */}
-      <div className={styles.statsGrid}>
+      {/* Stats grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {STATS.map((s, i) => (
-          <StatsCard key={i} {...s} delay={i * 60} />
+          <StatsCard key={i} {...s} />
         ))}
       </div>
 
       {/* Two columns */}
-      <div className={styles.cols}>
-        {/* Recent reservas */}
-        <div className={styles.card}>
-          <div className={styles.cardHeader}>
-            <h3 className={styles.cardTitle}>Reservas recientes</h3>
-            <span className={styles.cardBadge}>{RECENT.length}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Reservas recientes */}
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-3.5 border-b border-gray-100">
+            <h3 className="font-semibold text-gray-800 text-sm">Reservas recientes</h3>
+            <span className="bg-brand-100 text-brand-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+              {RECENT.length}
+            </span>
           </div>
-          <table className={styles.miniTable}>
+          <table className="w-full text-sm">
             <thead>
-              <tr>
-                <th>Cliente</th><th>Habitación</th><th>Fecha</th><th>Estado</th>
+              <tr className="bg-gray-50 border-b border-gray-100">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Cliente</th>
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Habitación</th>
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado</th>
               </tr>
             </thead>
             <tbody>
-              {RECENT.map(r => {
-              const s = STATUS_COLORS[r.estado as keyof typeof STATUS_COLORS] || {};
-                return (
-                  <tr key={r.id}>
-                    <td className={styles.clientName}>{r.cliente}</td>
-                    <td>{r.habitacion}</td>
-                    <td className={styles.dateCell}>{r.fecha}</td>
-                    <td>
-                      <span className={styles.pill} style={{ background: s.bg, color: s.color }}>
-                        {r.estado}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+              {RECENT.map((r) => (
+                <tr key={r.id} className="border-b border-gray-50 hover:bg-brand-50 transition-colors">
+                  <td className="px-4 py-2.5 font-medium text-gray-800">{r.cliente}</td>
+                  <td className="px-4 py-2.5 text-gray-500 text-xs">{r.habitacion}</td>
+                  <td className="px-4 py-2.5">
+                    <StatusBadge status={r.estado} />
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
-        {/* Room overview */}
-        <div className={styles.card}>
-          <div className={styles.cardHeader}>
-            <h3 className={styles.cardTitle}>Estado de habitaciones</h3>
+        {/* Estado habitaciones */}
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-gray-100">
+            <h3 className="font-semibold text-gray-800 text-sm">Estado de habitaciones</h3>
           </div>
-          <div className={styles.roomsGrid}>
-            {ROOMS.map(r => {
-            const s = STATUS_COLORS[r.estado as keyof typeof STATUS_COLORS] || {};
-              return (
-                <div key={r.n} className={styles.roomChip} style={{ borderColor: s.color + "40", background: s.bg }}>
-                  <span className={styles.roomNum} style={{ color: s.color }}>#{r.n}</span>
-                  <span className={styles.roomTipo}>{r.tipo}</span>
-                  <span className={styles.roomEstado} style={{ color: s.color }}>{r.estado}</span>
-                  <span className={styles.roomPrecio}>S/.{r.precio}</span>
+          <div className="p-4 grid grid-cols-2 gap-3">
+            {ROOMS.map((r) => (
+              <div
+                key={r.n}
+                className="border border-gray-100 rounded-lg p-3 flex flex-col gap-1 hover:border-brand-200 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-gray-800 text-sm">#{r.n}</span>
+                  <StatusBadge status={r.estado} />
                 </div>
-              );
-            })}
+                <span className="text-xs text-gray-400">{r.tipo}</span>
+                <span className="text-xs font-medium text-brand-600">S/.{r.precio}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
