@@ -553,7 +553,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
       
       {/* ── ChatBot flotante ── */}
       <ChatBot />
-
     </div>
   );
 }

@@ -14,8 +14,13 @@ const PAGE_NAMES: Record<string, string> = {
   administradores: "Administradores",
 };
 
-export default function Topbar({ page }: { page: string }) {
-  const { user, logout } = useAuth();
+interface Props {
+  page: string;
+  onLogout: () => void;
+}
+
+export default function Topbar({ page, onLogout }: Props) {
+  const { user } = useAuth();
 
   return (
     <header className="flex items-center justify-between px-6 h-14 bg-white border-b border-gray-100 sticky top-0 z-10 gap-4">
@@ -36,7 +41,7 @@ export default function Topbar({ page }: { page: string }) {
           </div>
         </div>
         <button
-          onClick={logout}
+          onClick={onLogout}
           title="Cerrar sesión"
           className="w-8 h-8 flex items-center justify-center text-gray-400 border border-gray-200 rounded-lg hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
         >

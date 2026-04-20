@@ -53,16 +53,14 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
       style={{
-        /* Sin backdrop-blur — solo color sólido semi-transparente, mucho más rápido */
         backgroundColor: "rgba(20, 8, 2, 0.75)",
       }}
     >
-      {/* Modal — will-change para que el browser lo eleve a su propio layer */}
+      {/* Modal*/}
       <div
         className="relative w-full max-w-[540px] bg-white rounded-sm shadow-2xl overflow-hidden"
         style={{ willChange: "transform" }}
       >
-
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 bg-brand-900 border-b border-brand-800">
           <div>
@@ -80,7 +78,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
             <X className="w-4 h-4" />
           </button>
         </div>
-
         {/* Stepper */}
         <div className="flex items-center px-6 py-4 bg-neutral-50 border-b border-neutral-100">
           {[
@@ -113,10 +110,8 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
             </div>
           ))}
         </div>
-
         {/* Body */}
         <div className="px-6 py-6">
-
           {/* ── Step 1 ── */}
           {step === 1 && (
             <div className="flex flex-col gap-5">
@@ -142,7 +137,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
                   ))}
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { label: "Llegada", key: "llegada", min: new Date().toISOString().split("T")[0] },
@@ -165,7 +159,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
                   </div>
                 ))}
               </div>
-
               {nights > 0 && (
                 <div className="flex items-center justify-between bg-brand-50 border border-brand-100 rounded-sm px-4 py-3">
                   <div className="flex items-center gap-2 text-[13px] text-brand-700">
@@ -177,7 +170,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
               )}
             </div>
           )}
-
           {/* ── Step 2 ── */}
           {step === 2 && (
             <div className="flex flex-col gap-5">
@@ -188,7 +180,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
                 </div>
                 <span className="font-display font-bold text-[18px] text-brand-700">S/.{total}</span>
               </div>
-
               {[
                 { label: "Nombre completo",      key: "nombre",   type: "text", Icon: User,  placeholder: "Tu nombre completo" },
                 { label: "WhatsApp / Teléfono",  key: "telefono", type: "tel",  Icon: Phone, placeholder: "+51 9xx xxx xxx" },
@@ -209,7 +200,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
                   </div>
                 </div>
               ))}
-
               <div>
                 <label className="block text-[11px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                   Número de adultos
@@ -224,7 +214,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
                   ))}
                 </select>
               </div>
-
               <div>
                 <label className="block text-[11px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                   Notas adicionales{" "}
@@ -240,7 +229,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
               </div>
             </div>
           )}
-
           {/* ── Step 3 ── */}
           {step === 3 && (
             <div className="flex flex-col gap-4">
@@ -289,7 +277,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
             </div>
           )}
         </div>
-
         {/* Footer */}
         <div className="px-6 py-4 border-t border-neutral-100 bg-neutral-50 flex items-center justify-between gap-3">
           {step > 1 ? (
@@ -307,7 +294,6 @@ export default function ReservaModal({ open, onClose, onLogin, initialRoom = "es
               Cancelar
             </button>
           )}
-
           {step < 3 ? (
             <button
               onClick={() => setStep((s) => (s + 1) as Step)}

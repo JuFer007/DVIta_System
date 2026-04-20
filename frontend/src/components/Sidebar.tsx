@@ -1,6 +1,6 @@
 import {
-  LayoutDashboard, Users, BriefcaseBusiness, BedDouble,
-  Tag, CalendarCheck, CreditCard, ShieldCheck, Headphones, Star, ChevronLeft, ChevronRight, Hotel
+  LayoutDashboard, Users, BriefcaseBusiness, BedDouble, Bed, ConciergeBell,
+  Tag, CalendarCheck, CreditCard, ChevronLeft, ChevronRight, User, Crown
 } from "lucide-react";
 
 const NAV = [
@@ -8,12 +8,12 @@ const NAV = [
   { id: "clientes",        label: "Clientes",          icon: Users },
   { id: "empleados",       label: "Empleados",         icon: BriefcaseBusiness },
   { id: "habitaciones",    label: "Habitaciones",      icon: BedDouble },
-  { id: "tipos",           label: "Tipos Habitación",  icon: Tag },
+  { id: "tipos",           label: "Tipos Habitación",  icon: Bed },
   { id: "reservas",        label: "Reservas",          icon: CalendarCheck },
   { id: "pagos",           label: "Pagos",             icon: CreditCard },
-  { id: "usuarios",        label: "Usuarios",          icon: ShieldCheck },
-  { id: "recepcionistas",  label: "Recepcionistas",    icon: Headphones },
-  { id: "administradores", label: "Administradores",   icon: Star },
+  { id: "usuarios",        label: "Usuarios",          icon: User },
+  { id: "recepcionistas",  label: "Recepcionistas",    icon: ConciergeBell },
+  { id: "administradores", label: "Administradores",   icon: Crown },
 ];
 
 interface Props {
@@ -27,32 +27,32 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Pro
   return (
     <aside
       className={`flex flex-col min-h-screen bg-brand-900 transition-all duration-300 flex-shrink-0 sticky top-0 h-screen overflow-y-auto overflow-x-hidden ${
-        collapsed ? "w-16" : "w-56"
+        collapsed ? "w-20" : "w-70"
       }`}
     >
       {/* Brand */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10 min-h-[64px]">
-        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-white/10 rounded-lg">
-          <Hotel className="w-4 h-4 text-brand-200" />
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-white/10 min-h-[72px]">
+        <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center bg-white/10 rounded-lg">
+          <img src="/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
         </div>
         {!collapsed && (
           <div className="flex-1 min-w-0">
-            <p className="font-display font-bold text-white text-base leading-tight">D'Vita</p>
-            <p className="text-brand-400 text-[10px] uppercase tracking-widest">Hospedaje</p>
+            <p className="font-display font-bold text-white text-[17px] leading-tight">D'Vita</p>
+            <p className="text-brand-400 text-[11px] uppercase tracking-widest">Hospedaje</p>
           </div>
         )}
         <button
           onClick={onToggle}
-          className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-brand-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+          className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-brand-400 hover:text-white hover:bg-white/10 rounded transition-colors"
         >
-          {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
+          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 flex flex-col gap-0.5 p-3">
+      <nav className="flex-1 flex flex-col gap-1 p-4">
         {!collapsed && (
-          <p className="text-brand-500 text-[10px] font-semibold uppercase tracking-widest px-2 py-1.5">
+          <p className="text-brand-500 text-[10px] font-semibold uppercase tracking-widest px-3 py-2">
             Gestión
           </p>
         )}
@@ -64,13 +64,13 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Pro
               key={item.id}
               onClick={() => onNavigate(item.id)}
               title={collapsed ? item.label : undefined}
-              className={`flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium transition-all text-left whitespace-nowrap ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-all text-left whitespace-nowrap ${
                 isActive
                   ? "bg-brand-500/30 text-white border-l-2 border-brand-400"
                   : "text-brand-300 hover:text-white hover:bg-white/5"
               }`}
             >
-              <Icon className={`flex-shrink-0 w-4 h-4 ${isActive ? "text-brand-300" : ""}`} />
+              <Icon className={`flex-shrink-0 w-[18px] h-[18px] ${isActive ? "text-brand-300" : ""}`} />
               {!collapsed && <span>{item.label}</span>}
             </button>
           );
@@ -79,8 +79,9 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Pro
 
       {/* Footer */}
       {!collapsed && (
-        <div className="px-4 py-3 border-t border-white/10">
-          <p className="text-brand-600 text-[10px]">v1.0.0 — 2025</p>
+        <div className="px-5 py-4 border-t border-white/10">
+          <p className="text-brand-200 text-[11px]">© 2026 · Chiclayo, Perú</p>
+          <p className="text-brand-200 text-[11px] mt-0.5">Victor Raúl Haya de la Torre</p>
         </div>
       )}
     </aside>

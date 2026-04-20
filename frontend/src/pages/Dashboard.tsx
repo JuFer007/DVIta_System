@@ -1,4 +1,4 @@
-import { CalendarCheck, BedDouble, Users, CreditCard, TrendingUp, Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { CalendarCheck, BedDouble, Users, CreditCard, TrendingUp, Clock, CheckCircle2, XCircle, AlertCircle, Sun, Sunset, Moon } from "lucide-react";
 import StatsCard from "../components/StatsCard";
 import StatusBadge from "../components/StatusBadge";
 
@@ -39,10 +39,10 @@ const ROOMS: {
 ];
 
 const ACTIVITY = [
-  { text: "Nueva reserva de María López — Hab. 101",     time: "Hace 5 min",  type: "new" },
+  { text: "Nueva reserva de María López — Hab. 101",      time: "Hace 5 min",  type: "new" },
   { text: "Check-out completado — Carlos Ruiz, Hab. 205", time: "Hace 22 min", type: "done" },
-  { text: "Pago recibido — S/. 360 — Transferencia",     time: "Hace 1h",     type: "payment" },
-  { text: "Reserva cancelada — Lucía Vargas, Hab. 220",  time: "Hace 2h",     type: "cancel" },
+  { text: "Pago recibido — S/. 360 — Transferencia",      time: "Hace 1h",     type: "payment" },
+  { text: "Reserva cancelada — Lucía Vargas, Hab. 220",   time: "Hace 2h",     type: "cancel" },
 ];
 
 const activityIcon = (type: string) => {
@@ -59,6 +59,26 @@ const roomStateColor = {
   MANTENIMIENTO: "bg-yellow-50 border-yellow-200 text-yellow-700",
 };
 
+function getGreeting(): { text: string; icon: JSX.Element } {
+  const hour = new Date().getHours();
+  if (hour >= 6 && hour < 12) {
+    return {
+      text: "Buenos días",
+      icon: <Sun className="w-6 h-6 text-black" />,
+    };
+  }
+  if (hour >= 12 && hour < 19) {
+    return {
+      text: "Buenas tardes",
+      icon: <Sunset className="w-6 h-6 text-black" />,
+    };
+  }
+  return {
+    text: "Buenas noches",
+    icon: <Moon className="w-6 h-6 text-black" />,
+  };
+}
+
 export default function Dashboard() {
   const today = new Date().toLocaleDateString("es-PE", {
     weekday: "long",
@@ -66,17 +86,18 @@ export default function Dashboard() {
     month: "long",
     year: "numeric",
   });
-
   const capitalized = today.charAt(0).toUpperCase() + today.slice(1);
+  const greeting = getGreeting();
 
   return (
-    <div className="flex flex-col gap-6 max-w-[1200px]">
+    <div className="flex flex-col gap-6 w-full">
 
       {/* ── Bienvenida ── */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="font-display text-[26px] font-bold text-neutral-900 leading-tight">
-            Buenos días 👋
+          <h1 className="font-display text-[26px] font-bold text-neutral-900 leading-tight flex items-center gap-2.5">
+            {greeting.icon}
+            {greeting.text}
           </h1>
           <p className="text-[14px] text-neutral-500 mt-1 font-light">
             Resumen del día — Hospedaje D'Vita
@@ -98,7 +119,7 @@ export default function Dashboard() {
       {/* ── Fila principal ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-        {/* Reservas recientes — ocupa 2/3 */}
+        {/* Reservas recientes — 2/3 */}
         <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-sm overflow-hidden shadow-sm">
           <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
             <div className="flex items-center gap-2.5">
@@ -119,15 +140,13 @@ export default function Dashboard() {
                   <th className="px-5 py-2.5 text-left text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Cliente</th>
                   <th className="px-5 py-2.5 text-left text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Habitación</th>
                   <th className="px-5 py-2.5 text-left text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Ingreso</th>
+                  <th className="px-5 py-2.5 text-left text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Salida</th>
                   <th className="px-5 py-2.5 text-left text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Estado</th>
                 </tr>
               </thead>
               <tbody>
                 {RECENT.map((r) => (
-                  <tr
-                    key={r.id}
-                    className="border-b border-neutral-50 hover:bg-brand-50/50 transition-colors cursor-pointer"
-                  >
+                  <tr key={r.id} className="border-b border-neutral-50 hover:bg-brand-50/50 transition-colors cursor-pointer">
                     <td className="px-5 py-3 font-medium text-neutral-800">{r.cliente}</td>
                     <td className="px-5 py-3 text-neutral-500 text-[12px]">{r.habitacion}</td>
                     <td className="px-5 py-3 text-neutral-500 text-[12px]">
@@ -136,6 +155,7 @@ export default function Dashboard() {
                         {r.ingreso}
                       </div>
                     </td>
+                    <td className="px-5 py-3 text-neutral-500 text-[12px]">{r.salida}</td>
                     <td className="px-5 py-3">
                       <StatusBadge status={r.estado} />
                     </td>
@@ -154,10 +174,7 @@ export default function Dashboard() {
           </div>
           <div className="p-4 flex flex-col gap-1">
             {ACTIVITY.map((a, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 p-3 rounded-sm hover:bg-neutral-50 transition-colors"
-              >
+              <div key={i} className="flex items-start gap-3 p-3 rounded-sm hover:bg-neutral-50 transition-colors">
                 <div className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                   {activityIcon(a.type)}
                 </div>
@@ -194,13 +211,11 @@ export default function Dashboard() {
           {ROOMS.map((r) => (
             <div
               key={r.n}
-              className={`border rounded-sm p-3.5 flex flex-col gap-1.5 hover:shadow-sm transition-all cursor-pointer ${roomStateColor[r.estado]}`}
+              className={`border rounded-sm p-4 flex flex-col gap-1.5 hover:shadow-sm transition-all cursor-pointer ${roomStateColor[r.estado]}`}
             >
-              <div className="flex items-center justify-between">
-                <span className="font-display font-bold text-[16px]">#{r.n}</span>
-              </div>
+              <span className="font-display font-bold text-[18px]">#{r.n}</span>
               <span className="text-[11px] font-medium opacity-70">{r.tipo}</span>
-              <span className="text-[12px] font-bold">S/.{r.precio}</span>
+              <span className="text-[13px] font-bold">S/.{r.precio}</span>
               <span className="text-[10px] font-bold uppercase tracking-wide opacity-60">{r.estado}</span>
             </div>
           ))}
@@ -210,9 +225,9 @@ export default function Dashboard() {
       {/* ── Resumen ocupación ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: "Ocupación actual", value: "67%",     color: "bg-brand-500",  sub: "4 de 6 habitaciones" },
-          { label: "Ingresos hoy",     value: "S/.480",  color: "bg-green-500",  sub: "4 noches facturadas" },
-          { label: "Check-outs hoy",   value: "2",       color: "bg-blue-500",   sub: "Hab. 108 y 220" },
+          { label: "Ocupación actual", value: "67%",    color: "bg-brand-500", sub: "4 de 6 habitaciones" },
+          { label: "Ingresos hoy",     value: "S/.480", color: "bg-green-500", sub: "4 noches facturadas" },
+          { label: "Check-outs hoy",   value: "2",      color: "bg-blue-500",  sub: "Hab. 108 y 220" },
         ].map((item, i) => (
           <div key={i} className="bg-white border border-neutral-200 rounded-sm p-5 shadow-sm flex items-center gap-4">
             <div className={`w-2 self-stretch rounded-full ${item.color}`} />

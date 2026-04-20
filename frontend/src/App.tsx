@@ -13,10 +13,15 @@ import {
 type View = "landing" | "login";
 
 function AppContent() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [view, setView] = useState<View>("landing");
   const [page, setPage] = useState("dashboard");
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    setView("landing");
+  };
 
   if (user) {
     const renderPage = () => {
@@ -34,12 +39,17 @@ function AppContent() {
         default:                return <Dashboard />;
       }
     };
+
     return (
       <div className="flex min-h-screen bg-gray-50">
         <Sidebar active={page} onNavigate={setPage} collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
         <div className="flex flex-col flex-1 min-w-0">
-          <Topbar page={page} />
-          <main className="flex-1 p-6 overflow-y-auto">{renderPage()}</main>
+          <Topbar page={page} onLogout={handleLogout} />
+          <main className="flex-1 p-6 overflow-y-auto">            
+            <div>
+              {renderPage()}
+            </div>
+          </main>
         </div>
       </div>
     );
