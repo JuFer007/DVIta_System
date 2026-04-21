@@ -118,7 +118,6 @@ export default function Dashboard() {
 
       {/* ── Fila principal ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
         {/* Reservas recientes — 2/3 */}
         <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-sm overflow-hidden shadow-sm">
           <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">

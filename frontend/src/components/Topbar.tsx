@@ -12,6 +12,8 @@ const PAGE_NAMES: Record<string, string> = {
   usuarios:        "Usuarios",
   recepcionistas:  "Recepcionistas",
   administradores: "Administradores",
+  horarios:        "Horarios",
+  operaciones:     "Operaciones",
 };
 
 interface Props {

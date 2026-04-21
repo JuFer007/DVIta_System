@@ -42,4 +42,14 @@ public class ReservaController {
         reservaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/checkin")
+    public ResponseEntity<Reserva> checkIn(@PathVariable Long id) {
+        return ResponseEntity.ok(reservaService.checkIn(id));
+    }
+
+    @PatchMapping("/{id}/checkout")
+    public ResponseEntity<Reserva> checkOut(@PathVariable Long id) {
+        return ResponseEntity.ok(reservaService.checkOut(id));
+    }
 }

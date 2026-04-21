@@ -1,5 +1,7 @@
 package com.systemWeb.DVita.Service;
+import com.systemWeb.DVita.Model.Habitacion;
 import com.systemWeb.DVita.Model.Reserva;
+import com.systemWeb.DVita.Repository.HabitacionRepository;
 import com.systemWeb.DVita.Repository.ReservaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import java.util.Optional;
 
 public class ReservaService {
     private final ReservaRepository reservaRepository;
+    private final HabitacionRepository habitacionRepository;
 
     public List<Reserva> listarTodos() {
         return reservaRepository.findAll();
@@ -39,5 +42,48 @@ public class ReservaService {
 
     public void eliminar(Long id) {
         reservaRepository.deleteById(id);
+    }
+
+    public Reserva checkIn(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
+
+        if ("CANCELADA".equals(reserva.getEstadoReserva()) ||
+                "COMPLETADA".equals(reserva.getEstadoReserva())) {
+            throw new IllegalStateException(
+                    "No se puede hacer check-in en una reserva con estado: " + reserva.getEstadoReserva()
+            );
+        }
+
+        reserva.setEstadoReserva("CONFIRMADA");
+        reservaRepository.save(reserva);
+
+        Habitacion habitacion = reserva.getHabitacion();
+        if (habitacion != null) {
+            habitacion.setEstado("OCUPADA");
+            habitacionRepository.save(habitacion);
+        }
+        return reserva;
+    }
+
+    public Reserva checkOut(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
+
+        if (!"CONFIRMADA".equals(reserva.getEstadoReserva())) {
+            throw new IllegalStateException(
+                    "Solo se puede hacer check-out en reservas CONFIRMADAS. Estado actual: " + reserva.getEstadoReserva()
+            );
+        }
+
+        reserva.setEstadoReserva("COMPLETADA");
+        reservaRepository.save(reserva);
+
+        Habitacion habitacion = reserva.getHabitacion();
+        if (habitacion != null) {
+            habitacion.setEstado("DISPONIBLE");
+            habitacionRepository.save(habitacion);
+        }
+        return reserva;
     }
 }

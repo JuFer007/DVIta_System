@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Users, BriefcaseBusiness, BedDouble, Bed, ConciergeBell,
-  Tag, CalendarCheck, CreditCard, ChevronLeft, ChevronRight, User, Crown
+  Tag, CalendarCheck, CreditCard, ChevronLeft, ChevronRight, User, Crown, Hotel, Clock
 } from "lucide-react";
 
 const NAV = [
@@ -9,9 +9,11 @@ const NAV = [
   { id: "empleados",       label: "Empleados",         icon: BriefcaseBusiness },
   { id: "habitaciones",    label: "Habitaciones",      icon: BedDouble },
   { id: "tipos",           label: "Tipos Habitación",  icon: Bed },
+  { id: "operaciones",     label: "Operaciones",       icon: Hotel },
   { id: "reservas",        label: "Reservas",          icon: CalendarCheck },
   { id: "pagos",           label: "Pagos",             icon: CreditCard },
   { id: "usuarios",        label: "Usuarios",          icon: User },
+  { id: "horarios",        label: "Horarios",          icon: Clock },
   { id: "recepcionistas",  label: "Recepcionistas",    icon: ConciergeBell },
   { id: "administradores", label: "Administradores",   icon: Crown },
 ];

@@ -132,7 +132,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
 
   return (
     <div className="min-h-screen bg-white font-body">
-
       {/* ── Navbar ──*/}
       <nav
         className={`fixed top-0 inset-x-0 z-50 flex items-center justify-between px-10 transition-all duration-300 ${
@@ -151,7 +150,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
             </span>
           </div>
         </div>
- 
         <div className="hidden md:flex items-center gap-9">
           {["habitaciones", "servicios", "contacto"].map((id) => (
             <button
@@ -164,7 +162,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
             </button>
           ))}
         </div>
- 
         <div className="flex items-center gap-3">
           {/* Iniciar sesión */}
           <button
@@ -182,7 +179,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </button>
         </div>
       </nav>
-
       {/* ── Hero ── */}
       <section className="relative h-screen min-h-[700px] flex items-end overflow-hidden">
         <div className="absolute inset-0">
@@ -199,7 +195,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
             />
           ))}
         </div>
-
         <div
           className="absolute inset-0"
           style={{
@@ -207,7 +202,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
               "linear-gradient(to top, rgba(29,13,4,0.93) 0%, rgba(29,13,4,0.46) 45%, rgba(29,13,4,0.14) 100%)",
           }}
         />
-
         <div className="relative z-10 w-full px-10 pb-28 flex justify-between items-end max-w-[1300px] mx-auto">
           <div className="max-w-[600px]">
             <div className="flex items-center gap-3 mb-6">
@@ -216,18 +210,15 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
                 Chiclayo, Perú · Desde 2018
               </span>
             </div>
-
             <h1 className="font-display text-[clamp(48px,6vw,76px)] font-bold text-white leading-[1.05] mb-5 tracking-[-0.01em]">
               Tu descanso,<br />
               <em className="font-display italic text-[#E8D5A0]">nuestra pasión.</em>
             </h1>
-
             <p className="text-white/65 text-[15px] font-light leading-[1.75] max-w-[400px] mb-10 text-justify">
               Un refugio de confort en el corazón de Chiclayo. Habitaciones
               diseñadas con calidez, atención personalizada y todo lo que
               necesitas para sentirte en casa.
             </p>
-
             <div className="flex gap-3.5 flex-wrap">
               <button
                 onClick={onLogin}
@@ -243,13 +234,11 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
               </button>
             </div>
           </div>
-
           <div className="text-right pb-1 hidden md:block">
             <div className="font-display text-[52px] font-bold text-[#C9A96E] leading-none">95%</div>
             <div className="text-[11px] font-medium text-white/50 tracking-[0.15em] uppercase mt-1">Satisfacción</div>
           </div>
         </div>
-
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {HERO_IMAGES.map((_, i) => (
             <button
@@ -264,7 +253,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           ))}
         </div>
       </section>
-
       {/* ── Rooms ── */}
       <section id="habitaciones" className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-8">
@@ -285,7 +273,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
               Espacios diseñados con calidez peruana, con todos los servicios que necesitas para un descanso perfecto.
             </p>
           </Reveal>
-
           <div className="grid md:grid-cols-3 gap-6">
             {ROOMS.map((room, i) => (
               <Reveal key={i} delay={i * 120}>
@@ -311,11 +298,9 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
                       {room.badge}
                     </span>
                   </div>
-
                   <div className="p-6 flex-1 flex flex-col">
                     <h3 className="font-display font-bold text-brand-900 text-[20px] mb-2">{room.name}</h3>
                     <p className="text-gray-500 text-[13px] font-light leading-relaxed mb-4 flex-1">{room.desc}</p>
-
                     <div className="flex flex-wrap gap-1.5 mb-5">
                       {room.features.map((f) => (
                         <span
@@ -326,7 +311,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
                         </span>
                       ))}
                     </div>
-
                     <div className="flex items-center justify-between border-t border-brand-100 pt-5">
                       <div>
                         <span className="font-display font-bold text-brand-700 text-[24px]">S/. {room.price}</span>
@@ -350,7 +334,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
       </section>
-
       {/* ── CTA Band ── */}
       <div className="py-20 px-10 bg-brand-50 border-y border-brand-100">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-10 flex-wrap">
@@ -382,7 +365,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
       </div>
-
       {/* ── Services Section ── */}
       <section id="servicios" className="py-24 bg-brand-900 relative overflow-hidden">
         {/* Elemento decorativo sutil con la paleta brand */}
@@ -395,13 +377,11 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
               Experiencia D'Vita
             </p>
           </Reveal>
-          
           <Reveal delay={120}>
             <h2 className="font-display text-[clamp(30px,3.5vw,44px)] font-bold text-white leading-[1.15] mb-12">
               Servicios pensados<br />en tu comodidad
             </h2>
           </Reveal>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
             {SERVICES.map(({ Icon, title, desc }, i) => (
               <Reveal key={i} delay={i * 100}>
@@ -424,7 +404,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
       </section>      
-
       {/* ── Contact ──*/}
       <section id="contacto" className="grid md:grid-cols-2">
         <div className="bg-brand-800 px-14 py-20 flex flex-col justify-center">
@@ -525,24 +504,10 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
           <span className="font-display text-[14px] font-semibold text-white">Hospedaje D'Vita</span>
         </div>
-
-        <div className="flex gap-7">
-          {["habitaciones", "servicios", "contacto"].map((id) => (
-            <button
-              key={id}
-              onClick={() => scrollTo(id)}
-              className="text-[11px] font-medium text-white hover:text-[#C9A96E] tracking-[0.1em] uppercase transition-colors"
-            >
-              {id.charAt(0).toUpperCase() + id.slice(1)}
-            </button>
-          ))}
-        </div>
-
         <p className="text-white text-[11px] tracking-[0.06em]">
           © 2026 · Chiclayo, Perú · Todos los derechos reservados
         </p>
       </footer>
-
       {/* ── Modal de Reserva ── */}
       <ReservaModal
         open={modalOpen}
@@ -550,7 +515,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
         onLogin={onLogin}
         initialRoom={modalRoom}
       />
-      
       {/* ── ChatBot flotante ── */}
       <ChatBot />
     </div>
