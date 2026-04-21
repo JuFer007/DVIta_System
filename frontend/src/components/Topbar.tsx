@@ -2,18 +2,16 @@ import { LogOut, ChevronRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const PAGE_NAMES: Record<string, string> = {
-  dashboard:       "Dashboard",
-  clientes:        "Clientes",
-  empleados:       "Empleados",
-  habitaciones:    "Habitaciones",
-  tipos:           "Tipos de Habitación",
-  reservas:        "Reservas",
-  pagos:           "Pagos",
-  usuarios:        "Usuarios",
-  recepcionistas:  "Recepcionistas",
-  administradores: "Administradores",
-  horarios:        "Horarios",
-  operaciones:     "Operaciones",
+  dashboard:    "Dashboard",
+  clientes:     "Clientes",
+  empleados:    "Empleados",
+  habitaciones: "Habitaciones",
+  tipos:        "Tipos de Habitación",
+  reservas:     "Reservas",
+  pagos:        "Pagos",
+  usuarios:     "Usuarios",
+  horarios:     "Horarios",
+  reportes:     "Reportes",
 };
 
 interface Props {

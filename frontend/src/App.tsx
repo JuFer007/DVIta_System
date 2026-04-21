@@ -13,8 +13,7 @@ import TiposPage          from "./pages/entities/TiposPage";
 import ReservasPage       from "./pages/entities/ReservaPage";
 import PagosPage          from "./pages/entities/PagosPages";
 import UsuariosPage       from "./pages/entities/UsuariosPages";
-import RecepcionistasPage from "./pages/entities/RecepcionistasPages";
-import AdministradoresPage from "./pages/entities/AdministradoresPage";
+import HorariosPage       from "./pages/entities/HorariosPage";
 
 type View = "landing" | "login";
 
@@ -32,18 +31,17 @@ function AppContent() {
   if (user) {
     const renderPage = () => {
       switch (page) {
-        case "dashboard":       return <Dashboard />;
-        case "clientes":        return <ClientesPage />;
-        case "empleados":       return <EmpleadosPage />;
-        case "habitaciones":    return <HabitacionesPage />;
-        case "tipos":           return <TiposPage />;
-        case "reservas":        return <ReservasPage />;
-        case "pagos":           return <PagosPage />;
-        case "usuarios":        return <UsuariosPage />;
-        case "recepcionistas":  return <RecepcionistasPage />;
-        case "administradores": return <AdministradoresPage />;
-        case "reportes":        return <ReportesPage />;
-        default:                return <Dashboard />;
+        case "dashboard":    return <Dashboard />;
+        case "clientes":     return <ClientesPage />;
+        case "empleados":    return <EmpleadosPage />;
+        case "habitaciones": return <HabitacionesPage />;
+        case "tipos":        return <TiposPage />;
+        case "reservas":     return <ReservasPage />;
+        case "pagos":        return <PagosPage />;
+        case "usuarios":     return <UsuariosPage />;
+        case "horarios":     return <HorariosPage />;
+        case "reportes":     return <ReportesPage />;
+        default:             return <Dashboard />;
       }
     };
 

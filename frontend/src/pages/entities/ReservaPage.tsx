@@ -4,9 +4,7 @@ import StatusBadge from "../../components/StatusBadge";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
-import {
-  reservasService, clientesService, habitacionesService, empleadosService,
-} from "../../services/api";
+import { reservasService, clientesService, habitacionesService, empleadosService, } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 
 const mapCliente    = (c: any) => ({ id: c.idCliente,    nombre: c.nombre,    apellidoP: c.apellidoPaterno, dni: c.dni,       _raw: c });

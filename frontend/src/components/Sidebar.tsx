@@ -1,22 +1,20 @@
 import {
-  LayoutDashboard, Users, BriefcaseBusiness, BedDouble, Bed, ConciergeBell,
-  Tag, CalendarCheck, CreditCard, ChevronLeft, ChevronRight, User, Crown,
-  Hotel, Clock, BarChart2
+  LayoutDashboard, Users, BriefcaseBusiness, BedDouble, Bed,
+  Tag, CalendarCheck, CreditCard, ChevronLeft, ChevronRight,
+  User, Hotel, Clock, BarChart2
 } from "lucide-react";
 
 const NAV = [
-  { id: "dashboard",       label: "Dashboard",         icon: LayoutDashboard },
-  { id: "clientes",        label: "Clientes",          icon: Users },
-  { id: "empleados",       label: "Empleados",         icon: BriefcaseBusiness },
-  { id: "habitaciones",    label: "Habitaciones",      icon: BedDouble },
-  { id: "tipos",           label: "Tipos Habitación",  icon: Bed },
-  { id: "reservas",        label: "Reservas",          icon: CalendarCheck },
-  { id: "pagos",           label: "Pagos",             icon: CreditCard },
-  { id: "usuarios",        label: "Usuarios",          icon: User },
-  { id: "horarios",        label: "Horarios",          icon: Clock },
-  { id: "recepcionistas",  label: "Recepcionistas",    icon: ConciergeBell },
-  { id: "administradores", label: "Administradores",   icon: Crown },
-  { id: "reportes",        label: "Reportes",          icon: BarChart2 },
+  { id: "dashboard",    label: "Dashboard",        icon: LayoutDashboard },
+  { id: "clientes",     label: "Clientes",         icon: Users },
+  { id: "empleados",    label: "Empleados",        icon: BriefcaseBusiness },
+  { id: "habitaciones", label: "Habitaciones",     icon: BedDouble },
+  { id: "tipos",        label: "Tipos Habitación", icon: Bed },
+  { id: "reservas",     label: "Reservas",         icon: CalendarCheck },
+  { id: "pagos",        label: "Pagos",            icon: CreditCard },
+  { id: "usuarios",     label: "Usuarios",         icon: User },
+  { id: "horarios",     label: "Horarios",         icon: Clock },
+  { id: "reportes",     label: "Reportes",         icon: BarChart2 },
 ];
 
 interface Props {
@@ -63,20 +61,19 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Pro
           const Icon = item.icon;
           const isActive = active === item.id;
           return (
-            <div key={item.id}>
-              <button
-                onClick={() => onNavigate(item.id)}
-                title={collapsed ? item.label : undefined}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-all text-left whitespace-nowrap w-full ${
-                  isActive
-                    ? "bg-brand-500/30 text-white border-l-2 border-brand-400"
-                    : "text-brand-300 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <Icon className={`flex-shrink-0 w-[18px] h-[18px] ${isActive ? "text-brand-300" : ""}`} />
-                {!collapsed && <span>{item.label}</span>}
-              </button>
-            </div>
+            <button
+              key={item.id}
+              onClick={() => onNavigate(item.id)}
+              title={collapsed ? item.label : undefined}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-all text-left whitespace-nowrap w-full ${
+                isActive
+                  ? "bg-brand-500/30 text-white border-l-2 border-brand-400"
+                  : "text-brand-300 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <Icon className={`flex-shrink-0 w-[18px] h-[18px] ${isActive ? "text-brand-300" : ""}`} />
+              {!collapsed && <span>{item.label}</span>}
+            </button>
           );
         })}
       </nav>
