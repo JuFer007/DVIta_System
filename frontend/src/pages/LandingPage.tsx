@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Phone, Mail, MapPin, Wifi, Coffee, Car, Shield } from "lucide-react";
+import { Phone, Mail, MapPin, Wifi, Coffee, Car, Shield, Send, CheckCircle2, Loader2 } from "lucide-react";
 import ReservaModal from "./ReservaModal";
 import ChatBot from "../components/ChatBot";
 
@@ -103,6 +103,25 @@ function Reveal({
 
 /* ─── COMPONENT ─── */
 export default function LandingPage({ onLogin }: { onLogin: () => void }) {
+  const [consultaNombre, setConsultaNombre] = useState("");
+  const [consultaEmail, setConsultaEmail] = useState("");
+  const [consultaMensaje, setConsultaMensaje] = useState("");
+  const [consultaEnviada, setConsultaEnviada] = useState(false);
+  const [consultaEnviando, setConsultaEnviando] = useState(false);
+
+  const handleEnviarConsulta = async () => {
+    setConsultaEnviando(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log("Consulta enviada:", { consultaNombre, consultaEmail, consultaMensaje });
+      setConsultaEnviada(true);
+    } catch (error) {
+      console.error("Error al enviar consulta", error);
+    } finally {
+      setConsultaEnviando(false);
+    }
+  };
+
   const [currentImage, setCurrentImage] = useState(0);
   const [scrolled, setScrolled]         = useState(false);
   const [modalOpen, setModalOpen]       = useState(false);
@@ -404,12 +423,12 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
       </section>      
-      {/* ── Contact ──*/}
+      {/* ── Contacto ── */}
       <section id="contacto" className="grid md:grid-cols-2">
+        {/* Panel izquierdo */}
         <div className="bg-brand-800 px-14 py-20 flex flex-col justify-center">
           <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#C9A96E] mb-3.5">
-            <span className="inline-block w-6 h-px bg-[#C9A96E]" />
-            Contáctanos
+            <span className="inline-block w-6 h-px bg-[#C9A96E]" />Contáctanos
           </p>
           <h2 className="font-display text-[38px] font-bold text-white leading-[1.15] mb-3">
             Hablemos de<br />tu estadía
@@ -418,7 +437,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           <p className="text-white text-[15px] font-light leading-relaxed max-w-xs mb-11">
             Respondemos rápido. Reserva con confianza directamente con nosotros.
           </p>
-
           <div className="flex flex-col gap-6">
             {CONTACTS.map(({ Icon, label, value }, i) => (
               <div key={i} className="flex items-center gap-4">
@@ -433,65 +451,66 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
             ))}
           </div>
         </div>
-
         <div className="bg-white px-14 py-20 flex items-center justify-center">
           <div className="w-full max-w-sm">
             <h3 className="font-display text-[24px] font-bold text-brand-900 mb-1.5">
-              Verificar disponibilidad
+              Envíanos una consulta
             </h3>
-            <p className="text-[13px] text-gray-400 mb-8">Completa los datos y te contactamos en minutos</p>
-
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {[
-                { label: "Llegada", type: "date" },
-                { label: "Salida",  type: "date" },
-              ].map(({ label, type }) => (
-                <div key={label}>
-                  <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-1.5">
-                    {label}
-                  </label>
-                  <input
-                    type={type}
-                    className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px] text-brand-900 outline-none focus:border-brand-400 transition-colors"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {[
-              { label: "Habitación", isSelect: true },
-              { label: "Tu nombre",  type: "text",  placeholder: "Nombre completo" },
-              { label: "WhatsApp / Teléfono", type: "tel", placeholder: "+51 9xx xxx xxx" },
-            ].map(({ label, isSelect, type, placeholder }) => (
-              <div key={label} className="mb-4">
-                <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-1.5">
-                  {label}
-                </label>
-                {isSelect ? (
-                  <select className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px] text-brand-900 outline-none focus:border-brand-400 transition-colors bg-white appearance-none cursor-pointer">
-                    <option>Estándar — S/. 60 / noche</option>
-                    <option>Suite Deluxe — S/. 120 / noche</option>
-                    <option>Familiar — S/. 180 / noche</option>
-                  </select>
-                ) : (
-                  <input
-                    type={type}
-                    placeholder={placeholder}
-                    className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px] text-brand-900 outline-none focus:border-brand-400 transition-colors placeholder:text-gray-300"
-                  />
-                )}
-              </div>
-            ))}
-
-            <button
-              onClick={onLogin}
-              className="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-[15px] rounded-sm text-[12px] tracking-[0.14em] uppercase transition-all duration-200 hover:-translate-y-px mt-2"
-            >
-              Consultar disponibilidad
-            </button>
-            <p className="text-[11px] text-gray-300 text-center mt-3 leading-relaxed">
-              Sin cargos al consultar · Confirmación en menos de 2 horas
+            <p className="text-[13px] text-gray-400 mb-8 leading-relaxed">
+              ¿Tienes dudas sobre disponibilidad o servicios? Te respondemos en menos de 2 horas.
             </p>
+
+            {consultaEnviada ? (
+              <div className="flex flex-col items-center text-center py-10 gap-4">
+                <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle2 className="w-7 h-7 text-green-500" />
+                </div>
+                <div>
+                  <p className="font-display text-[20px] font-bold text-brand-900 mb-1">¡Mensaje enviado!</p>
+                  <p className="text-[13px] text-neutral-500 leading-relaxed">
+                    Te responderemos a <strong>{consultaEmail}</strong> en breve.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setConsultaEnviada(false)}
+                  className="text-[12px] text-brand-600 font-semibold underline"
+                >
+                  Enviar otra consulta
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <input 
+                  type="text" 
+                  placeholder="Tu nombre" 
+                  value={consultaNombre}
+                  onChange={(e) => setConsultaNombre(e.target.value)}
+                  className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px]"
+                />
+                <input 
+                  type="email" 
+                  placeholder="tu@email.com" 
+                  value={consultaEmail}
+                  onChange={(e) => setConsultaEmail(e.target.value)}
+                  className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px]"
+                />
+                <textarea 
+                  rows={4} 
+                  placeholder="¿En qué podemos ayudarte?" 
+                  value={consultaMensaje}
+                  onChange={(e) => setConsultaMensaje(e.target.value)}
+                  className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px] resize-none"
+                />
+                <button
+                  onClick={handleEnviarConsulta}
+                  disabled={consultaEnviando || !consultaNombre || !consultaEmail || !consultaMensaje}
+                  className="w-full bg-brand-600 text-white font-bold py-4 rounded-sm text-[12px] uppercase disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {consultaEnviando ? <Loader2 className="animate-spin w-4 h-4" /> : <Send className="w-4 h-4" />}
+                  {consultaEnviando ? "Enviando..." : "Enviar consulta"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -22,9 +22,9 @@ INSERT INTO empleado (nombre, apellido_p, apellido_m, dni, telefono) VALUES
 
 -- 3) Usuario  (columna: contrasena — sin tilde)
 INSERT INTO usuario (id_empleado, nombre_usuario, contrasena) VALUES
-(1, 'jufer07',   'jubia07__'),
-(2, 'polsent',   'Mar2025__'),
-(3, 'chriso',    'chriso19_'),
+(1, 'jufer07',   '123456'),
+(2, 'polsent',   '123456'),
+(3, 'santamaria', '123456'),.
 (4, 'agonzales', 'Ana#2025_'),
 (5, 'dvargas',   'Diego2025');
 
