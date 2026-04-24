@@ -1,6 +1,5 @@
-package com.systemWeb.DVita.Controller;
-import com.systemWeb.DVita.Repository.*;
-import com.systemWeb.DVita.Service.DashboardService;
+package main.java.com.systemWeb.DVita.Controller;
+import main.java.com.systemWeb.DVita.Service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

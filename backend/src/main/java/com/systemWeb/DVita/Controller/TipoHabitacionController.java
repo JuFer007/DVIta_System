@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Controller;
-import com.systemWeb.DVita.Model.TipoHabitacion;
-import com.systemWeb.DVita.Service.TipoHabitacionService;
+package main.java.com.systemWeb.DVita.Controller;
+import main.java.com.systemWeb.DVita.Model.TipoHabitacion;
+import main.java.com.systemWeb.DVita.Service.TipoHabitacionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

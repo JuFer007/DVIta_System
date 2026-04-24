@@ -1,4 +1,4 @@
-package com.systemWeb.DVita.Model;
+package main.java.com.systemWeb.DVita.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

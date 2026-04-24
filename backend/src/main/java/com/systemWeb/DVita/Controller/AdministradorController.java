@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Controller;
-import com.systemWeb.DVita.Model.Administrador;
-import com.systemWeb.DVita.Service.AdministradorService;
+package main.java.com.systemWeb.DVita.Controller;
+import main.java.com.systemWeb.DVita.Model.Administrador;
+import main.java.com.systemWeb.DVita.Service.AdministradorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

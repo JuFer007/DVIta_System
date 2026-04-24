@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Service;
-import com.systemWeb.DVita.Model.Usuario;
-import com.systemWeb.DVita.Repository.UsuarioRepository;
+package main.java.com.systemWeb.DVita.Service;
+import main.java.com.systemWeb.DVita.Model.Usuario;
+import main.java.com.systemWeb.DVita.Repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;

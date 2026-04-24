@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Service;
-import com.systemWeb.DVita.Model.Horario;
-import com.systemWeb.DVita.Repository.HorarioRepository;
+package main.java.com.systemWeb.DVita.Service;
+import main.java.com.systemWeb.DVita.Model.Horario;
+import main.java.com.systemWeb.DVita.Repository.HorarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;

@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Controller;
-import com.systemWeb.DVita.Model.Reserva;
-import com.systemWeb.DVita.Service.ReservaService;
+package main.java.com.systemWeb.DVita.Controller;
+import main.java.com.systemWeb.DVita.Model.Reserva;
+import main.java.com.systemWeb.DVita.Service.ReservaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

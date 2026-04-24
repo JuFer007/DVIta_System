@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Service;
-import com.systemWeb.DVita.Model.Pago;
-import com.systemWeb.DVita.Repository.PagoRepository;
+package main.java.com.systemWeb.DVita.Service;
+import main.java.com.systemWeb.DVita.Model.Pago;
+import main.java.com.systemWeb.DVita.Repository.PagoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;

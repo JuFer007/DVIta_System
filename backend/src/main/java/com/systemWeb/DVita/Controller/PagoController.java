@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Controller;
-import com.systemWeb.DVita.Model.Pago;
-import com.systemWeb.DVita.Service.PagoService;
+package main.java.com.systemWeb.DVita.Controller;
+import main.java.com.systemWeb.DVita.Model.Pago;
+import main.java.com.systemWeb.DVita.Service.PagoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

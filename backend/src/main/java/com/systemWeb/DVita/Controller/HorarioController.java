@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Controller;
-import com.systemWeb.DVita.Model.Horario;
-import com.systemWeb.DVita.Service.HorarioService;
+package main.java.com.systemWeb.DVita.Controller;
+import main.java.com.systemWeb.DVita.Model.Horario;
+import main.java.com.systemWeb.DVita.Service.HorarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

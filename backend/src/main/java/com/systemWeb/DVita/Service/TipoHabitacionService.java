@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Service;
-import com.systemWeb.DVita.Model.TipoHabitacion;
-import com.systemWeb.DVita.Repository.TipoHabitacionRepository;
+package main.java.com.systemWeb.DVita.Service;
+import main.java.com.systemWeb.DVita.Model.TipoHabitacion;
+import main.java.com.systemWeb.DVita.Repository.TipoHabitacionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;

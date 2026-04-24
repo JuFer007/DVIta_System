@@ -1,6 +1,6 @@
-package com.systemWeb.DVita.Service;
-import com.systemWeb.DVita.Model.Cliente;
-import com.systemWeb.DVita.Repository.ClienteRepository;
+package main.java.com.systemWeb.DVita.Service;
+import main.java.com.systemWeb.DVita.Model.Cliente;
+import main.java.com.systemWeb.DVita.Repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
