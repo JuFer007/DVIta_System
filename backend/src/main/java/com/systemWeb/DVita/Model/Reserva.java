@@ -30,28 +30,27 @@ public class Reserva {
     @JoinColumn(name = "id_habitacion", nullable = false)
     private Habitacion habitacion;
 
-    @NotNull(message = "El empleado es obligatorio")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_empleado", nullable = false)
+    @JoinColumn(name = "id_empleado", nullable = true)
     private Empleado empleado;
 
     @NotNull(message = "La fecha de reserva es obligatoria")
-    @PastOrPresent(message = "La fecha de reserva no puede ser futura")
     @Column(name = "fecha_reserva", nullable = false)
     private LocalDate fechaReserva;
 
     @NotNull(message = "La fecha de ingreso es obligatoria")
-    @FutureOrPresent(message = "La fecha de ingreso debe ser hoy o en el futuro")
     @Column(name = "fecha_ingreso", nullable = false)
     private LocalDate fechaIngreso;
 
     @NotNull(message = "La fecha de salida es obligatoria")
-    @Future(message = "La fecha de salida debe ser en el futuro")
     @Column(name = "fecha_salida", nullable = false)
     private LocalDate fechaSalida;
 
     @NotBlank(message = "El estado de la reserva es obligatorio")
-    @Pattern(regexp = "PENDIENTE|CONFIRMADA|CANCELADA|COMPLETADA", message = "El estado debe ser: PENDIENTE, CONFIRMADA, CANCELADA o COMPLETADA")
+    @Pattern(
+            regexp = "PENDIENTE|CONFIRMADA|CANCELADA|COMPLETADA",
+            message = "El estado debe ser: PENDIENTE, CONFIRMADA, CANCELADA o COMPLETADA"
+    )
     @Column(name = "estado_reserva", nullable = false, length = 20)
     private String estadoReserva;
 
