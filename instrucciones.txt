@@ -1,0 +1,160 @@
+INSTRUCCIONES DEL PROYECTO - D'VITA HOSPEDAJE
+=============================================
+
+Antes de arrancar con el proyecto asegurate de tener instalado lo siguiente:
+
+- Java 21
+- Maven (o usar el mvnw que ya viene en el proyecto)
+- Node.js 18 o superior
+- npm 9 o superior
+- MySQL corriendo en tu maquina
+- Git Bash (para los comandos de git)
+
+
+PASO 1 - BASE DE DATOS
+-----------------------
+Abre tu gestor de MySQL (puede ser Workbench, DBeaver, o directo desde terminal) y ejecuta el archivo:
+  scripD'Vita.sql
+
+Ese script crea la base de datos DVita y mete todos los datos iniciales (empleados, habitaciones, clientes, etc). Sin esto el backend no va a funcionar bien.
+
+Las credenciales que usa el proyecto por defecto son:
+    usuario: root
+    contrasena: 123456
+    puerto: 3306
+
+Si las tuyas son distintas, tenes que cambiarlas en el archivo:
+    backend/src/main/resources/application.properties
+
+
+PASO 2 - BACKEND (Spring Boot)
+-------------------------------
+Abri una terminal en la raiz del proyecto (donde esta el pom.xml) y ejecuta:
+
+    ./mvnw spring-boot:run
+
+Si estas en Windows con CMD en vez de bash:
+
+    mvnw.cmd spring-boot:run
+
+El backend va a levantar en: http://localhost:8080
+
+Espera a que aparezca el mensaje "Started Application" en la consola antes de seguir.
+
+
+PASO 3 - FRONTEND (React + Vite)
+----------------------------------
+Abre otra terminal (no cierres la del backend) y entra a la carpeta del frontend:
+
+    cd frontend
+
+Instala las dependencias (solo la primera vez o cuando alguien agregue algo nuevo):
+
+    npm install
+
+Luego arranca el servidor de desarrollo:
+
+    npm run dev
+
+El frontend va a estar disponible en: http://localhost:5173
+
+El proxy de Vite ya esta configurado para redirigir las llamadas a /api hacia el backend en el puerto 8080, asi que no tenes que tocar nada mas.
+
+
+CREDENCIALES DE PRUEBA
+-----------------------
+Para entrar al sistema podes usar cualquiera de estos usuarios (todos con contrasena 123456):
+
+    malarcon
+    joterob
+    osantamaria
+    jzumaeta
+    agonzales
+    dvargas
+
+
+RESUMEN DE LO QUE TIENE EL PROYECTO
+=====================================
+
+BACKEND - Spring Boot (Java 21)
+---------------------------------
+El backend esta construido con Spring Boot y expone una API REST en /api.
+
+Entidades y endpoints disponibles:
+
+- /api/clientes          - CRUD de clientes
+- /api/empleados         - CRUD de empleados
+- /api/habitaciones      - CRUD de habitaciones
+- /api/tipos-habitacion  - CRUD de tipos de habitacion
+- /api/reservas          - CRUD de reservas + endpoints de check-in y check-out
+- /api/pagos             - CRUD de pagos
+- /api/usuarios          - CRUD de usuarios del sistema
+- /api/recepcionistas    - CRUD de recepcionistas
+- /api/administradores   - CRUD de administradores
+- /api/horarios          - CRUD de horarios con filtros por recepcionista y fecha
+- /api/dashboard/*       - Endpoints de estadisticas para el dashboard
+- /api/reniec/dni/{dni}  - Consulta de datos por DNI via API externa (decolecta)
+
+El proyecto usa:
+    - Spring Data JPA con Hibernate para la base de datos
+    - Lombok para reducir el codigo repetitivo
+    - Bean Validation para validar los datos de entrada
+    - MySQL como base de datos
+    - CORS configurado para aceptar peticiones desde localhost:5173
+
+Estructura del backend:
+    - Model/      - Entidades JPA
+    - Repository/ - Interfaces de acceso a datos
+    - Service/    - Logica de negocio
+    - Controller/ - Endpoints REST
+    - Config/     - Configuracion de CORS
+    - DTO/        - Objetos de transferencia (para RENIEC)
+
+
+FRONTEND - React + TypeScript + Vite
+--------------------------------------
+El frontend es una SPA hecha con React 18, TypeScript y Tailwind CSS.
+
+Paginas disponibles dentro del sistema:
+
+- Landing Page   - Pagina publica con informacion del hospedaje, habitaciones y contacto
+- Login          - Inicio de sesion para el personal
+- Dashboard      - Panel principal con estadisticas en tiempo real
+- Clientes       - Gestion de clientes con busqueda y CRUD
+- Empleados      - Gestion de empleados
+- Habitaciones   - Gestion de habitaciones con estados visuales
+- Tipos          - Tipos de habitacion
+- Reservas       - Gestion de reservas con check-in y check-out rapido
+- Pagos          - Registro de pagos
+- Usuarios       - Administracion de usuarios del sistema
+- Horarios       - Turnos de recepcionistas con filtros
+- Reportes       - Graficos de ingresos, metodos de pago y ocupacion
+
+Componentes principales:
+    - Sidebar         - Menu lateral colapsable
+    - Topbar          - Barra superior con notificaciones
+    - DataTable       - Tabla reutilizable con busqueda integrada
+    - EntityModal     - Modal generico para crear y editar registros
+    - ConfirmModal    - Modal de confirmacion para eliminar
+    - ChatBot         - Asistente flotante para la landing page
+    - StatsCard       - Tarjetas de metricas para el dashboard
+    - StatusBadge     - Badge de colores segun estado
+
+Hooks personalizados:
+    - useCrud         - Manejo completo de operaciones CRUD con estado de carga
+    - useModalState   - Estado del modal de edicion y eliminacion
+    - useReservaModal - Logica del modal de reserva publica (landing)
+    - useApiData      - Fetching simple con fallback a datos demo
+
+La paleta de colores esta documentada en frontend/PALETA_COLORES.md
+Fuentes usadas: Playfair Display (titulos) y DM Sans (texto)
+
+Cuando el backend no esta disponible el sistema muestra datos de ejemplo
+para que se pueda ver la interfaz igual.
+
+
+NOTAS ADICIONALES
+------------------
+- El token de la API de RENIEC ya esta en application.properties, no hace falta configurar nada extra
+- Si necesitas cambiar el puerto del backend, tambien hay que actualizar el proxy en frontend/vite.config.js
+- Para hacer el build de produccion del frontend: npm run build (los archivos quedan en /dist)
