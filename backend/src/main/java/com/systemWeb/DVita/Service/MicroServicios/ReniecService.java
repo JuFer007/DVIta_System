@@ -1,10 +1,13 @@
 package main.java.com.systemWeb.DVita.Service.MicroServicios;
 import main.java.com.systemWeb.DVita.DTO.ReniecDataDTO;
+import main.java.com.systemWeb.DVita.DTO.ReniecResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @Service
 public class ReniecService {
@@ -22,24 +25,37 @@ public class ReniecService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(apiToken);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
-        String url = UriComponentsBuilder.fromUriString(apiUrl)
-                .queryParam("numero", numero)
-                .build()
+        String url = UriComponentsBuilder
+                .fromUriString(apiUrl)
+                .pathSegment(numero)
                 .toUriString();
+
+        System.out.println("URL: " + url);
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
-            ResponseEntity<ReniecDataDTO> response = restTemplate.exchange(
+
+            ResponseEntity<ReniecResponse> response = restTemplate.exchange(
                     url,
                     HttpMethod.GET,
                     entity,
-                    ReniecDataDTO.class
+                    ReniecResponse.class
             );
-            return response.getBody();
+
+            System.out.println("BODY: " + response.getBody());
+
+            if(response.getBody() != null && response.getBody().isSuccess()){
+                return response.getBody().getData();
+            }
+
+            return null;
+
         } catch (Exception e) {
-            System.err.println("Error al consultar DNI: " + e.getMessage());
+            System.err.println("Error al consultar DNI:");
+            e.printStackTrace();
             return null;
         }
     }
