@@ -3,6 +3,8 @@ import main.java.com.systemWeb.DVita.Model.Habitacion;
 import main.java.com.systemWeb.DVita.Repository.HabitacionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,5 +38,9 @@ public class HabitacionService {
 
     public void eliminar(Long id) {
         habitacionRepository.deleteById(id);
+    }
+
+    public List<Habitacion> habitacionesDisponibles(LocalDate ingreso, LocalDate salida) {
+        return habitacionRepository.findHabitacionesDisponibles(ingreso, salida);
     }
 }

@@ -3,9 +3,11 @@ import main.java.com.systemWeb.DVita.Model.Habitacion;
 import main.java.com.systemWeb.DVita.Service.HabitacionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -41,5 +43,17 @@ public class HabitacionController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         habitacionService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<Habitacion>> habitacionesDisponibles(
+            @RequestParam("fechaIngreso") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaIngreso,
+            @RequestParam("fechaSalida") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaSalida
+    ) {
+
+        List<Habitacion> disponibles =
+                habitacionService.habitacionesDisponibles(fechaIngreso, fechaSalida);
+
+        return ResponseEntity.ok(disponibles);
     }
 }
