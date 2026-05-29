@@ -1,7 +1,7 @@
-package main.java.com.systemWeb.DVita.Controller;
+package com.systemWeb.DVita.Controller;
 import lombok.RequiredArgsConstructor;
-import main.java.com.systemWeb.DVita.Model.ChatSession;
-import main.java.com.systemWeb.DVita.Service.MicroServicios.ChatSessionService;
+import com.systemWeb.DVita.Model.ChatSession;
+import com.systemWeb.DVita.Service.MicroServicios.ChatSessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;

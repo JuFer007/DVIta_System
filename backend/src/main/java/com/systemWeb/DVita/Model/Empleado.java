@@ -1,4 +1,4 @@
-package main.java.com.systemWeb.DVita.Model;
+package com.systemWeb.DVita.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -41,7 +41,6 @@ public class Empleado {
     @Column(name = "dni", nullable = false, unique = true, length = 8)
     private String dni;
 
-    @NotBlank(message = "El teléfono es obligatorio")
     @Pattern(regexp = "\\d{9,15}", message = "El teléfono debe tener entre 9 y 15 dígitos")
     @Column(name = "telefono", nullable = false, length = 15)
     private String telefono;

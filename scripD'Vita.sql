@@ -20,7 +20,8 @@ INSERT INTO empleado (nombre, apellido_p, apellido_m, dni, telefono) VALUES
 ('Oscar', 'Santamaria', 'Morales',  '73381544', '987654323'),
 ('Junior', 'Zumaeta',    'Golac',    '71374454', '987654324'),
 ('Ana', 'Gonzales',   'Flores',   '15975348', '987654325'),
-('Diego', 'Vargas',     'Ruiz',     '25814736', '987654326');
+('Diego', 'Vargas',     'Ruiz',     '25814736', '987654326'),
+('Dvi', 'Bot', 'ChatBotVirtual',  '00000000', '000000000');
 
 -- 3) Usuario
 INSERT INTO usuario (id_empleado, nombre_usuario, contrasena) VALUES

@@ -1,6 +1,6 @@
-package main.java.com.systemWeb.DVita.Controller;
-import main.java.com.systemWeb.DVita.Model.Habitacion;
-import main.java.com.systemWeb.DVita.Service.HabitacionService;
+package com.systemWeb.DVita.Controller;
+import com.systemWeb.DVita.Model.Habitacion;
+import com.systemWeb.DVita.Service.HabitacionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -1,7 +1,7 @@
-package main.java.com.systemWeb.DVita.Service.MicroServicios;
+package com.systemWeb.DVita.Service.MicroServicios;
 import lombok.RequiredArgsConstructor;
-import main.java.com.systemWeb.DVita.Model.ChatSession;
-import main.java.com.systemWeb.DVita.Repository.ChatSessionRepository;
+import com.systemWeb.DVita.Model.ChatSession;
+import com.systemWeb.DVita.Repository.ChatSessionRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;

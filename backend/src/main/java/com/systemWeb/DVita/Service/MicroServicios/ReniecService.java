@@ -1,12 +1,11 @@
-package main.java.com.systemWeb.DVita.Service.MicroServicios;
-import main.java.com.systemWeb.DVita.DTO.ReniecDataDTO;
-import main.java.com.systemWeb.DVita.DTO.ReniecResponse;
+package com.systemWeb.DVita.Service.MicroServicios;
+import com.systemWeb.DVita.DTO.ReniecDataDTO;
+import com.systemWeb.DVita.DTO.ReniecResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.List;
 
 @Service

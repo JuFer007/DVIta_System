@@ -36,3 +36,7 @@ build/
 node_modules/
 dist/
 .env
+
+# Python
+__pycache__/
+*.pyc

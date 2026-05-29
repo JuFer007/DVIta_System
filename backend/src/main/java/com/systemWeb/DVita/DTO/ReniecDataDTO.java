@@ -1,4 +1,4 @@
-package main.java.com.systemWeb.DVita.DTO;
+package com.systemWeb.DVita.DTO;
 import lombok.Data;
 
 @Data
