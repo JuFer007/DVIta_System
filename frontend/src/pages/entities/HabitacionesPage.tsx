@@ -1,17 +1,17 @@
-import { BedDouble } from "lucide-react";
+import { BedDouble, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 import DataTable from "../../components/DataTable";
 import StatusBadge from "../../components/StatusBadge";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import ConfirmModal from "../../components/ConfirmModal";
-import { useCrud } from "../../hooks/useCrud";
 import { habitacionesService, tiposService } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 
 const mapHabitacion = (h: any) => ({
   id: h.idHabitacion,
   numero: String(h.numeroHabitacion),
-  tipo: h.tipoHabitacion?.descripcion || "—",
-  tipoId: h.tipoHabitacion?.idTipoHabitacion || "",
+  tipo: h.tipoDescripcion || "—",
+  tipoId: h.idTipoHabitacion || "",
   estado: h.estado,
   precio: Number(h.precio),
   precioFmt: `S/.${Number(h.precio).toFixed(2)}`,
@@ -36,11 +36,45 @@ const DEMO_TIPOS: any[] = [
 ];
 
 export default function HabitacionesPage() {
-  const crud      = useCrud(habitacionesService, mapHabitacion, DEMO_HAB);
-  const tiposCrud = useCrud(tiposService, mapTipo, DEMO_TIPOS);
+  const [data, setData] = useState<any[]>(DEMO_HAB);
+  const [tiposData, setTiposData] = useState<any[]>(DEMO_TIPOS);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
   const m = useModalState();
 
-  const tipoOptions = tiposCrud.data.map((t) => ({
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await habitacionesService.getAll(0, 100, "numeroHabitacion", "asc");
+      setData(response.content.map(mapHabitacion));
+    } catch (e) {
+      setError("No se pudo conectar con el servidor. Mostrando datos demo.");
+      setData(DEMO_HAB);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTipos = async () => {
+    try {
+      const response = await tiposService.getAll();
+      setTiposData(response.map(mapTipo));
+    } catch (e) {
+      setTiposData(DEMO_TIPOS);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    fetchTipos();
+  }, []);
+
+  const tipoOptions = tiposData.map((t) => ({
     value: t.id,
     label: `${t.descripcion} — S/.${t.precio}/noche`,
   }));
@@ -64,25 +98,67 @@ export default function HabitacionesPage() {
 
   const handleSave = async (form: any) => {
     const payload = {
-      tipoHabitacion: { idTipoHabitacion: Number(form.idTipoHabitacion) },
+      idTipoHabitacion: Number(form.idTipoHabitacion),
       numeroHabitacion: Number(form.numeroHabitacion),
       estado: form.estado,
       precio: parseFloat(form.precio),
     };
-    const ok = m.editing ? await crud.update(m.editing.id, payload) : await crud.create(payload);
-    if (ok) m.closeModal();
+    setSaving(true);
+    setSaveError(null);
+    try {
+      if (m.editing) {
+        await habitacionesService.update(m.editing.id, payload);
+      } else {
+        await habitacionesService.create(payload);
+      }
+      await fetchData();
+      m.closeModal();
+    } catch (e: any) {
+      const errorMessage = e?.message || "Error al guardar la habitación";
+      setSaveError(errorMessage);
+      setAlertMessage(errorMessage);
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 5000);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async () => {
     if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await habitacionesService.delete(m.deleting.id);
+      await fetchData();
+      m.closeDelete();
+    } catch (e: any) {
+      const errorMessage = e?.message || "Error al eliminar la habitación";
+      setSaveError(errorMessage);
+      setAlertMessage(errorMessage);
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 5000);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <>
+      {showAlert && (
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-lg shadow-lg animate-in slide-in-from-top-2">
+          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+          <p className="text-sm text-red-700 font-medium">{alertMessage}</p>
+          <button
+            onClick={() => setShowAlert(false)}
+            className="ml-2 text-red-400 hover:text-red-600 transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <DataTable
-        title="Habitaciones" data={crud.data} loading={crud.loading} error={crud.error}
+        title="Habitaciones" data={data} loading={loading} error={error}
         columns={[
           { key: "id",        label: "ID" },
           { key: "numero",    label: "Nº" },
@@ -95,13 +171,13 @@ export default function HabitacionesPage() {
       <EntityModal
         open={m.modalOpen} title="Habitación" icon={<BedDouble className="w-4 h-4" />}
         fields={fields} data={getFormData(m.editing)}
-        loading={crud.saving} error={crud.saveError}
+        loading={saving} error={saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
       <ConfirmModal
         open={m.deleteOpen} title="habitación"
         description={`¿Eliminar la habitación #${m.deleting?.numero}?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
+        loading={saving} onClose={m.closeDelete} onConfirm={handleDelete}
       />
     </>
   );

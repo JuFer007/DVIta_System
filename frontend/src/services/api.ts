@@ -5,7 +5,26 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    let errorMessage = `Error ${res.status}`;
+    try {
+      const errorData = await res.json();
+      if (errorData.error) {
+        errorMessage = errorData.error;
+      } else if (res.status === 404) {
+        errorMessage = "Recurso no encontrado";
+      } else if (res.status === 409) {
+        errorMessage = "El recurso ya existe o hay un conflicto";
+      } else if (res.status === 400) {
+        errorMessage = "Datos inválidos";
+      } else if (res.status === 500) {
+        errorMessage = "Error interno del servidor";
+      }
+    } catch (e) {
+      // Si no podemos parsear el error, usamos el mensaje genérico
+    }
+    throw new Error(errorMessage);
+  }
   return res.json();
 }
 
@@ -44,7 +63,8 @@ export const empleadosService = {
 
 // ── Habitaciones ──────────────────────────────
 export const habitacionesService = {
-  getAll:  ()                   => request<any[]>("habitaciones"),
+  getAll:  (page = 0, size = 10, sortBy = "numeroHabitacion", sortDir = "asc") => 
+    request<any>(`habitaciones?page=${page}&size=${size}&sortBy=${sortBy}&sortDir=${sortDir}`),
   create:  (data: any)          => request("habitaciones",     { method: "POST", body: JSON.stringify(data) }),
   update:  (id: number, data: any) => request(`habitaciones/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
   delete:  (id: number)         => request(`habitaciones/${id}`, { method: "DELETE" }),
