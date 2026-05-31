@@ -10,7 +10,7 @@ INSERT INTO tipo_habitacion (descripcion, precio) VALUES
 ('INDIVIDUAL - CAMA SENCILLA, BAÑO PRIVADO',       50.00),
 ('DOBLE - 2 CAMAS, BAÑO PRIVADO',                  75.50),
 ('MATRIMONIAL - CAMA MATRIMONIAL, VISTA',           85.00),
-('SUITE EJECUTIVA - CAMA KING, SALA, MINIBAR',     150.00),
+('SUITE EJECUTIVA - CAMA KING, SALA, MINIBAR',     200.00),
 ('FAMILIAR - 2 AMBIENTES, HASTA 4 PERSONAS',       120.00);
 
 -- 2) Empleado
@@ -75,7 +75,7 @@ INSERT INTO reserva (id_cliente, id_empleado, id_habitacion, fecha_reserva, fech
 -- 9) Pago
 INSERT INTO pago (id_reserva, monto, fecha_pago, metodo_pago) VALUES
 (1, 151.00, '2025-11-12', 'TARJETA_CREDITO'),
-(2,  50.00, '2025-11-20', 'EFECTIVO'),
+(2,  50.00, '2025-11-20', 'TRANSFERENCIA'),
 (3, 120.00, '2025-11-30', 'YAPE'),
 (4,   1.00, '2025-11-13', 'EFECTIVO'),
 (5, 600.00, '2025-11-16', 'TRANSFERENCIA');
