@@ -5,6 +5,7 @@ import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
 import { tiposService } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
+import { useToast } from "../../components/Toast";
 
 const mapTipo = (t: any) => ({
   id: t.idTipoHabitacion,
@@ -21,26 +22,50 @@ const DEMO: any[] = [
 
 const FIELDS: ModalField[] = [
   { key: "descripcion", label: "Descripción", required: true, placeholder: "Ej: Suite Deluxe", cols: 2 },
-  { key: "precio",      label: "Precio (S/.)", required: true, type: "number", placeholder: "120.00", hint: "Precio base por noche" },
+  { key: "precio",      label: "Precio (S/.)", required: true, type: "number", placeholder: "120.00", hint: "Precio base por noche — debe ser mayor a 0" },
 ];
 
 export default function TiposPage() {
   const crud = useCrud(tiposService, mapTipo, DEMO);
   const m = useModalState();
+  const toast = useToast();
 
   const getFormData = (row: any) =>
     row ? { descripcion: row.descripcion, precio: row.precio } : null;
 
   const handleSave = async (form: any) => {
-    const payload = { descripcion: form.descripcion, precio: parseFloat(form.precio) };
-    const ok = m.editing ? await crud.update(m.editing.id, payload) : await crud.create(payload);
-    if (ok) m.closeModal();
+    const precio = parseFloat(form.precio);
+    if (isNaN(precio) || precio <= 0) {
+      toast.showToast("fail", "Validación", "El precio debe ser un número mayor a 0");
+      return;
+    }
+    if (!form.descripcion?.trim()) {
+      toast.showToast("fail", "Validación", "La descripción es obligatoria");
+      return;
+    }
+    const payload = { descripcion: form.descripcion, precio };
+    const esNuevo = !m.editing;
+    const ok = esNuevo ? await crud.create(payload) : await crud.update(m.editing.id, payload);
+    if (ok) {
+      toast.showToast("success",
+        esNuevo ? "Tipo de habitación creado" : "Tipo de habitación actualizado",
+        `${form.descripcion} — S/.${precio.toFixed(2)}`);
+      m.closeModal();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al guardar", crud.saveError);
+    }
   };
 
   const handleDelete = async () => {
     if (!m.deleting) return;
     const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
+    if (ok) {
+      toast.showToast("success", "Tipo eliminado",
+        `"${m.deleting.descripcion}" eliminado correctamente`);
+      m.closeDelete();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al eliminar", crud.saveError);
+    }
   };
 
   return (
@@ -48,7 +73,6 @@ export default function TiposPage() {
       <DataTable
         title="Tipos de Habitación" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id",          label: "ID" },
           { key: "descripcion", label: "Descripción" },
           { key: "precioFmt",   label: "Precio" },
         ]}
@@ -62,7 +86,7 @@ export default function TiposPage() {
       />
       <ConfirmModal
         open={m.deleteOpen} title="tipo de habitación"
-        description={`¿Eliminar el tipo "${m.deleting?.descripcion}"?`}
+        description={`¿Eliminar el tipo "${m.deleting?.descripcion}"? Esta acción no se puede deshacer.`}
         loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
       />
     </>

@@ -35,7 +35,7 @@ public class Pago {
     @Column(name = "fecha_pago", nullable = false)
     private LocalDate fechaPago;
 
-    @Pattern(regexp = "EFECTIVO|TARJETA_CREDITO|TARJETA_DEBITO|TRANSFERENCIA|YAPE|PLIN", message = "El método de pago no es válido")
+    @Pattern(regexp = "PENDIENTE|EFECTIVO|TARJETA_CREDITO|TARJETA_DEBITO|TRANSFERENCIA|YAPE|PLIN", message = "El método de pago no es válido")
     @Column(name = "metodo_pago", nullable = false, length = 30)
     private String metodoPago;
 }

@@ -39,6 +39,7 @@ public class HorarioService {
 
     public Horario guardar(Horario horario) {
         aplicarHorasPorTurno(horario);
+        horario.setObservaciones(upper(horario.getObservaciones()));
         return horarioRepository.save(horario);
     }
 
@@ -52,10 +53,14 @@ public class HorarioService {
                 horario.setHoraInicio(horarioActualizado.getHoraInicio());
                 horario.setHoraFin(horarioActualizado.getHoraFin());
             }
-            horario.setEstado(horarioActualizado.getEstado());
-            horario.setObservaciones(horarioActualizado.getObservaciones());
+            horario.setEstado(upper(horarioActualizado.getEstado()));
+            horario.setObservaciones(upper(horarioActualizado.getObservaciones()));
             return horarioRepository.save(horario);
         }).orElseThrow(() -> new RuntimeException("Horario no encontrado con id: " + id));
+    }
+
+    private static String upper(String s) {
+        return s != null ? s.toUpperCase().trim() : null;
     }
 
     public Horario cambiarEstado(Long id, String nuevoEstado) {

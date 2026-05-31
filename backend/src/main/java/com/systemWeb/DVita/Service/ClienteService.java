@@ -20,20 +20,34 @@ public class ClienteService {
         return clienteRepository.findById(id);
     }
 
+    public Optional<Cliente> buscarPorDni(String dni) {
+        return clienteRepository.findByDni(dni);
+    }
+
     public Cliente guardar(Cliente cliente) {
+        cliente.setNombre(     upper(cliente.getNombre()));
+        cliente.setApellidoPaterno(upper(cliente.getApellidoPaterno()));
+        cliente.setApellidoMaterno(upper(cliente.getApellidoMaterno()));
+        cliente.setDni(        upper(cliente.getDni()));
+        cliente.setTelefono(   upper(cliente.getTelefono()));
+        cliente.setEmail(      upper(cliente.getEmail()));
         return clienteRepository.save(cliente);
     }
 
     public Cliente actualizar(Long id, Cliente clienteActualizado) {
         return clienteRepository.findById(id).map(cliente -> {
-            cliente.setNombre(clienteActualizado.getNombre());
-            cliente.setApellidoPaterno(clienteActualizado.getApellidoPaterno());
-            cliente.setApellidoMaterno(clienteActualizado.getApellidoMaterno());
-            cliente.setDni(clienteActualizado.getDni());
-            cliente.setTelefono(clienteActualizado.getTelefono());
-            cliente.setEmail(clienteActualizado.getEmail());
+            cliente.setNombre(         upper(clienteActualizado.getNombre()));
+            cliente.setApellidoPaterno(upper(clienteActualizado.getApellidoPaterno()));
+            cliente.setApellidoMaterno(upper(clienteActualizado.getApellidoMaterno()));
+            cliente.setDni(            upper(clienteActualizado.getDni()));
+            cliente.setTelefono(       upper(clienteActualizado.getTelefono()));
+            cliente.setEmail(          upper(clienteActualizado.getEmail()));
             return clienteRepository.save(cliente);
         }).orElseThrow(() -> new RuntimeException("Cliente no encontrado con id: " + id));
+    }
+
+    private static String upper(String s) {
+        return s != null ? s.toUpperCase().trim() : null;
     }
 
     public void eliminar(Long id) {

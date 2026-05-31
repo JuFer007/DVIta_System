@@ -21,15 +21,20 @@ public class TipoHabitacionService {
     }
 
     public TipoHabitacion guardar(TipoHabitacion tipoHabitacion) {
+        tipoHabitacion.setDescripcion(upper(tipoHabitacion.getDescripcion()));
         return tipoHabitacionRepository.save(tipoHabitacion);
     }
 
     public TipoHabitacion actualizar(Long id, TipoHabitacion tipoActualizado) {
         return tipoHabitacionRepository.findById(id).map(tipo -> {
-            tipo.setDescripcion(tipoActualizado.getDescripcion());
+            tipo.setDescripcion(upper(tipoActualizado.getDescripcion()));
             tipo.setPrecio(tipoActualizado.getPrecio());
             return tipoHabitacionRepository.save(tipo);
         }).orElseThrow(() -> new RuntimeException("TipoHabitacion no encontrado con id: " + id));
+    }
+
+    private static String upper(String s) {
+        return s != null ? s.toUpperCase().trim() : null;
     }
 
     public void eliminar(Long id) {

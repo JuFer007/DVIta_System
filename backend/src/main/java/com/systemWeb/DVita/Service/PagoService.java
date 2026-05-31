@@ -21,6 +21,7 @@ public class PagoService {
     }
 
     public Pago guardar(Pago pago) {
+        pago.setMetodoPago(upper(pago.getMetodoPago()));
         return pagoRepository.save(pago);
     }
 
@@ -29,9 +30,13 @@ public class PagoService {
             pago.setReserva(pagoActualizado.getReserva());
             pago.setMonto(pagoActualizado.getMonto());
             pago.setFechaPago(pagoActualizado.getFechaPago());
-            pago.setMetodoPago(pagoActualizado.getMetodoPago());
+            pago.setMetodoPago(upper(pagoActualizado.getMetodoPago()));
             return pagoRepository.save(pago);
         }).orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
+    }
+
+    private static String upper(String s) {
+        return s != null ? s.toUpperCase().trim() : null;
     }
 
     public void eliminar(Long id) {

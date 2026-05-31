@@ -51,7 +51,6 @@ export default function AdministradoresPage() {
       <DataTable
         title="Administradores" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id",       label: "ID" },
           { key: "empleado", label: "Empleado" },
           { key: "correo",   label: "Correo" },
         ]}

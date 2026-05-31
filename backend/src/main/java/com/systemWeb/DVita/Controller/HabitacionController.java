@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/habitaciones")
@@ -48,12 +49,24 @@ public class HabitacionController {
     @GetMapping("/disponibles")
     public ResponseEntity<List<Habitacion>> habitacionesDisponibles(
             @RequestParam("fechaIngreso") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaIngreso,
-            @RequestParam("fechaSalida") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaSalida
+            @RequestParam("fechaSalida") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaSalida,
+            @RequestParam(value = "tipoId", required = false) Long tipoId
     ) {
-
-        List<Habitacion> disponibles =
-                habitacionService.habitacionesDisponibles(fechaIngreso, fechaSalida);
-
+        List<Habitacion> disponibles = tipoId != null
+                ? habitacionService.disponiblesPorTipo(tipoId, fechaIngreso, fechaSalida)
+                : habitacionService.habitacionesDisponibles(fechaIngreso, fechaSalida);
         return ResponseEntity.ok(disponibles);
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<Habitacion> cambiarEstado(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body
+    ) {
+        String nuevoEstado = body.get("estado");
+        if (nuevoEstado == null || nuevoEstado.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(habitacionService.cambiarEstado(id, nuevoEstado.toUpperCase().trim()));
     }
 }

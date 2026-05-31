@@ -21,16 +21,21 @@ public class UsuarioService {
     }
 
     public Usuario guardar(Usuario usuario) {
+        usuario.setNombreUsuario(upper(usuario.getNombreUsuario()));
         return usuarioRepository.save(usuario);
     }
 
     public Usuario actualizar(Long id, Usuario usuarioActualizado) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setEmpleado(usuarioActualizado.getEmpleado());
-            usuario.setNombreUsuario(usuarioActualizado.getNombreUsuario());
+            usuario.setNombreUsuario(upper(usuarioActualizado.getNombreUsuario()));
             usuario.setContrasena(usuarioActualizado.getContrasena());
             return usuarioRepository.save(usuario);
         }).orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+    }
+
+    private static String upper(String s) {
+        return s != null ? s.toUpperCase().trim() : null;
     }
 
     public void eliminar(Long id) {

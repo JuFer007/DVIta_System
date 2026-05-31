@@ -14,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/horarios")
 @RequiredArgsConstructor
+
 public class HorarioController {
 
     private final HorarioService horarioService;

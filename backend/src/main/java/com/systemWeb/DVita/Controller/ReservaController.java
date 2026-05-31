@@ -1,4 +1,5 @@
 package com.systemWeb.DVita.Controller;
+import com.systemWeb.DVita.DTO.ReservaDTO;
 import com.systemWeb.DVita.Model.Reserva;
 import com.systemWeb.DVita.Service.ReservaService;
 import jakarta.validation.Valid;
@@ -32,6 +33,11 @@ public class ReservaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.guardar(reserva));
     }
 
+    @PostMapping("/con-dni")
+    public ResponseEntity<Reserva> crearConDni(@Valid @RequestBody ReservaDTO request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.crearConDni(request));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Reserva> actualizar(@PathVariable Long id, @Valid @RequestBody Reserva reserva) {
         return ResponseEntity.ok(reservaService.actualizar(id, reserva));
@@ -51,5 +57,10 @@ public class ReservaController {
     @PatchMapping("/{id}/checkout")
     public ResponseEntity<Reserva> checkOut(@PathVariable Long id) {
         return ResponseEntity.ok(reservaService.checkOut(id));
+    }
+
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<Reserva> cancelar(@PathVariable Long id) {
+        return ResponseEntity.ok(reservaService.cancelar(id));
     }
 }

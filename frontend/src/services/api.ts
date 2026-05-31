@@ -5,7 +5,21 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    let msg = `Error del servidor (${res.status})`;
+    try {
+      const body = await res.text();
+      if (body) {
+        try {
+          const json = JSON.parse(body);
+          msg = json.message || json.error || body;
+        } catch {
+          msg = body;
+        }
+      }
+    } catch {}
+    throw new Error(msg);
+  }
   return res.json();
 }
 
@@ -28,10 +42,11 @@ export const dashboardService = {
 
 // ── Clientes ──────────────────────────────────
 export const clientesService = {
-  getAll:  ()                   => request<any[]>("clientes"),
-  create:  (data: any)          => request("clientes",     { method: "POST", body: JSON.stringify(data) }),
-  update:  (id: number, data: any) => request(`clientes/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
-  delete:  (id: number)         => request(`clientes/${id}`, { method: "DELETE" }),
+  getAll:   ()                    => request<any[]>("clientes"),
+  getByDni: (dni: string)         => request<any>(`clientes/dni/${dni}`),
+  create:   (data: any)           => request("clientes",     { method: "POST", body: JSON.stringify(data) }),
+  update:   (id: number, data: any) => request(`clientes/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
+  delete:   (id: number)          => request(`clientes/${id}`, { method: "DELETE" }),
 };
 
 // ── Empleados ─────────────────────────────────
@@ -44,10 +59,14 @@ export const empleadosService = {
 
 // ── Habitaciones ──────────────────────────────
 export const habitacionesService = {
-  getAll:  ()                   => request<any[]>("habitaciones"),
-  create:  (data: any)          => request("habitaciones",     { method: "POST", body: JSON.stringify(data) }),
-  update:  (id: number, data: any) => request(`habitaciones/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
-  delete:  (id: number)         => request(`habitaciones/${id}`, { method: "DELETE" }),
+  getAll:         ()                    => request<any[]>("habitaciones"),
+  getDisponibles: (ingreso: string, salida: string, tipoId?: number) =>
+    request<any[]>(`habitaciones/disponibles?fechaIngreso=${ingreso}&fechaSalida=${salida}${tipoId ? `&tipoId=${tipoId}` : ""}`),
+  create:         (data: any)           => request("habitaciones",     { method: "POST", body: JSON.stringify(data) }),
+  update:         (id: number, data: any) => request(`habitaciones/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
+  delete:         (id: number)          => request(`habitaciones/${id}`, { method: "DELETE" }),
+  cambiarEstado:  (id: number, estado: string) =>
+    request(`habitaciones/${id}/estado`, { method: "PATCH", body: JSON.stringify({ estado }) }),
 };
 
 // ── Tipos Habitación ──────────────────────────
@@ -60,12 +79,14 @@ export const tiposService = {
 
 // ── Reservas ──────────────────────────────────
 export const reservasService = {
-  getAll:  ()                   => request<any[]>("reservas"),
-  create:  (data: any)          => request("reservas",     { method: "POST", body: JSON.stringify(data) }),
-  update:  (id: number, data: any) => request(`reservas/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
-  delete:  (id: number)         => request(`reservas/${id}`, { method: "DELETE" }),
-  checkIn: (id: number)         => request(`reservas/${id}/checkin`,  { method: "PATCH" }),
-  checkOut:(id: number)         => request(`reservas/${id}/checkout`, { method: "PATCH" }),
+  getAll:     ()                    => request<any[]>("reservas"),
+  create:     (data: any)           => request("reservas",     { method: "POST", body: JSON.stringify(data) }),
+  createWithDni: (data: any)        => request("reservas/con-dni", { method: "POST", body: JSON.stringify(data) }),
+  update:     (id: number, data: any) => request(`reservas/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
+  delete:     (id: number)          => request(`reservas/${id}`, { method: "DELETE" }),
+  checkIn:    (id: number)          => request(`reservas/${id}/checkin`,  { method: "PATCH" }),
+  checkOut:   (id: number)          => request(`reservas/${id}/checkout`, { method: "PATCH" }),
+  cancelar:   (id: number)          => request(`reservas/${id}/cancelar`, { method: "PATCH" }),
 };
 
 // ── Pagos ─────────────────────────────────────
@@ -98,4 +119,9 @@ export const administradoresService = {
   create:  (data: any)          => request("administradores",     { method: "POST", body: JSON.stringify(data) }),
   update:  (id: number, data: any) => request(`administradores/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
   delete:  (id: number)         => request(`administradores/${id}`, { method: "DELETE" }),
+};
+
+// ── RENIEC ────────────────────────────────────
+export const reniecService = {
+  consultar: (dni: string) => request<any>(`reniec/dni/${dni}`),
 };

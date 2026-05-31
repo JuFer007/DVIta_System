@@ -27,6 +27,13 @@ public class ClienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/dni/{dni}")
+    public ResponseEntity<Cliente> buscarPorDni(@PathVariable String dni) {
+        return clienteService.buscarPorDni(dni)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<Cliente> crear(@Valid @RequestBody Cliente cliente) {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.guardar(cliente));

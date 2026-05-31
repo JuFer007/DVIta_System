@@ -14,6 +14,8 @@ import ReservasPage       from "./pages/entities/ReservaPage";
 import PagosPage          from "./pages/entities/PagosPages";
 import UsuariosPage       from "./pages/entities/UsuariosPages";
 import HorariosPage       from "./pages/entities/HorariosPage";
+import { ToastProvider } from "./components/Toast";
+import { ConfirmProvider } from "./hooks/useConfirm";
 
 type View = "landing" | "login";
 
@@ -68,5 +70,5 @@ function AppContent() {
 }
 
 export default function App() {
-  return <AuthProvider><AppContent /></AuthProvider>;
+  return <AuthProvider><ToastProvider><ConfirmProvider><AppContent /></ConfirmProvider></ToastProvider></AuthProvider>;
 }

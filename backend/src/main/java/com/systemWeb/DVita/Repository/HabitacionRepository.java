@@ -11,6 +11,15 @@ import java.util.List;
 
 public interface HabitacionRepository extends JpaRepository<Habitacion, Long> {
     @Query("SELECT h FROM Habitacion h WHERE h.idHabitacion NOT IN (SELECT r.habitacion.idHabitacion " +
-    "FROM Reserva r WHERE r.estadoReserva <> 'CANCELADA' AND r.fechaIngreso <= :fechaSalida AND r.fechaSalida >= :fechaIngreso) AND h.estado = 'DISPONIBLE'")
+    "FROM Reserva r WHERE r.estadoReserva <> 'CANCELADA' AND r.fechaIngreso <= :fechaSalida AND r.fechaSalida >= :fechaIngreso) AND h.estado <> 'MANTENIMIENTO'")
     List<Habitacion> findHabitacionesDisponibles(@Param("fechaIngreso") LocalDate fechaIngreso, @Param("fechaSalida") LocalDate fechaSalida);
+
+    @Query("SELECT h FROM Habitacion h WHERE h.tipoHabitacion.idTipoHabitacion = :tipoId AND h.idHabitacion NOT IN (SELECT r.habitacion.idHabitacion " +
+    "FROM Reserva r WHERE r.estadoReserva <> 'CANCELADA' AND r.fechaIngreso <= :fechaSalida AND r.fechaSalida >= :fechaIngreso) AND h.estado <> 'MANTENIMIENTO'")
+    List<Habitacion> findDisponiblesByTipo(@Param("tipoId") Long tipoId, @Param("fechaIngreso") LocalDate fechaIngreso, @Param("fechaSalida") LocalDate fechaSalida);
+
+    @Query("SELECT h FROM Habitacion h WHERE h.estado = 'MANTENIMIENTO' AND EXISTS (" +
+    "SELECT 1 FROM Reserva r WHERE r.habitacion.idHabitacion = h.idHabitacion " +
+    "AND r.estadoReserva <> 'CANCELADA' AND r.fechaIngreso >= :hoy AND r.fechaIngreso <= :limite)")
+    List<Habitacion> findMantenimientoConReservaProxima(@Param("hoy") LocalDate hoy, @Param("limite") LocalDate limite);
 }

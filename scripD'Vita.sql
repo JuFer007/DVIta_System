@@ -7,30 +7,30 @@ USE DVita;
 
 -- 1) Tipo Habitación
 INSERT INTO tipo_habitacion (descripcion, precio) VALUES
-('Individual - cama sencilla, baño privado',       50.00),
-('Doble - 2 camas, baño privado',                  75.50),
-('Matrimonial - cama matrimonial, vista',           85.00),
-('Suite Ejecutiva - cama king, sala, minibar',     150.00),
-('Familiar - 2 ambientes, hasta 4 personas',       120.00);
+('INDIVIDUAL - CAMA SENCILLA, BAÑO PRIVADO',       50.00),
+('DOBLE - 2 CAMAS, BAÑO PRIVADO',                  75.50),
+('MATRIMONIAL - CAMA MATRIMONIAL, VISTA',           85.00),
+('SUITE EJECUTIVA - CAMA KING, SALA, MINIBAR',     150.00),
+('FAMILIAR - 2 AMBIENTES, HASTA 4 PERSONAS',       120.00);
 
 -- 2) Empleado
 INSERT INTO empleado (nombre, apellido_p, apellido_m, dni, telefono) VALUES
-('Marcelo', 'Alarcon',    'Manay',    '71433244', '987654321'),
-('Jair', 'Otero',      'Brenis',   '71374451', '987654322'),
-('Oscar', 'Santamaria', 'Morales',  '73381544', '987654323'),
-('Junior', 'Zumaeta',    'Golac',    '71374454', '987654324'),
-('Ana', 'Gonzales',   'Flores',   '15975348', '987654325'),
-('Diego', 'Vargas',     'Ruiz',     '25814736', '987654326'),
-('Dvi', 'Bot', 'ChatBotVirtual',  '00000000', '000000000');
+('MARCELO', 'ALARCON',    'MANAY',    '71433244', '987654321'),
+('JAIR',    'OTERO',      'BRENIS',   '71374451', '987654322'),
+('OSCAR',   'SANTAMARIA', 'MORALES',  '73381544', '987654323'),
+('JUNIOR',  'ZUMAETA',    'GOLAC',    '71374454', '987654324'),
+('ANA',     'GONZALES',   'FLORES',   '15975348', '987654325'),
+('DIEGO',   'VARGAS',     'RUIZ',     '25814736', '987654326'),
+('DVI',     'BOT',        'CHATBOTVIRTUAL', '00000000', '000000000');
 
 -- 3) Usuario
 INSERT INTO usuario (id_empleado, nombre_usuario, contrasena) VALUES
-(1, 'malarcon',    '123456'),
-(2, 'joterob',     '123456'),
-(3, 'osantamaria', '123456'),
-(4, 'jzumaeta',    '123456'),
-(5, 'agonzales',   '123456'),
-(6, 'dvargas',     '123456');
+(1, 'MALARCON',    '123456'),
+(2, 'JOTEROB',     '123456'),
+(3, 'OSANTAMARIA', '123456'),
+(4, 'JZUMAETA',    '123456'),
+(5, 'AGONZALES',   '123456'),
+(6, 'DVARGAS',     '123456');
 
 -- 4) Recepcionista
 INSERT INTO recepcionista (id_empleado, turno_trabajo) VALUES
@@ -41,28 +41,28 @@ INSERT INTO recepcionista (id_empleado, turno_trabajo) VALUES
 (5, 'TARDE'),
 (6, 'NOCHE');
 
--- 5) Administrador (los 4 miembros del equipo)
+-- 5) Administrador
 INSERT INTO administrador (id_empleado, correo_electronico) VALUES
-(1, 'malarcon@dvita.pe'),
-(2, 'joterob@dvita.pe'),
-(3, 'osantamaria@dvita.pe'),
-(4, 'jzumaeta@dvita.pe');
+(1, 'MALARCON@DVITA.PE'),
+(2, 'JOTEROB@DVITA.PE'),
+(3, 'OSANTAMARIA@DVITA.PE'),
+(4, 'JZUMAETA@DVITA.PE');
 
 -- 6) Cliente
 INSERT INTO cliente (nombre, apellido_paterno, apellido_materno, dni, telefono, email) VALUES
-('Luis',   'Chafloque', 'Avellaneda', '11122233', '945111222', 'luis.chafloque@outlook.com'),
-('Maria',  'Lopez',     'Sanchez',    '22233344', '945222333', 'maria.lopez@outlook.com'),
-('Pedro',  'Quispe',    'Ayala',      '33344455', '945333444', 'pedro.quispe@outlook.com'),
-('Sofia',  'Reyes',     'Gomez',      '44455566', '945444555', 'sofia.reyes@outlook.com'),
-('Andres', 'Delgado',   'Torres',     '55566677', '945555666', 'andres.delgado@outlook.com');
+('LUIS',   'CHAFLOQUE', 'AVELLANEDA', '11122233', '945111222', 'LUIS.CHAFLOQUE@OUTLOOK.COM'),
+('MARIA',  'LOPEZ',     'SANCHEZ',    '22233344', '945222333', 'MARIA.LOPEZ@OUTLOOK.COM'),
+('PEDRO',  'QUISPE',    'AYALA',      '33344455', '945333444', 'PEDRO.QUISPE@OUTLOOK.COM'),
+('SOFIA',  'REYES',     'GOMEZ',      '44455566', '945444555', 'SOFIA.REYES@OUTLOOK.COM'),
+('ANDRES', 'DELGADO',   'TORRES',     '55566677', '945555666', 'ANDRES.DELGADO@OUTLOOK.COM');
 
 -- 7) Habitación
-INSERT INTO habitacion (id_tipo_habitacion, numero_habitacion, estado, precio) VALUES
-(1, 101, 'DISPONIBLE',    50.00),
-(2, 102, 'OCUPADA',       75.50),
-(3, 103, 'MANTENIMIENTO', 85.00),
-(4, 104, 'DISPONIBLE',   150.00),
-(5, 105, 'DISPONIBLE',   120.00);
+INSERT INTO habitacion (id_tipo_habitacion, numero_habitacion, estado) VALUES
+(1, 101, 'DISPONIBLE'),
+(2, 102, 'OCUPADA'),
+(3, 103, 'DISPONIBLE'),
+(4, 104, 'DISPONIBLE'),
+(5, 105, 'DISPONIBLE');
 
 -- 8) Reserva
 INSERT INTO reserva (id_cliente, id_empleado, id_habitacion, fecha_reserva, fecha_ingreso, fecha_salida, estado_reserva) VALUES

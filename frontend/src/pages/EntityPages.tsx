@@ -185,7 +185,7 @@ export function ClientesPage() {
       <DataTable
         title="Clientes" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" }, { key: "nombre", label: "Nombre" },
+          { key: "nombre", label: "Nombre" },
           { key: "apellidoP", label: "Ap. Paterno" }, { key: "apellidoM", label: "Ap. Materno" },
           { key: "dni", label: "DNI" }, { key: "telefono", label: "Teléfono" }, { key: "email", label: "Email" },
         ]}
@@ -241,7 +241,7 @@ export function EmpleadosPage() {
       <DataTable
         title="Empleados" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" }, { key: "nombre", label: "Nombre" },
+          { key: "nombre", label: "Nombre" },
           { key: "apellidoP", label: "Ap. Paterno" }, { key: "apellidoM", label: "Ap. Materno" },
           { key: "dni", label: "DNI" }, { key: "telefono", label: "Teléfono" },
         ]}
@@ -291,7 +291,7 @@ export function TiposPage() {
       <DataTable
         title="Tipos de Habitación" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" },
+          
           { key: "descripcion", label: "Descripción" },
           { key: "precioFmt", label: "Precio" },
         ]}
@@ -370,7 +370,7 @@ export function HabitacionesPage() {
       <DataTable
         title="Habitaciones" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" }, { key: "numero", label: "Nº" },
+          { key: "numero", label: "Nº" },
           { key: "tipo", label: "Tipo" },
           { key: "estado", label: "Estado", render: (v) => <StatusBadge status={v} /> },
           { key: "precioFmt", label: "Precio" },
@@ -496,7 +496,7 @@ export function ReservasPage() {
       <DataTable
         title="Reservas" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" },
+          
           { key: "cliente", label: "Cliente" },
           { key: "habitacion", label: "Hab." },
           { key: "empleado", label: "Empleado" },
@@ -607,7 +607,7 @@ export function PagosPage() {
       <DataTable
         title="Pagos" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" }, { key: "reserva", label: "Reserva" },
+          { key: "reserva", label: "Reserva" },
           { key: "montoFmt", label: "Monto" }, { key: "fecha", label: "Fecha" },
           { key: "metodo", label: "Método" },
         ]}
@@ -671,7 +671,7 @@ export function UsuariosPage() {
       <DataTable
         title="Usuarios" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" }, { key: "empleado", label: "Empleado" },
+          { key: "empleado", label: "Empleado" },
           { key: "usuario", label: "Usuario" }, { key: "contrasena", label: "Contraseña" },
         ]}
         onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
@@ -739,7 +739,7 @@ export function RecepcionistasPage() {
       <DataTable
         title="Recepcionistas" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" }, { key: "empleado", label: "Empleado" },
+          { key: "empleado", label: "Empleado" },
           { key: "turno", label: "Turno" },
         ]}
         onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
@@ -800,7 +800,7 @@ export function AdministradoresPage() {
       <DataTable
         title="Administradores" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id", label: "ID" }, { key: "empleado", label: "Empleado" },
+          { key: "empleado", label: "Empleado" },
           { key: "correo", label: "Correo" },
         ]}
         onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}

@@ -53,7 +53,6 @@ export default function UsuariosPage() {
       <DataTable
         title="Usuarios" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id",         label: "ID" },
           { key: "empleado",   label: "Empleado" },
           { key: "usuario",    label: "Usuario" },
           { key: "contrasena", label: "Contraseña" },

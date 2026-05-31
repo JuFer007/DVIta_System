@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "reserva")
@@ -59,5 +61,18 @@ public class Reserva {
     public boolean isFechasValidas() {
         if (fechaIngreso == null || fechaSalida == null) return true;
         return fechaSalida.isAfter(fechaIngreso);
+    }
+
+    @Transient
+    public long getNoches() {
+        if (fechaIngreso == null || fechaSalida == null) return 1;
+        long n = ChronoUnit.DAYS.between(fechaIngreso, fechaSalida);
+        return n < 1 ? 1 : n;
+    }
+
+    @Transient
+    public BigDecimal getMontoTotal() {
+        if (habitacion == null || habitacion.getTipoHabitacion() == null) return BigDecimal.ZERO;
+        return habitacion.getTipoHabitacion().getPrecio().multiply(BigDecimal.valueOf(getNoches()));
     }
 }
