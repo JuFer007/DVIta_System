@@ -1,36 +1,32 @@
 CREATE DATABASE IF NOT EXISTS DVita;
 USE DVita;
 
--- ═══════════════════════════════════════════════════
--- LLENADO INICIAL — DVita
--- ═══════════════════════════════════════════════════
-
--- 1) Tipo Habitación
+-- 1) Tipo Habitacion
 INSERT INTO tipo_habitacion (descripcion, precio) VALUES
-('INDIVIDUAL - CAMA SENCILLA, BAÑO PRIVADO',       50.00),
-('DOBLE - 2 CAMAS, BAÑO PRIVADO',                  75.50),
-('MATRIMONIAL - CAMA MATRIMONIAL, VISTA',           85.00),
-('SUITE EJECUTIVA - CAMA KING, SALA, MINIBAR',     200.00),
-('FAMILIAR - 2 AMBIENTES, HASTA 4 PERSONAS',       120.00);
+('INDIVIDUAL - CAMA SENCILLA, BAÑO PRIVADO', 60.00),
+('DOBLE - 2 CAMAS, BAÑO PRIVADO', 82.00),
+('MATRIMONIAL - CAMA MATRIMONIAL, VISTA AL MAR', 95.00),
+('SUITE EJECUTIVA - CAMA KING, SALA, MINIBAR', 200.00),
+('FAMILIAR - 2 AMBIENTES, HASTA 4 PERSONAS', 140.00);
 
 -- 2) Empleado
 INSERT INTO empleado (nombre, apellido_p, apellido_m, dni, telefono) VALUES
-('MARCELO', 'ALARCON',    'MANAY',    '71433244', '987654321'),
-('JAIR',    'OTERO',      'BRENIS',   '71374451', '987654322'),
-('OSCAR',   'SANTAMARIA', 'MORALES',  '73381544', '987654323'),
-('JUNIOR',  'ZUMAETA',    'GOLAC',    '71374454', '987654324'),
-('ANA',     'GONZALES',   'FLORES',   '15975348', '987654325'),
-('DIEGO',   'VARGAS',     'RUIZ',     '25814736', '987654326'),
-('DVI',     'BOT',        'CHATBOTVIRTUAL', '00000000', '000000000');
+('MARCELO', 'ALARCON', 'MANAY', '71433244', '999000001'),
+('JAIR', 'OTERO', 'BRENIS', '71374451', '999000002'),
+('OSCAR', 'SANTAMARIA', 'MORALES', '73381544', '999000003'),
+('JUNIOR', 'ZUMAETA', 'GOLAC', '71374454', '999000004'),
+('ANA', 'GONZALES', 'FLORES', '15975348', '999000005'),
+('DIEGO', 'VARGAS', 'RUIZ', '25814736', '999000006'),
+('DVI', 'BOT', 'CHATBOTVIRTUAL', '00000000', '999000007');
 
 -- 3) Usuario
 INSERT INTO usuario (id_empleado, nombre_usuario, contrasena) VALUES
-(1, 'MALARCON',    '123456'),
-(2, 'JOTEROB',     '123456'),
-(3, 'OSANTAMARIA', '123456'),
-(4, 'JZUMAETA',    '123456'),
-(5, 'AGONZALES',   '123456'),
-(6, 'DVARGAS',     '123456');
+(1, 'MALARCON', 'pass_2025_01'),
+(2, 'JOTEROB', 'pass_2025_02'),
+(3, 'OSANTAMARIA', 'pass_2025_03'),
+(4, 'JZUMAETA', 'pass_2025_04'),
+(5, 'AGONZALES', 'pass_2025_05'),
+(6, 'DVARGAS', 'pass_2025_06');
 
 -- 4) Recepcionista
 INSERT INTO recepcionista (id_empleado, turno_trabajo) VALUES
@@ -43,20 +39,20 @@ INSERT INTO recepcionista (id_empleado, turno_trabajo) VALUES
 
 -- 5) Administrador
 INSERT INTO administrador (id_empleado, correo_electronico) VALUES
-(1, 'MALARCON@DVITA.PE'),
-(2, 'JOTEROB@DVITA.PE'),
-(3, 'OSANTAMARIA@DVITA.PE'),
-(4, 'JZUMAETA@DVITA.PE');
+(1, 'MALARCON@DVITA.COM'),
+(2, 'JOTEROB@DVITA.COM'),
+(3, 'OSANTAMARIA@DVITA.COM'),
+(4, 'JZUMAETA@DVITA.COM');
 
 -- 6) Cliente
 INSERT INTO cliente (nombre, apellido_paterno, apellido_materno, dni, telefono, email) VALUES
-('LUIS',   'CHAFLOQUE', 'AVELLANEDA', '11122233', '945111222', 'LUIS.CHAFLOQUE@OUTLOOK.COM'),
-('MARIA',  'LOPEZ',     'SANCHEZ',    '22233344', '945222333', 'MARIA.LOPEZ@OUTLOOK.COM'),
-('PEDRO',  'QUISPE',    'AYALA',      '33344455', '945333444', 'PEDRO.QUISPE@OUTLOOK.COM'),
-('SOFIA',  'REYES',     'GOMEZ',      '44455566', '945444555', 'SOFIA.REYES@OUTLOOK.COM'),
-('ANDRES', 'DELGADO',   'TORRES',     '55566677', '945555666', 'ANDRES.DELGADO@OUTLOOK.COM');
+('LUIS', 'CHAFLOQUE', 'AVELLANEDA', '11122233', '945111222', 'LUIS.CHAFLOQUE@OUTLOOK.COM'),
+('MARIA', 'LOPEZ', 'SANCHEZ', '22233344', '945222333', 'MARIA.LOPEZ@OUTLOOK.COM'),
+('PEDRO', 'QUISPE', 'AYALA', '33344455', '945333444', 'PEDRO.QUISPE@OUTLOOK.COM'),
+('SOFIA', 'REYES', 'GOMEZ', '44455566', '945444555', 'SOFIA.REYES@OUTLOOK.COM'),
+('ANDRES', 'DELGADO', 'TORRES', '55566677', '945555666', 'ANDRES.DELGADO@OUTLOOK.COM');
 
--- 7) Habitación
+-- 7) Habitacion
 INSERT INTO habitacion (id_tipo_habitacion, numero_habitacion, estado) VALUES
 (1, 101, 'DISPONIBLE'),
 (2, 102, 'OCUPADA'),
@@ -75,7 +71,7 @@ INSERT INTO reserva (id_cliente, id_empleado, id_habitacion, fecha_reserva, fech
 -- 9) Pago
 INSERT INTO pago (id_reserva, monto, fecha_pago, metodo_pago) VALUES
 (1, 151.00, '2025-11-12', 'TARJETA_CREDITO'),
-(2,  50.00, '2025-11-20', 'TRANSFERENCIA'),
+(2, 50.00, '2025-11-20', 'TRANSFERENCIA'),
 (3, 120.00, '2025-11-30', 'YAPE'),
-(4,   1.00, '2025-11-13', 'EFECTIVO'),
+(4, 1.00, '2025-11-13', 'EFECTIVO'),
 (5, 600.00, '2025-11-16', 'TRANSFERENCIA');
