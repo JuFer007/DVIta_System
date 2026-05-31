@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS DVita;
-USE DVita;
-
 -- ═══════════════════════════════════════════════════
 -- LLENADO INICIAL — DVita
 -- ═══════════════════════════════════════════════════
