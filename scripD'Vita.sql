@@ -54,7 +54,9 @@ INSERT INTO cliente (nombre, apellido_paterno, apellido_materno, dni, telefono, 
 ('MARIA',  'LOPEZ',     'SANCHEZ',    '22233344', '945222333', 'MARIA.LOPEZ@OUTLOOK.COM'),
 ('PEDRO',  'QUISPE',    'AYALA',      '33344455', '945333444', 'PEDRO.QUISPE@OUTLOOK.COM'),
 ('SOFIA',  'REYES',     'GOMEZ',      '44455566', '945444555', 'SOFIA.REYES@OUTLOOK.COM'),
-('ANDRES', 'DELGADO',   'TORRES',     '55566677', '945555666', 'ANDRES.DELGADO@OUTLOOK.COM');
+('ANDRES', 'DELGADO',   'TORRES',     '55566677', '945555666', 'ANDRES.DELGADO@OUTLOOK.COM'),
+('CARLA',  'MARTINEZ',  'SILVA',      '66677788', '945666777', 'CARLA.MARTINEZ@GMAIL.COM'),
+('JOSE',   'RAMIREZ',   'DIAZ',       '77788899', '945777888', 'JOSE.RAMIREZ@GMAIL.COM');
 
 -- 7) Habitación
 INSERT INTO habitacion (id_tipo_habitacion, numero_habitacion, estado) VALUES
@@ -62,7 +64,10 @@ INSERT INTO habitacion (id_tipo_habitacion, numero_habitacion, estado) VALUES
 (2, 102, 'OCUPADA'),
 (3, 103, 'DISPONIBLE'),
 (4, 104, 'DISPONIBLE'),
-(5, 105, 'DISPONIBLE');
+(5, 105, 'DISPONIBLE'),
+(1, 106, 'MANTENIMIENTO'),
+(2, 107, 'MANTENIMIENTO'),
+(3, 108, 'MANTENIMIENTO');
 
 -- 8) Reserva
 INSERT INTO reserva (id_cliente, id_empleado, id_habitacion, fecha_reserva, fecha_ingreso, fecha_salida, estado_reserva) VALUES
@@ -70,7 +75,9 @@ INSERT INTO reserva (id_cliente, id_empleado, id_habitacion, fecha_reserva, fech
 (2, 2, 1, '2025-11-05', '2025-11-20', '2025-11-22', 'PENDIENTE'),
 (3, 3, 5, '2025-11-10', '2025-12-01', '2025-12-05', 'CONFIRMADA'),
 (4, 4, 4, '2025-11-12', '2025-11-25', '2025-11-27', 'CANCELADA'),
-(5, 5, 3, '2025-11-15', '2025-12-15', '2025-12-20', 'CONFIRMADA');
+(5, 5, 3, '2025-11-15', '2025-12-15', '2025-12-20', 'CONFIRMADA'),
+(6, 1, 8, '2025-11-20', '2025-12-10', '2025-12-12', 'CONFIRMADA'),
+(7, 3, 7, '2025-11-22', '2025-12-20', '2025-12-25', 'PENDIENTE');
 
 -- 9) Pago
 INSERT INTO pago (id_reserva, monto, fecha_pago, metodo_pago) VALUES
@@ -78,4 +85,6 @@ INSERT INTO pago (id_reserva, monto, fecha_pago, metodo_pago) VALUES
 (2,  50.00, '2025-11-20', 'EFECTIVO'),
 (3, 120.00, '2025-11-30', 'YAPE'),
 (4,   1.00, '2025-11-13', 'EFECTIVO'),
-(5, 600.00, '2025-11-16', 'TRANSFERENCIA');
+(5, 600.00, '2025-11-16', 'TRANSFERENCIA'),
+(6,  50.00, '2025-12-10', 'YAPE'),
+(7, 120.00, '2025-12-20', 'TARJETA_DEBITO');
