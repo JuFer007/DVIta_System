@@ -6,7 +6,6 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     ...options,
   });
   if (!res.ok) {
-<<<<<<< HEAD
     let errorMessage = `Error ${res.status}`;
     try {
       const errorData = await res.json();
@@ -25,21 +24,6 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
       // Si no podemos parsear el error, usamos el mensaje genérico
     }
     throw new Error(errorMessage);
-=======
-    let msg = `Error del servidor (${res.status})`;
-    try {
-      const body = await res.text();
-      if (body) {
-        try {
-          const json = JSON.parse(body);
-          msg = json.message || json.error || body;
-        } catch {
-          msg = body;
-        }
-      }
-    } catch {}
-    throw new Error(msg);
->>>>>>> main
   }
   return res.json();
 }
@@ -80,13 +64,6 @@ export const empleadosService = {
 
 // ── Habitaciones ──────────────────────────────
 export const habitacionesService = {
-<<<<<<< HEAD
-  getAll:  (page = 0, size = 10, sortBy = "numeroHabitacion", sortDir = "asc") => 
-    request<any>(`habitaciones?page=${page}&size=${size}&sortBy=${sortBy}&sortDir=${sortDir}`),
-  create:  (data: any)          => request("habitaciones",     { method: "POST", body: JSON.stringify(data) }),
-  update:  (id: number, data: any) => request(`habitaciones/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
-  delete:  (id: number)         => request(`habitaciones/${id}`, { method: "DELETE" }),
-=======
   getAll:         ()                    => request<any[]>("habitaciones"),
   getDisponibles: (ingreso: string, salida: string, tipoId?: number) =>
     request<any[]>(`habitaciones/disponibles?fechaIngreso=${ingreso}&fechaSalida=${salida}${tipoId ? `&tipoId=${tipoId}` : ""}`),
@@ -95,7 +72,6 @@ export const habitacionesService = {
   delete:         (id: number)          => request(`habitaciones/${id}`, { method: "DELETE" }),
   cambiarEstado:  (id: number, estado: string) =>
     request(`habitaciones/${id}/estado`, { method: "PATCH", body: JSON.stringify({ estado }) }),
->>>>>>> main
 };
 
 // ── Tipos Habitación ──────────────────────────
