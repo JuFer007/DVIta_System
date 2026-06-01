@@ -1,4 +1,4 @@
-package main.java.com.systemWeb.DVita.Model;
+package com.systemWeb.DVita.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -35,9 +35,8 @@ public class Habitacion {
     @Column(name = "estado", nullable = false, length = 20)
     private String estado;
 
-    @NotNull(message = "El precio es obligatorio")
-    @DecimalMin(value = "0.01", message = "El precio debe ser mayor a 0")
-    @Digits(integer = 8, fraction = 2, message = "El precio debe tener máximo 8 dígitos enteros y 2 decimales")
-    @Column(name = "precio", nullable = false, precision = 10, scale = 2)
-    private BigDecimal precio;
+    @Transient
+    public BigDecimal getPrecio() {
+        return tipoHabitacion != null ? tipoHabitacion.getPrecio() : BigDecimal.ZERO;
+    }
 }

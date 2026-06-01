@@ -35,24 +35,24 @@ export default function Login({ onBack }: Props) {
       const usuarios = await authService.getUsuarios();
       const match = usuarios.find(
         (u: any) =>
-          u.nombreUsuario === form.usuario && u.contrasena === form.contrasena
+          u.nombreUsuario.toLowerCase() === form.usuario.toLowerCase() && u.contrasena === form.contrasena
       );
       if (!match) {
         setError("Usuario o contraseña incorrectos.");
         setLoading(false);
         return;
       }
+      const idEmpleado = match.empleado?.idEmpleado ?? undefined;
       let nombre = match.empleado?.nombre ?? "Usuario";
-      try {
-        const empId = match.empleado?.idEmpleado ?? match.empleado;
-        if (empId) {
-          const emp = await authService.getEmpleado(empId);
+      if (idEmpleado) {
+        try {
+          const emp = await authService.getEmpleado(idEmpleado);
           nombre = `${emp.nombre ?? ""} ${emp.apellidoP ?? ""}`.trim();
-        }
-      } catch { /* usar nombre parcial */ }
-      login({ idUsuario: match.idUsuario, nombreUsuario: match.nombreUsuario, nombre, rol: "Administrador" });
+        } catch { /* usar nombre parcial */ }
+      }
+      login({ idUsuario: match.idUsuario, nombreUsuario: match.nombreUsuario, nombre, rol: "Administrador", idEmpleado });
     } catch {
-      login({ idUsuario: 0, nombreUsuario: form.usuario, nombre: "Usuario Demo", rol: "Administrador" });
+      login({ idUsuario: 0, nombreUsuario: form.usuario, nombre: "Usuario Demo", rol: "Administrador", idEmpleado: undefined });
     } finally {
       setLoading(false);
     }

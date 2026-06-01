@@ -3,10 +3,9 @@ import {
   ClienteData,
   buscarClienteEnBD,
   buscarEnReniec,
-  crearCliente,
   buscarHabitacionDisponible,
-  crearReserva,
-  crearPago,
+  crearReservaConDni,
+  buscarEmpleadoChatbot,
 } from "../services/reservaWebService";
 
 export const ROOMS = [
@@ -21,7 +20,6 @@ export type DniStatus = "" | "bd" | "reniec" | "notfound";
 
 export interface ReservaResult {
   idReserva: number;
-  idPago?: number;
 }
 
 export function useReservaModal(initialRoom: RoomValue = "estandar") {
@@ -117,39 +115,37 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
     setSendError("");
 
     try {
-      let idCliente: number;
-      if (clienteData?.idCliente) {
-        idCliente = clienteData.idCliente;
-      } else {
-        if (!telefono) throw new Error("El teléfono es obligatorio para registrar el cliente.");
-        idCliente = await crearCliente({
-          nombre, apellidoPaterno: apellidoP, apellidoMaterno: apellidoM,
-          dni, telefono, email: email || null,
-        });
-      }
-
-      const idHabitacion = await buscarHabitacionDisponible(selectedRoom.tipoLabel);
+      const idHabitacion = await buscarHabitacionDisponible(selectedRoom.tipoLabel, llegada, salida);
       if (!idHabitacion) {
         throw new Error(
           `No hay habitaciones de tipo "${selectedRoom.label}" disponibles. Llámanos al +51 922 626 148.`
         );
       }
 
-      const idReserva = await crearReserva({
-        cliente:    { idCliente },
-        habitacion: { idHabitacion },
+      const idEmpleado = await buscarEmpleadoChatbot();
+
+      let payload: any = {
+        idHabitacion,
+        idEmpleado: idEmpleado ?? undefined,
         fechaReserva: today,
         fechaIngreso: llegada,
-        fechaSalida:  salida,
+        fechaSalida: salida,
         estadoReserva: "PENDIENTE",
-      });
+      };
 
-      let idPago: number | undefined;
-      try {
-        idPago = await crearPago(idReserva, total, today);
-      } catch {
-        console.warn("Pago no creado automáticamente — se registrará en recepción.");
+      if (clienteData?.idCliente) {
+        payload.idCliente = clienteData.idCliente;
+      } else {
+        if (!telefono) throw new Error("El teléfono es obligatorio para registrar el cliente.");
+        payload.dniCliente = dni;
+        payload.nombreCliente = nombre;
+        payload.apellidoPaterno = apellidoP;
+        payload.apellidoMaterno = apellidoM;
+        payload.telefonoCliente = telefono;
+        payload.emailCliente = email || "";
       }
+
+      const idReserva = await crearReservaConDni(payload);
 
       try {
         const notif = {
@@ -165,7 +161,7 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
         localStorage.setItem("dvita_notificaciones", JSON.stringify([notif, ...prev]));
       } catch {}
 
-      setResult({ idReserva, idPago });
+      setResult({ idReserva });
       setSent(true);
 
     } catch (err: any) {

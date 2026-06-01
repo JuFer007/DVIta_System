@@ -1,11 +1,16 @@
+<<<<<<< HEAD
 import { BedDouble, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
+=======
+import { useState } from "react";
+import { BedDouble, Wrench, CheckCircle, Loader2 } from "lucide-react";
+>>>>>>> main
 import DataTable from "../../components/DataTable";
-import StatusBadge from "../../components/StatusBadge";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import ConfirmModal from "../../components/ConfirmModal";
 import { habitacionesService, tiposService } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
+import { useToast } from "../../components/Toast";
 
 const mapHabitacion = (h: any) => ({
   id: h.idHabitacion,
@@ -13,8 +18,8 @@ const mapHabitacion = (h: any) => ({
   tipo: h.tipoDescripcion || "—",
   tipoId: h.idTipoHabitacion || "",
   estado: h.estado,
-  precio: Number(h.precio),
-  precioFmt: `S/.${Number(h.precio).toFixed(2)}`,
+  precio: h.tipoHabitacion?.precio ?? 0,
+  precioFmt: `S/.${Number(h.tipoHabitacion?.precio ?? 0).toFixed(2)}`,
   _raw: h,
 });
 
@@ -27,15 +32,16 @@ const mapTipo = (t: any) => ({
 });
 
 const DEMO_HAB: any[] = [
-  { id: 1, numero: "101", tipo: "Estándar",  tipoId: 1, estado: "OCUPADA",    precio: 60,  precioFmt: "S/.60.00",  _raw: {} },
-  { id: 2, numero: "201", tipo: "Suite",     tipoId: 2, estado: "DISPONIBLE", precio: 120, precioFmt: "S/.120.00", _raw: {} },
+  { id: 1, numero: "101", tipo: "INDIVIDUAL", tipoId: 1, estado: "OCUPADA",    precio: 50,  precioFmt: "S/.50.00",  _raw: {} },
+  { id: 2, numero: "102", tipo: "DOBLE",      tipoId: 2, estado: "DISPONIBLE", precio: 75.50, precioFmt: "S/.75.50", _raw: {} },
 ];
 const DEMO_TIPOS: any[] = [
-  { id: 1, descripcion: "Habitación Estándar", precio: 60,  precioFmt: "S/.60.00",  _raw: {} },
-  { id: 2, descripcion: "Suite Deluxe",        precio: 120, precioFmt: "S/.120.00", _raw: {} },
+  { id: 1, descripcion: "INDIVIDUAL", precio: 50,  precioFmt: "S/.50.00",  _raw: {} },
+  { id: 2, descripcion: "DOBLE",      precio: 75.50, precioFmt: "S/.75.50", _raw: {} },
 ];
 
 export default function HabitacionesPage() {
+<<<<<<< HEAD
   const [data, setData] = useState<any[]>(DEMO_HAB);
   const [tiposData, setTiposData] = useState<any[]>(DEMO_TIPOS);
   const [loading, setLoading] = useState(true);
@@ -75,28 +81,39 @@ export default function HabitacionesPage() {
   }, []);
 
   const tipoOptions = tiposData.map((t) => ({
+=======
+  const crud      = useCrud(habitacionesService, mapHabitacion, DEMO_HAB);
+  const tiposCrud = useCrud(tiposService, mapTipo, DEMO_TIPOS);
+  const toast     = useToast();
+  const m = useModalState();
+
+  const [cambiando, setCambiando] = useState<number | null>(null);
+
+  const tipoOptions = tiposCrud.data.map((t) => ({
+>>>>>>> main
     value: t.id,
     label: `${t.descripcion} — S/.${t.precio}/noche`,
   }));
 
+  const sinTipos = tipoOptions.length === 0;
+
   const fields: ModalField[] = [
-    { key: "idTipoHabitacion", label: "Tipo de Habitación", required: true, type: "select", options: tipoOptions },
-    { key: "numeroHabitacion", label: "Número",             required: true, type: "number", placeholder: "101" },
     {
-      key: "estado", label: "Estado", required: true, type: "select",
-      options: [
-        { value: "DISPONIBLE",    label: "Disponible" },
-        { value: "OCUPADA",       label: "Ocupada" },
-        { value: "MANTENIMIENTO", label: "Mantenimiento" },
-      ],
+      key: "idTipoHabitacion", label: "Tipo de Habitación", required: true,
+      type: "select", options: tipoOptions, cols: 2,
+      hint: sinTipos ? "No hay tipos registrados — crea uno primero en la sección Tipos" : undefined,
     },
-    { key: "precio", label: "Precio (S/.)", required: true, type: "number", placeholder: "60.00", hint: "Puede diferir del tipo" },
+    {
+      key: "numeroHabitacion", label: "Número", required: true, type: "number",
+      placeholder: "101", hint: "Número entero positivo único",
+    },
   ];
 
   const getFormData = (row: any) =>
-    row ? { idTipoHabitacion: row.tipoId, numeroHabitacion: row.numero, estado: row.estado, precio: row.precio } : null;
+    row ? { idTipoHabitacion: row.tipoId, numeroHabitacion: row.numero } : { estado: "DISPONIBLE" };
 
   const handleSave = async (form: any) => {
+<<<<<<< HEAD
     const payload = {
       idTipoHabitacion: Number(form.idTipoHabitacion),
       numeroHabitacion: Number(form.numeroHabitacion),
@@ -121,11 +138,38 @@ export default function HabitacionesPage() {
       setTimeout(() => setShowAlert(false), 5000);
     } finally {
       setSaving(false);
+=======
+    const num = Number(form.numeroHabitacion);
+    if (!Number.isInteger(num) || num <= 0) {
+      toast.showToast("fail", "Validación", "El número de habitación debe ser un entero positivo");
+      return;
+    }
+    if (!form.idTipoHabitacion) {
+      toast.showToast("fail", "Validación", "Debes seleccionar un tipo de habitación");
+      return;
+    }
+    const payload: any = {
+      tipoHabitacion: { idTipoHabitacion: Number(form.idTipoHabitacion) },
+      numeroHabitacion: num,
+      estado: m.editing ? m.editing.estado : "DISPONIBLE",
+    };
+    const esNuevo = !m.editing;
+    const ok = esNuevo ? await crud.create(payload) : await crud.update(m.editing.id, payload);
+    if (ok) {
+      const tipoLabel = tipoOptions.find((t) => t.value === Number(form.idTipoHabitacion))?.label ?? "";
+      toast.showToast("success",
+        esNuevo ? "Habitación creada" : "Habitación actualizada",
+        `#${num} — ${tipoLabel}`);
+      m.closeModal();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al guardar", crud.saveError || "Ocurrió un error inesperado");
+>>>>>>> main
     }
   };
 
   const handleDelete = async () => {
     if (!m.deleting) return;
+<<<<<<< HEAD
     setSaving(true);
     setSaveError(null);
     try {
@@ -141,6 +185,39 @@ export default function HabitacionesPage() {
     } finally {
       setSaving(false);
     }
+=======
+    const ok = await crud.remove(m.deleting.id);
+    if (ok) {
+      toast.showToast("success", "Habitación eliminada",
+        `Habitación #${m.deleting.numero} eliminada correctamente`);
+      m.closeDelete();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al eliminar", crud.saveError);
+    }
+  };
+
+  const handleCambiarEstado = async (row: any, nuevoEstado: string) => {
+    setCambiando(row.id);
+    try {
+      await habitacionesService.cambiarEstado(row.id, nuevoEstado);
+      const msg = nuevoEstado === "DISPONIBLE"
+        ? `Habitación #${row.numero} habilitada — ahora está disponible`
+        : `Habitación #${row.numero} puesta en mantenimiento`;
+      toast.showToast("success", "Estado actualizado", msg);
+      crud.refetch();
+    } catch (e: any) {
+      const msg = e?.message || "No se pudo cambiar el estado de la habitación";
+      toast.showToast("fail", "Error", msg);
+    } finally {
+      setCambiando(null);
+    }
+  };
+
+  const estadoColor: Record<string, string> = {
+    DISPONIBLE:   "bg-green-100 text-green-700",
+    OCUPADA:      "bg-amber-100 text-amber-700",
+    MANTENIMIENTO: "bg-neutral-200 text-neutral-600",
+>>>>>>> main
   };
 
   return (
@@ -160,11 +237,47 @@ export default function HabitacionesPage() {
       <DataTable
         title="Habitaciones" data={data} loading={loading} error={error}
         columns={[
-          { key: "id",        label: "ID" },
           { key: "numero",    label: "Nº" },
           { key: "tipo",      label: "Tipo" },
-          { key: "estado",    label: "Estado", render: (v) => <StatusBadge status={v} /> },
+          {
+            key: "estado",    label: "Estado",
+            render: (v) => {
+              const labels: Record<string, string> = { DISPONIBLE: "LIBRE", OCUPADA: "OCUPADA", MANTENIMIENTO: "MANTENIMIENTO" };
+              return (
+                <span className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold ${estadoColor[v] || ""}`}>
+                  {labels[v] || v}
+                </span>
+              );
+            },
+          },
           { key: "precioFmt", label: "Precio" },
+          {
+            key: "_acciones", label: "",
+            render: (_, row: any) => {
+              if (cambiando === row.id) {
+                return <Loader2 className="w-4 h-4 animate-spin text-neutral-400" />;
+              }
+              if (row.estado === "DISPONIBLE") {
+                return (
+                  <button onClick={() => handleCambiarEstado(row, "MANTENIMIENTO")}
+                    className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                    title="Poner en mantenimiento">
+                    <Wrench className="w-3 h-3" /> MANTENIMIENTO
+                  </button>
+                );
+              }
+              if (row.estado === "MANTENIMIENTO") {
+                return (
+                  <button onClick={() => handleCambiarEstado(row, "DISPONIBLE")}
+                    className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-green-700 bg-green-100 hover:bg-green-200 rounded-lg transition-colors"
+                    title="Habilitar habitación">
+                    <CheckCircle className="w-3 h-3" /> DISPONIBLE
+                  </button>
+                );
+              }
+              return null;
+            },
+          },
         ]}
         onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
       />
@@ -176,8 +289,13 @@ export default function HabitacionesPage() {
       />
       <ConfirmModal
         open={m.deleteOpen} title="habitación"
+<<<<<<< HEAD
         description={`¿Eliminar la habitación #${m.deleting?.numero}?`}
         loading={saving} onClose={m.closeDelete} onConfirm={handleDelete}
+=======
+        description={`¿Eliminar la habitación #${m.deleting?.numero}? Esta acción no se puede deshacer.`}
+        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
+>>>>>>> main
       />
     </>
   );

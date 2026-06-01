@@ -1,6 +1,6 @@
-package main.java.com.systemWeb.DVita.Controller;
-import main.java.com.systemWeb.DVita.DTO.ReniecDataDTO;
-import main.java.com.systemWeb.DVita.Service.MicroServicios.ReniecService;
+package com.systemWeb.DVita.Controller;
+import com.systemWeb.DVita.DTO.ReniecDataDTO;
+import com.systemWeb.DVita.Service.MicroServicios.ReniecService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

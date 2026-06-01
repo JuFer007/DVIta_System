@@ -38,12 +38,12 @@ export async function buscarEnReniec(dni: string): Promise<Partial<ClienteData> 
 
     const data = await res.json();
 
-    if (!data?.first_name) return null;
+    if (!data?.nombres) return null;
 
     return {
-      nombre: data.first_name ?? "",
-      apellidoPaterno: data.first_last_name ?? "",
-      apellidoMaterno: data.second_last_name ?? "",
+      nombre: data.nombres ?? "",
+      apellidoPaterno: data.apellidoPaterno ?? "",
+      apellidoMaterno: data.apellidoMaterno ?? "",
       dni,
       esNuevo: true,
     };
@@ -70,14 +70,16 @@ export async function crearCliente(payload: {
   return data.idCliente as number;
 }
  
-export async function buscarHabitacionDisponible(tipoLabel: string): Promise<number | null> {
+export async function buscarHabitacionDisponible(
+  tipoLabel: string, fechaIngreso: string, fechaSalida: string
+): Promise<number | null> {
   try {
-    const res = await fetch("/api/habitaciones");
+    const res = await fetch(`/api/habitaciones/disponibles?fechaIngreso=${fechaIngreso}&fechaSalida=${fechaSalida}`);
     if (!res.ok) return null;
     const habs: any[] = await res.json();
     const match = habs.find(
       (h) =>
-        h.estado === "DISPONIBLE" &&
+        h.estado !== "MANTENIMIENTO" &&
         (h.tipoHabitacion?.descripcion ?? "")
           .toLowerCase()
           .includes(tipoLabel.toLowerCase())
@@ -105,25 +107,41 @@ export async function crearReserva(payload: {
   const data = await res.json();
   return data.idReserva as number;
 }
- 
-/** Crea el pago pendiente vinculado a la reserva */
-export async function crearPago(
-  idReserva: number,
-  monto: number,
-  fechaPago: string
-): Promise<number | undefined> {
-  const res = await fetch("/api/pagos", {
+
+export async function crearReservaConDni(payload: {
+  idCliente?: number;
+  dniCliente?: string;
+  nombreCliente?: string;
+  apellidoPaterno?: string;
+  apellidoMaterno?: string;
+  telefonoCliente?: string;
+  emailCliente?: string;
+  idHabitacion: number;
+  idEmpleado?: number;
+  fechaReserva: string;
+  fechaIngreso: string;
+  fechaSalida: string;
+  estadoReserva: string;
+}): Promise<number> {
+  const res = await fetch("/api/reservas/con-dni", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      reserva: { idReserva },
-      monto,
-      fechaPago,
-      metodoPago: "EFECTIVO",
-    }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(await res.text().catch(() => `HTTP ${res.status}`));
   const data = await res.json();
-  return data.idPago as number | undefined;
+  return data.idReserva as number;
+}
+
+export async function buscarEmpleadoChatbot(): Promise<number | null> {
+  try {
+    const res = await fetch("/api/empleados");
+    if (!res.ok) return null;
+    const emp: any[] = await res.json();
+    const bot = emp.find((e: any) => e.dni === "00000000");
+    return bot ? (bot.idEmpleado as number) : null;
+  } catch {
+    return null;
+  }
 }
  

@@ -1,11 +1,10 @@
-package main.java.com.systemWeb.DVita.Model;
+package com.systemWeb.DVita.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 
 @Entity

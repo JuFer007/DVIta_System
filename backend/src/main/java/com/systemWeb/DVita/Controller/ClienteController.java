@@ -1,6 +1,6 @@
-package main.java.com.systemWeb.DVita.Controller;
-import main.java.com.systemWeb.DVita.Model.Cliente;
-import main.java.com.systemWeb.DVita.Service.ClienteService;
+package com.systemWeb.DVita.Controller;
+import com.systemWeb.DVita.Model.Cliente;
+import com.systemWeb.DVita.Service.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,13 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
         return clienteService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/dni/{dni}")
+    public ResponseEntity<Cliente> buscarPorDni(@PathVariable String dni) {
+        return clienteService.buscarPorDni(dni)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

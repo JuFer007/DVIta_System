@@ -80,7 +80,6 @@ export default function PagosPage() {
       <DataTable
         title="Pagos" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id",       label: "ID" },
           { key: "reserva",  label: "Reserva" },
           { key: "montoFmt", label: "Monto" },
           { key: "fecha",    label: "Fecha" },

@@ -1,5 +1,5 @@
-package main.java.com.systemWeb.DVita.Controller;
-import main.java.com.systemWeb.DVita.Service.DashboardService;
+package com.systemWeb.DVita.Controller;
+import com.systemWeb.DVita.Service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +8,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/dashboard")
 @RequiredArgsConstructor
+
 public class DashboardController {
     private final DashboardService dashboardService;
 

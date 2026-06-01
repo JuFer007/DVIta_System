@@ -1,4 +1,4 @@
-package main.java.com.systemWeb.DVita.Model;
+package com.systemWeb.DVita.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -11,6 +11,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Horario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

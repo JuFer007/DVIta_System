@@ -1,6 +1,6 @@
-package main.java.com.systemWeb.DVita.Service;
-import main.java.com.systemWeb.DVita.Model.Recepcionista;
-import main.java.com.systemWeb.DVita.Repository.RecepcionistaRepository;
+package com.systemWeb.DVita.Service;
+import com.systemWeb.DVita.Model.Recepcionista;
+import com.systemWeb.DVita.Repository.RecepcionistaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -21,15 +21,20 @@ public class RecepcionistaService {
     }
 
     public Recepcionista guardar(Recepcionista recepcionista) {
+        recepcionista.setTurnoTrabajo(upper(recepcionista.getTurnoTrabajo()));
         return recepcionistaRepository.save(recepcionista);
     }
 
     public Recepcionista actualizar(Long id, Recepcionista recepcionistaActualizado) {
         return recepcionistaRepository.findById(id).map(recepcionista -> {
             recepcionista.setEmpleado(recepcionistaActualizado.getEmpleado());
-            recepcionista.setTurnoTrabajo(recepcionistaActualizado.getTurnoTrabajo());
+            recepcionista.setTurnoTrabajo(upper(recepcionistaActualizado.getTurnoTrabajo()));
             return recepcionistaRepository.save(recepcionista);
         }).orElseThrow(() -> new RuntimeException("Recepcionista no encontrado con id: " + id));
+    }
+
+    private static String upper(String s) {
+        return s != null ? s.toUpperCase().trim() : null;
     }
 
     public void eliminar(Long id) {

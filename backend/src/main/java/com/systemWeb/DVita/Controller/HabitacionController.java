@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package main.java.com.systemWeb.DVita.Controller;
 import main.java.com.systemWeb.DVita.DTO.HabitacionDTO;
 import main.java.com.systemWeb.DVita.DTO.HabitacionRequestDTO;
@@ -12,6 +13,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
+=======
+package com.systemWeb.DVita.Controller;
+import com.systemWeb.DVita.Model.Habitacion;
+import com.systemWeb.DVita.Service.HabitacionService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+>>>>>>> main
 
 @RestController
 @RequestMapping("/api/habitaciones")
@@ -73,5 +88,29 @@ public class HabitacionController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         habitacionService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<Habitacion>> habitacionesDisponibles(
+            @RequestParam("fechaIngreso") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaIngreso,
+            @RequestParam("fechaSalida") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaSalida,
+            @RequestParam(value = "tipoId", required = false) Long tipoId
+    ) {
+        List<Habitacion> disponibles = tipoId != null
+                ? habitacionService.disponiblesPorTipo(tipoId, fechaIngreso, fechaSalida)
+                : habitacionService.habitacionesDisponibles(fechaIngreso, fechaSalida);
+        return ResponseEntity.ok(disponibles);
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<Habitacion> cambiarEstado(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body
+    ) {
+        String nuevoEstado = body.get("estado");
+        if (nuevoEstado == null || nuevoEstado.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(habitacionService.cambiarEstado(id, nuevoEstado.toUpperCase().trim()));
     }
 }

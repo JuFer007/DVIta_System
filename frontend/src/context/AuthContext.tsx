@@ -5,6 +5,7 @@ interface AuthUser {
   nombre: string;
   nombreUsuario: string;
   rol: string;
+  idEmpleado?: number;
 }
 
 interface AuthContextType {

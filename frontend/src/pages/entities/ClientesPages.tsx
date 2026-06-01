@@ -5,6 +5,7 @@ import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
 import { clientesService } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
+import { useToast } from "../../components/Toast";
 
 const mapCliente = (c: any) => ({
   id: c.idCliente,
@@ -26,14 +27,15 @@ const FIELDS: ModalField[] = [
   { key: "nombre",          label: "Nombre",          required: true, placeholder: "Ej: María" },
   { key: "apellidoPaterno", label: "Apellido Paterno", required: true, placeholder: "Ej: López" },
   { key: "apellidoMaterno", label: "Apellido Materno", required: true, placeholder: "Ej: Ríos" },
-  { key: "dni",             label: "DNI",              required: true, placeholder: "12345678", hint: "8 dígitos" },
-  { key: "telefono",        label: "Teléfono",         required: true, placeholder: "987654321", hint: "9-15 dígitos" },
-  { key: "email",           label: "Email",            type: "email",  placeholder: "correo@email.com", cols: 2 },
+  { key: "dni",             label: "DNI",              required: true, placeholder: "12345678", hint: "8 dígitos exactos" },
+  { key: "telefono",        label: "Teléfono",         required: true, placeholder: "987654321", hint: "9 dígitos exactos" },
+  { key: "email",           label: "Email",            type: "email",  placeholder: "correo@email.com", hint: "ej: usuario@dominio.com", cols: 2 },
 ];
 
 export default function ClientesPage() {
   const crud = useCrud(clientesService, mapCliente, DEMO);
   const m = useModalState();
+  const toast = useToast();
 
   const getFormData = (row: any) =>
     row
@@ -41,19 +43,49 @@ export default function ClientesPage() {
       : null;
 
   const handleSave = async (form: any) => {
+    if (!form.dni?.trim() || !/^\d{8}$/.test(form.dni)) {
+      toast.showToast("fail", "Validación", "El DNI debe tener exactamente 8 dígitos numéricos");
+      return;
+    }
+    if (!form.nombre?.trim() || !form.apellidoPaterno?.trim()) {
+      toast.showToast("fail", "Validación", "Nombre y Apellido Paterno son obligatorios");
+      return;
+    }
+    if (!form.telefono?.trim() || !/^\d{9}$/.test(form.telefono)) {
+      toast.showToast("fail", "Validación", "El teléfono debe tener exactamente 9 dígitos numéricos");
+      return;
+    }
+    if (form.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      toast.showToast("fail", "Validación", "El email no tiene un formato válido");
+      return;
+    }
     const payload = {
       nombre: form.nombre, apellidoPaterno: form.apellidoPaterno,
       apellidoMaterno: form.apellidoMaterno, dni: form.dni,
-      telefono: form.telefono, email: form.email || null,
+      telefono: form.telefono, email: form.email?.trim() || null,
     };
-    const ok = m.editing ? await crud.update(m.editing.id, payload) : await crud.create(payload);
-    if (ok) m.closeModal();
+    const esNuevo = !m.editing;
+    const ok = esNuevo ? await crud.create(payload) : await crud.update(m.editing.id, payload);
+    if (ok) {
+      toast.showToast("success",
+        esNuevo ? "Cliente creado" : "Cliente actualizado",
+        `${form.nombre} ${form.apellidoPaterno}`);
+      m.closeModal();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al guardar", crud.saveError);
+    }
   };
 
   const handleDelete = async () => {
     if (!m.deleting) return;
     const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
+    if (ok) {
+      toast.showToast("success", "Cliente eliminado",
+        `${m.deleting.nombre} ${m.deleting.apellidoP} eliminado correctamente`);
+      m.closeDelete();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al eliminar", crud.saveError);
+    }
   };
 
   return (
@@ -61,7 +93,6 @@ export default function ClientesPage() {
       <DataTable
         title="Clientes" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "id",        label: "ID" },
           { key: "nombre",    label: "Nombre" },
           { key: "apellidoP", label: "Ap. Paterno" },
           { key: "apellidoM", label: "Ap. Materno" },
