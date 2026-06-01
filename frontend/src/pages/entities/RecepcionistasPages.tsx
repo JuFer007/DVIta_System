@@ -1,25 +1,26 @@
-import { User } from "lucide-react";
+import { ClipboardList, Pencil, Mail } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
-import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
-import { usuariosService, empleadosService } from "../../services/api";
+import { recepcionistasService, empleadosService } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
+import { useToast } from "../../components/Toast";
 
 const mapEmpleado = (e: any) => ({ id: e.idEmpleado, nombre: e.nombre, apellidoP: e.apellidoP, _raw: e });
-const mapUsuario  = (u: any) => ({
-  id: u.idUsuario,
-  empleadoId: u.empleado?.idEmpleado || "",
-  empleado: `${u.empleado?.nombre || ""} ${u.empleado?.apellidoP || ""}`.trim() || "—",
-  usuario: u.nombreUsuario, contrasena: "••••••••", _raw: u,
+const mapRecepcionista = (r: any) => ({
+  id: r.idRecepcionista,
+  empleadoId: r.empleado?.idEmpleado || "",
+  empleado: `${r.empleado?.nombre || ""} ${r.empleado?.apellidoP || ""}`.trim() || "—",
+  correo: r.correoElectronico, _raw: r,
 });
 
-const DEMO_U: any[] = [{ id: 1, empleadoId: 1, empleado: "Pedro Huamán", usuario: "pedro.huaman", contrasena: "••••••••", _raw: {} }];
-const DEMO_E: any[] = [{ id: 1, nombre: "Pedro Huamán", apellidoP: "Huamán", _raw: {} }];
+const DEMO_R: any[] = [{ id: 1, empleadoId: 1, empleado: "María García", correo: "maria.recep@dvita.pe", _raw: {} }];
+const DEMO_E: any[] = [{ id: 1, nombre: "María García", apellidoP: "García", _raw: {} }];
 
-export default function UsuariosPage() {
-  const crud    = useCrud(usuariosService,  mapUsuario,  DEMO_U);
-  const empCrud = useCrud(empleadosService, mapEmpleado, DEMO_E);
+export default function RecepcionistasPage() {
+  const crud    = useCrud(recepcionistasService, mapRecepcionista, DEMO_R);
+  const empCrud = useCrud(empleadosService,      mapEmpleado,      DEMO_E);
+  const toast   = useToast();
   const m = useModalState();
 
   const fields: ModalField[] = [
@@ -28,47 +29,62 @@ export default function UsuariosPage() {
       options: empCrud.data.map((e) => ({ value: e.id, label: `${e.nombre} ${e.apellidoP}` })),
       cols: 2,
     },
-    { key: "nombreUsuario", label: "Nombre de usuario", required: true,      placeholder: "pedro.huaman", hint: "4-50 caracteres" },
-    { key: "contrasena",    label: "Contraseña",        required: !m.editing, type: "password", hint: "Mínimo 8 caracteres", placeholder: m.editing ? "Dejar vacío para no cambiar" : undefined },
+    {
+      key: "correoElectronico", label: "Correo Electrónico", required: true, type: "email",
+      placeholder: "recepcion@dvita.pe", cols: 2,
+    },
   ];
 
   const getFormData = (row: any) =>
-    row ? { idEmpleado: row.empleadoId, nombreUsuario: row.usuario, contrasena: "" } : null;
+    row ? { idEmpleado: row.empleadoId, correoElectronico: row.correo } : null;
 
   const handleSave = async (form: any) => {
-    const payload: any = { empleado: { idEmpleado: Number(form.idEmpleado) }, nombreUsuario: form.nombreUsuario };
-    if (form.contrasena) payload.contrasena = form.contrasena;
+    if (form.correoElectronico && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correoElectronico)) {
+      toast.showToast("fail", "Validación", "Correo electrónico no válido");
+      return;
+    }
+    const payload = { empleado: { idEmpleado: Number(form.idEmpleado) }, correoElectronico: form.correoElectronico };
     const ok = m.editing ? await crud.update(m.editing.id, payload) : await crud.create(payload);
-    if (ok) m.closeModal();
-  };
-
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
+    if (ok) {
+      toast.showToast("success", m.editing ? "Recepcionista actualizado" : "Recepcionista creado", form.correoElectronico);
+      m.closeModal();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al guardar", crud.saveError);
+    }
   };
 
   return (
     <>
       <DataTable
-        title="Usuarios" data={crud.data} loading={crud.loading} error={crud.error}
+        title="Recepcionistas" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "empleado",   label: "Empleado" },
-          { key: "usuario",    label: "Usuario" },
-          { key: "contrasena", label: "Contraseña" },
+          {
+            key: "empleado", label: "Empleado",
+            render: (v: string, row: any) => (
+              <div className="flex items-center gap-3">
+                <span className="w-7 h-7 rounded-full bg-sky-100 text-sky-700 text-xs font-bold flex items-center justify-center shrink-0">
+                  <ClipboardList className="w-3.5 h-3.5" />
+                </span>
+                <span className="font-medium text-gray-800">{v}</span>
+              </div>
+            ),
+          },
+          {
+            key: "correo", label: "Correo",
+            render: (v: string) => v ? (
+              <a href={`mailto:${v}`} className="inline-flex items-center gap-1.5 text-brand-600 hover:text-brand-800 hover:underline">
+                <Mail className="w-3 h-3" />{v}
+              </a>
+            ) : "—",
+          },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
-        open={m.modalOpen} title="Usuario" icon={<User className="w-4 h-4" />}
+        open={m.modalOpen} title="Recepcionista" icon={<ClipboardList className="w-4 h-4" />}
         fields={fields} data={getFormData(m.editing)}
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
-      />
-      <ConfirmModal
-        open={m.deleteOpen} title="usuario"
-        description={`¿Eliminar al usuario "${m.deleting?.usuario}"?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
       />
     </>
   );

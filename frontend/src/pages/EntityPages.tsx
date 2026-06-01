@@ -3,7 +3,6 @@ import { Users, BriefcaseBusiness, BedDouble, Bed, CalendarCheck, CreditCard, Us
 import DataTable from "../components/DataTable";
 import StatusBadge from "../components/StatusBadge";
 import EntityModal, { type ModalField } from "../components/EntityModal";
-import ConfirmModal from "../components/ConfirmModal";
 import { useCrud } from "../hooks/useCrud";
 import {
   clientesService, empleadosService, habitacionesService,
@@ -152,8 +151,8 @@ export function ClientesPage() {
     { key: "nombre",           label: "Nombre",           required: true,  placeholder: "Ej: María", cols: 1 },
     { key: "apellidoPaterno",  label: "Apellido Paterno",  required: true,  placeholder: "Ej: López", cols: 1 },
     { key: "apellidoMaterno",  label: "Apellido Materno",  required: true,  placeholder: "Ej: Ríos",  cols: 1 },
-    { key: "dni",              label: "DNI",               required: true,  placeholder: "12345678",   hint: "8 dígitos" },
-    { key: "telefono",         label: "Teléfono",          required: true,  placeholder: "987654321",  hint: "9-15 dígitos" },
+    { key: "dni",              label: "DNI",               required: true,  pattern: "\\d{8}", maxLength: 8, placeholder: "12345678",   hint: "8 dígitos exactos" },
+    { key: "telefono",         label: "Teléfono",          required: true,  pattern: "\\d{9}", maxLength: 9, placeholder: "987654321",  hint: "9 dígitos exactos" },
     { key: "email",            label: "Email",             type: "email",   placeholder: "correo@email.com", cols: 2 },
   ];
 
@@ -163,6 +162,10 @@ export function ClientesPage() {
   } : null;
 
   const handleSave = async (form: any) => {
+    if (!form.dni?.trim() || !/^\d{8}$/.test(form.dni)) return;
+    if (!form.nombre?.trim() || !form.apellidoPaterno?.trim()) return;
+    if (!form.telefono?.trim() || !/^\d{9}$/.test(form.telefono)) return;
+    if (form.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return;
     const payload = {
       nombre: form.nombre, apellidoPaterno: form.apellidoPaterno,
       apellidoMaterno: form.apellidoMaterno, dni: form.dni,
@@ -174,12 +177,6 @@ export function ClientesPage() {
     if (ok) m.closeModal();
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
-  };
-
   return (
     <>
       <DataTable
@@ -189,7 +186,7 @@ export function ClientesPage() {
           { key: "apellidoP", label: "Ap. Paterno" }, { key: "apellidoM", label: "Ap. Materno" },
           { key: "dni", label: "DNI" }, { key: "telefono", label: "Teléfono" }, { key: "email", label: "Email" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Cliente" icon={<Users className="w-4 h-4" />}
@@ -197,11 +194,7 @@ export function ClientesPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="cliente"
-        description={`¿Eliminar a ${m.deleting?.nombre} ${m.deleting?.apellidoP}? Esta acción no se puede deshacer.`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }
@@ -214,8 +207,8 @@ export function EmpleadosPage() {
     { key: "nombre",    label: "Nombre",           required: true, placeholder: "Ej: Pedro" },
     { key: "apellidoP", label: "Apellido Paterno",  required: true, placeholder: "Ej: Huamán" },
     { key: "apellidoM", label: "Apellido Materno",  required: true, placeholder: "Ej: García" },
-    { key: "dni",       label: "DNI",               required: true, placeholder: "12345678", hint: "8 dígitos exactos" },
-    { key: "telefono",  label: "Teléfono",          required: true, placeholder: "912345678" },
+    { key: "dni",       label: "DNI",               required: true, pattern: "\\d{8}", maxLength: 8, placeholder: "12345678", hint: "8 dígitos exactos" },
+    { key: "telefono",  label: "Teléfono",          required: true, pattern: "\\d{9}", maxLength: 9, placeholder: "912345678", hint: "9 dígitos exactos" },
   ];
 
   const getFormData = (row: any) => row ? {
@@ -224,16 +217,13 @@ export function EmpleadosPage() {
   } : null;
 
   const handleSave = async (form: any) => {
+    if (!form.dni?.trim() || !/^\d{8}$/.test(form.dni)) return;
+    if (!form.nombre?.trim() || !form.apellidoP?.trim()) return;
+    if (!form.telefono?.trim() || !/^\d{9}$/.test(form.telefono)) return;
     const ok = m.editing
       ? await crud.update(m.editing.id, { nombre: form.nombre, apellidoP: form.apellidoP, apellidoM: form.apellidoM, dni: form.dni, telefono: form.telefono })
       : await crud.create({ nombre: form.nombre, apellidoP: form.apellidoP, apellidoM: form.apellidoM, dni: form.dni, telefono: form.telefono });
     if (ok) m.closeModal();
-  };
-
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
   };
 
   return (
@@ -245,7 +235,7 @@ export function EmpleadosPage() {
           { key: "apellidoP", label: "Ap. Paterno" }, { key: "apellidoM", label: "Ap. Materno" },
           { key: "dni", label: "DNI" }, { key: "telefono", label: "Teléfono" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Empleado" icon={<BriefcaseBusiness className="w-4 h-4" />}
@@ -253,11 +243,7 @@ export function EmpleadosPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="empleado"
-        description={`¿Eliminar al empleado ${m.deleting?.nombre} ${m.deleting?.apellidoP}?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }
@@ -268,22 +254,19 @@ export function TiposPage() {
 
   const fields: ModalField[] = [
     { key: "descripcion", label: "Descripción", required: true, placeholder: "Ej: Suite Deluxe", cols: 2 },
-    { key: "precio",      label: "Precio (S/.)", required: true, type: "number", placeholder: "120.00", hint: "Precio base por noche" },
+    { key: "precio",      label: "Precio (S/.)", required: true, type: "number", placeholder: "120.00", min: 0.01, hint: "Precio base por noche — debe ser mayor a 0" },
   ];
 
   const getFormData = (row: any) => row ? { descripcion: row.descripcion, precio: row.precio } : null;
 
   const handleSave = async (form: any) => {
+    const precio = parseFloat(form.precio);
+    if (isNaN(precio) || precio <= 0) return;
+    if (!form.descripcion?.trim()) return;
     const ok = m.editing
-      ? await crud.update(m.editing.id, { descripcion: form.descripcion, precio: parseFloat(form.precio) })
-      : await crud.create({ descripcion: form.descripcion, precio: parseFloat(form.precio) });
+      ? await crud.update(m.editing.id, { descripcion: form.descripcion, precio })
+      : await crud.create({ descripcion: form.descripcion, precio });
     if (ok) m.closeModal();
-  };
-
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
   };
 
   return (
@@ -295,7 +278,7 @@ export function TiposPage() {
           { key: "descripcion", label: "Descripción" },
           { key: "precioFmt", label: "Precio" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Tipo de Habitación" icon={<Bed className="w-4 h-4" />}
@@ -303,11 +286,7 @@ export function TiposPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="tipo de habitación"
-        description={`¿Eliminar el tipo "${m.deleting?.descripcion}"?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }
@@ -327,7 +306,7 @@ export function HabitacionesPage() {
       key: "idTipoHabitacion", label: "Tipo de Habitación", required: true,
       type: "select", options: tipoOptions,
     },
-    { key: "numeroHabitacion", label: "Número de Habitación", required: true, type: "number", placeholder: "101" },
+    { key: "numeroHabitacion", label: "Número de Habitación", required: true, type: "number", placeholder: "101", min: 1 },
     {
       key: "estado", label: "Estado", required: true, type: "select",
       options: [
@@ -347,9 +326,12 @@ export function HabitacionesPage() {
   } : null;
 
   const handleSave = async (form: any) => {
+    const num = Number(form.numeroHabitacion);
+    if (!Number.isInteger(num) || num <= 0) return;
+    if (!form.idTipoHabitacion) return;
     const payload = {
       tipoHabitacion: { idTipoHabitacion: Number(form.idTipoHabitacion) },
-      numeroHabitacion: Number(form.numeroHabitacion),
+      numeroHabitacion: num,
       estado: form.estado,
       precio: parseFloat(form.precio),
     };
@@ -357,12 +339,6 @@ export function HabitacionesPage() {
       ? await crud.update(m.editing.id, payload)
       : await crud.create(payload);
     if (ok) m.closeModal();
-  };
-
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
   };
 
   return (
@@ -375,7 +351,7 @@ export function HabitacionesPage() {
           { key: "estado", label: "Estado", render: (v) => <StatusBadge status={v} /> },
           { key: "precioFmt", label: "Precio" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Habitación" icon={<BedDouble className="w-4 h-4" />}
@@ -383,11 +359,7 @@ export function HabitacionesPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="habitación"
-        description={`¿Eliminar la habitación #${m.deleting?.numero}?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }
@@ -438,6 +410,9 @@ export function ReservasPage() {
   } : { estadoReserva: "PENDIENTE", fechaReserva: today };
 
   const handleSave = async (form: any) => {
+    if (!form.fechaIngreso || !form.fechaSalida) return;
+    if (form.fechaSalida <= form.fechaIngreso) return;
+    if (!form.idCliente || !form.idHabitacion || !form.idEmpleado) return;
     const payload = {
       cliente:    { idCliente:    Number(form.idCliente) },
       habitacion: { idHabitacion: Number(form.idHabitacion) },
@@ -451,12 +426,6 @@ export function ReservasPage() {
       ? await crud.update(m.editing.id, payload)
       : await crud.create(payload);
     if (ok) m.closeModal();
-  };
-
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
   };
 
   const handleCheckIn = async (row: any) => {
@@ -531,7 +500,7 @@ export function ReservasPage() {
             ),
           },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Reserva" icon={<CalendarCheck className="w-4 h-4" />}
@@ -539,11 +508,7 @@ export function ReservasPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="reserva"
-        description={`¿Eliminar la reserva #${m.deleting?.id} de ${m.deleting?.cliente}?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }
@@ -596,12 +561,6 @@ export function PagosPage() {
     if (ok) m.closeModal();
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
-  };
-
   return (
     <>
       <DataTable
@@ -611,7 +570,7 @@ export function PagosPage() {
           { key: "montoFmt", label: "Monto" }, { key: "fecha", label: "Fecha" },
           { key: "metodo", label: "Método" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Pago" icon={<CreditCard className="w-4 h-4" />}
@@ -619,11 +578,7 @@ export function PagosPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="pago"
-        description={`¿Eliminar el pago #${m.deleting?.id} de ${m.deleting?.montoFmt}?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }
@@ -641,7 +596,7 @@ export function UsuariosPage() {
   const fields: ModalField[] = [
     { key: "idEmpleado",    label: "Empleado",       required: true, type: "select", options: empOptions, cols: 2 },
     { key: "nombreUsuario", label: "Nombre de usuario", required: true, placeholder: "pedro.huaman", hint: "4-50 caracteres" },
-    { key: "contrasena",    label: "Contraseña",     required: !m.editing, type: "password", hint: "Mínimo 8 caracteres", placeholder: m.editing ? "Dejar vacío para no cambiar" : undefined },
+    { key: "contrasena",    label: "Contraseña",     required: !m.editing, type: "password", hint: "Mínimo 6 caracteres", minLength: 6, placeholder: m.editing ? "Dejar vacío para no cambiar" : undefined },
   ];
 
   const getFormData = (row: any) => row ? {
@@ -649,6 +604,7 @@ export function UsuariosPage() {
   } : null;
 
   const handleSave = async (form: any) => {
+    if (form.contrasena && form.contrasena.length < 6) return;
     const payload: any = {
       empleado: { idEmpleado: Number(form.idEmpleado) },
       nombreUsuario: form.nombreUsuario,
@@ -660,12 +616,6 @@ export function UsuariosPage() {
     if (ok) m.closeModal();
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
-  };
-
   return (
     <>
       <DataTable
@@ -674,7 +624,7 @@ export function UsuariosPage() {
           { key: "empleado", label: "Empleado" },
           { key: "usuario", label: "Usuario" }, { key: "contrasena", label: "Contraseña" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Usuario" icon={<User className="w-4 h-4" />}
@@ -682,11 +632,7 @@ export function UsuariosPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="usuario"
-        description={`¿Eliminar al usuario "${m.deleting?.usuario}"?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }
@@ -728,12 +674,6 @@ export function RecepcionistasPage() {
     if (ok) m.closeModal();
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
-  };
-
   return (
     <>
       <DataTable
@@ -742,7 +682,7 @@ export function RecepcionistasPage() {
           { key: "empleado", label: "Empleado" },
           { key: "turno", label: "Turno" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Recepcionista" icon={<ConciergeBell className="w-4 h-4" />}
@@ -750,11 +690,7 @@ export function RecepcionistasPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="recepcionista"
-        description={`¿Eliminar al recepcionista ${m.deleting?.empleado}?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }
@@ -779,6 +715,7 @@ export function AdministradoresPage() {
   } : null;
 
   const handleSave = async (form: any) => {
+    if (form.correoElectronico && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correoElectronico)) return;
     const payload = {
       empleado: { idEmpleado: Number(form.idEmpleado) },
       correoElectronico: form.correoElectronico,
@@ -789,12 +726,6 @@ export function AdministradoresPage() {
     if (ok) m.closeModal();
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
-  };
-
   return (
     <>
       <DataTable
@@ -803,7 +734,7 @@ export function AdministradoresPage() {
           { key: "empleado", label: "Empleado" },
           { key: "correo", label: "Correo" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Administrador" icon={<Crown className="w-4 h-4" />}
@@ -811,11 +742,7 @@ export function AdministradoresPage() {
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen} title="administrador"
-        description={`¿Eliminar al administrador ${m.deleting?.empleado}?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
-      />
+
     </>
   );
 }

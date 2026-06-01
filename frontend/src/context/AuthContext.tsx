@@ -1,17 +1,18 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-interface AuthUser {
+export interface AuthUser {
   idUsuario: number;
   nombre: string;
   nombreUsuario: string;
-  rol: string;
   idEmpleado?: number;
+  permisos: Record<string, boolean>;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   login: (user: AuthUser) => void;
   logout: () => void;
+  tienePermiso: (modulo: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,9 +22,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = (userData: AuthUser) => setUser(userData);
   const logout = () => setUser(null);
+  const tienePermiso = (modulo: string) => {
+    if (!user) return false;
+    if (!user.permisos) return true;
+    return user.permisos[modulo] !== false;
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, tienePermiso }}>
       {children}
     </AuthContext.Provider>
   );

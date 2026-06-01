@@ -28,6 +28,8 @@ export interface ModalField {
   options?: SelectOption[];           // para type="select"
   min?: string | number;
   max?: string | number;
+  minLength?: number;
+  maxLength?: number;
   pattern?: string;
   hint?: string;                      // texto de ayuda bajo el campo
   cols?: 1 | 2;                       // span en grid (default 1)
@@ -109,6 +111,7 @@ function FieldInput({ field, value, onChange, error }: FieldProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={field.placeholder}
+        maxLength={field.maxLength}
         className={base + " resize-none"}
       />
     );
@@ -126,6 +129,8 @@ function FieldInput({ field, value, onChange, error }: FieldProps) {
       placeholder={field.placeholder}
       min={field.min as string}
       max={field.max as string}
+      minLength={field.minLength}
+      maxLength={field.maxLength}
       pattern={field.pattern}
       className={base}
     />
@@ -147,6 +152,7 @@ function PasswordField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={field.placeholder || "••••••••"}
+        minLength={field.minLength}
         className={base + " pr-10"}
       />
       <button

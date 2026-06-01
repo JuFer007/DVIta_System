@@ -44,25 +44,21 @@ public class HabitacionService {
         return s != null ? s.toUpperCase().trim() : null;
     }
 
-    public void eliminar(Long id) {
-        boolean tieneReservas = reservaRepository.findByHabitacionIdHabitacionAndEstadoReservaNot(id, "CANCELADA")
-                .stream().anyMatch(r -> r.getFechaSalida().isAfter(LocalDate.now()) || r.getFechaIngreso().isAfter(LocalDate.now()));
-        if (tieneReservas) {
-            throw new IllegalStateException("No se puede eliminar la habitación porque tiene reservas activas o futuras");
-        }
-        habitacionRepository.deleteById(id);
-    }
+
 
     @Transactional
     public Habitacion cambiarEstado(Long id, String nuevoEstado) {
         return habitacionRepository.findById(id).map(habitacion -> {
             String actual = habitacion.getEstado();
 
+            if ("EN_LIMPIEZA".equals(nuevoEstado) && !"DISPONIBLE".equals(actual)) {
+                throw new IllegalStateException("Solo se puede asignar limpieza a una habitación disponible");
+            }
+            if ("DISPONIBLE".equals(nuevoEstado) && !"MANTENIMIENTO".equals(actual) && !"EN_LIMPIEZA".equals(actual)) {
+                throw new IllegalStateException("Solo se puede habilitar una habitación en mantenimiento o en limpieza");
+            }
             if ("MANTENIMIENTO".equals(nuevoEstado) && !"DISPONIBLE".equals(actual)) {
                 throw new IllegalStateException("Solo se puede poner en mantenimiento una habitación disponible");
-            }
-            if ("DISPONIBLE".equals(nuevoEstado) && !"MANTENIMIENTO".equals(actual)) {
-                throw new IllegalStateException("Solo se puede habilitar una habitación que estaba en mantenimiento");
             }
 
             habitacion.setEstado(nuevoEstado);

@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -144,11 +145,7 @@ public class ReservaService {
         }).orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
     }
 
-    @Transactional
-    public void eliminar(Long id) {
-        pagoRepository.findByReservaIdReserva(id).ifPresent(pagoRepository::delete);
-        reservaRepository.deleteById(id);
-    }
+
 
     private void generarPago(Reserva reserva) {
         Habitacion habitacion = reserva.getHabitacion();
@@ -186,7 +183,7 @@ public class ReservaService {
 
         Habitacion habitacion = reserva.getHabitacion();
         if (habitacion != null && "OCUPADA".equals(habitacion.getEstado())) {
-            habitacion.setEstado("DISPONIBLE");
+            habitacion.setEstado("EN_LIMPIEZA");
             habitacionRepository.save(habitacion);
         }
 
@@ -233,10 +230,29 @@ public class ReservaService {
 
         Habitacion habitacion = reserva.getHabitacion();
         if (habitacion != null) {
-            habitacion.setEstado("DISPONIBLE");
+            habitacion.setEstado("EN_LIMPIEZA");
             habitacionRepository.save(habitacion);
         }
         return reserva;
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void autoCompletarReservasVencidas() {
+        LocalDate hoy = LocalDate.now();
+        List<Reserva> vencidas = reservaRepository.findAll().stream()
+                .filter(r -> ("CONFIRMADA".equals(r.getEstadoReserva()) || "OCUPADA".equals(r.getEstadoReserva()))
+                        && r.getFechaSalida() != null && r.getFechaSalida().isBefore(hoy))
+                .collect(Collectors.toList());
+        for (Reserva r : vencidas) {
+            r.setEstadoReserva("COMPLETADA");
+            reservaRepository.save(r);
+            Habitacion h = r.getHabitacion();
+            if (h != null && "OCUPADA".equals(h.getEstado())) {
+                h.setEstado("EN_LIMPIEZA");
+                habitacionRepository.save(h);
+            }
+        }
     }
 
     @Scheduled(cron = "0 0 8 * * ?")

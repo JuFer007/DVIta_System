@@ -37,9 +37,5 @@ public class TipoHabitacionController {
         return ResponseEntity.ok(tipoHabitacionService.actualizar(id, tipoHabitacion));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        tipoHabitacionService.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
+
 }

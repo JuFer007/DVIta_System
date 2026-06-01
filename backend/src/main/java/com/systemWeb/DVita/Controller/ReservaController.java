@@ -43,11 +43,7 @@ public class ReservaController {
         return ResponseEntity.ok(reservaService.actualizar(id, reserva));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        reservaService.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
+
 
     @PatchMapping("/{id}/checkin")
     public ResponseEntity<Reserva> checkIn(@PathVariable Long id) {

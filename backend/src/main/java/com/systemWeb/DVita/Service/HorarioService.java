@@ -70,9 +70,7 @@ public class HorarioService {
         }).orElseThrow(() -> new RuntimeException("Horario no encontrado con id: " + id));
     }
 
-    public void eliminar(Long id) {
-        horarioRepository.deleteById(id);
-    }
+
 
     private void aplicarHorasPorTurno(Horario horario) {
         if (horario.getTipoTurno() == null) return;

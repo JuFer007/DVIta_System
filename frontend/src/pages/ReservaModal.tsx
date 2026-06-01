@@ -6,16 +6,16 @@ import {
   CheckCircle2, Search, Loader2, Mail, AlertCircle,
   User, CreditCard, Building2,
 } from "lucide-react";
-import { useReservaModal, ROOMS, type RoomValue } from "../hooks/useReservaModal";
+import { useReservaModal } from "../hooks/useReservaModal";
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  initialRoom?: string;
+  onLogin?: () => void;
 }
 
-export default function ReservaModal({ open, onClose, initialRoom = "estandar" }: Props) {
-  const h = useReservaModal(initialRoom as RoomValue);
+export default function ReservaModal({ open, onClose }: Props) {
+  const h = useReservaModal();
 
   function handleClose() {
     h.reset();
@@ -186,7 +186,7 @@ function StepSuccess({ h, onClose }: { h: ReturnType<typeof useReservaModal>; on
           {h.result?.idReserva && (
             <SummaryRow label="N° Reserva" value={`#${h.result.idReserva}`} highlight />
           )}
-          <SummaryRow label="Habitación" value={h.selectedRoom.label} />
+          <SummaryRow label="Habitación" value={h.selectedRoom?.descripcion ?? "—"} />
           <SummaryRow label="Llegada"    value={h.llegada} />
           <SummaryRow label="Salida"     value={h.salida} />
           <SummaryRow label="Noches"     value={String(h.nights)} />
@@ -229,23 +229,29 @@ function Step1({ h }: { h: ReturnType<typeof useReservaModal> }) {
         <label className="block text-[11px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-2.5">
           Tipo de habitación
         </label>
-        <div className="grid grid-cols-3 gap-2.5">
-          {ROOMS.map((r) => (
-            <button
-              key={r.value}
-              onClick={() => h.setHabitacion(r.value)}
-              className={`p-3 rounded-sm border text-left transition-colors ${
-                h.habitacion === r.value
-                  ? "border-[#C9A96E] bg-brand-50 shadow-[0_0_0_1px_rgba(201,169,110,0.3)]"
-                  : "border-neutral-200 hover:border-brand-200"
-              }`}
-            >
-              <p className="text-[12px] font-bold text-neutral-800 leading-tight mb-1">{r.label}</p>
-              <p className="text-[14px] font-display font-bold text-brand-600">S/.{r.price}</p>
-              <p className="text-[10px] text-neutral-400 font-light">/ noche</p>
-            </button>
-          ))}
-        </div>
+        {h.tiposLoading ? (
+          <div className="flex items-center justify-center py-8 text-neutral-400 text-sm gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" /> Cargando tipos…
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {h.tipos.map((t) => (
+              <button
+                key={t.idTipoHabitacion}
+                onClick={() => h.setHabitacion(t.idTipoHabitacion)}
+                className={`p-3 rounded-sm border text-left transition-colors ${
+                  h.habitacion === t.idTipoHabitacion
+                    ? "border-[#C9A96E] bg-brand-50 shadow-[0_0_0_1px_rgba(201,169,110,0.3)]"
+                    : "border-neutral-200 hover:border-brand-200"
+                }`}
+              >
+                <p className="text-[12px] font-bold text-neutral-800 leading-tight mb-1">{t.descripcion}</p>
+                <p className="text-[14px] font-display font-bold text-brand-600">S/.{t.precio}</p>
+                <p className="text-[10px] text-neutral-400 font-light">/ noche</p>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Fechas */}
@@ -271,26 +277,17 @@ function Step1({ h }: { h: ReturnType<typeof useReservaModal> }) {
       </div>
 
       {/* Resumen precio */}
-      {h.nights > 0 && (
+      {h.selectedRoom && h.nights > 0 && (
         <div className="flex items-center justify-between bg-brand-50 border border-brand-100 rounded-sm px-4 py-3">
           <div className="flex items-center gap-2 text-[13px] text-brand-700">
             <BedDouble className="w-4 h-4" />
             <span className="font-medium">
-              {h.nights} noche{h.nights > 1 ? "s" : ""} · {h.selectedRoom.label}
+              {h.nights} noche{h.nights > 1 ? "s" : ""} · {h.selectedRoom.descripcion}
             </span>
           </div>
           <span className="font-display font-bold text-[18px] text-brand-700">S/.{h.total}</span>
         </div>
       )}
-
-      {/* Features */}
-      <div className="flex flex-wrap gap-1.5">
-        {h.selectedRoom.features.map((f) => (
-          <span key={f} className="text-[11px] font-medium bg-neutral-100 text-neutral-600 px-2.5 py-1 rounded-sm">
-            {f}
-          </span>
-        ))}
-      </div>
     </div>
   );
 }
@@ -304,7 +301,7 @@ function Step2({ h }: { h: ReturnType<typeof useReservaModal> }) {
       {/* Mini resumen */}
       <div className="flex items-center justify-between bg-neutral-50 border border-neutral-200 rounded-sm px-4 py-3">
         <div>
-          <p className="text-[12px] font-bold text-neutral-600">{h.selectedRoom.label}</p>
+          <p className="text-[12px] font-bold text-neutral-600">{h.selectedRoom?.descripcion ?? "—"}</p>
           <p className="text-[11px] text-neutral-400">
             {h.llegada} → {h.salida} ({h.nights} noche{h.nights > 1 ? "s" : ""})
           </p>
@@ -462,7 +459,7 @@ function Step3({ h }: { h: ReturnType<typeof useReservaModal> }) {
           </p>
         </div>
         <div className="p-4 flex flex-col gap-1.5">
-          <SummaryRow label="Habitación" value={h.selectedRoom.label} />
+          <SummaryRow label="Habitación" value={h.selectedRoom?.descripcion ?? "—"} />
           <SummaryRow label="Llegada"    value={h.llegada} />
           <SummaryRow label="Salida"     value={h.salida} />
           <SummaryRow label="Noches"     value={`${h.nights} noche${h.nights > 1 ? "s" : ""}`} />

@@ -2,7 +2,6 @@
 import { CreditCard } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
-import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
 import { pagosService, reservasService } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
@@ -69,12 +68,6 @@ export default function PagosPage() {
     if (ok) m.closeModal();
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
-  };
-
   return (
     <>
       <DataTable
@@ -85,18 +78,13 @@ export default function PagosPage() {
           { key: "fecha",    label: "Fecha" },
           { key: "metodo",   label: "Método" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Pago" icon={<CreditCard className="w-4 h-4" />}
         fields={fields} data={getFormData(m.editing)}
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
-      />
-      <ConfirmModal
-        open={m.deleteOpen} title="pago"
-        description={`¿Eliminar el pago #${m.deleting?.id} de ${m.deleting?.montoFmt}?`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
       />
     </>
   );

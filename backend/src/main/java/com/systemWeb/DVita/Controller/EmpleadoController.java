@@ -37,9 +37,8 @@ public class EmpleadoController {
         return ResponseEntity.ok(empleadoService.actualizar(id, empleado));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        empleadoService.eliminar(id);
-        return ResponseEntity.noContent().build();
+    @PatchMapping("/{id}/toggle-activo")
+    public ResponseEntity<Empleado> toggleActivo(@PathVariable Long id) {
+        return ResponseEntity.ok(empleadoService.toggleActivo(id));
     }
 }

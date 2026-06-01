@@ -39,7 +39,5 @@ public class PagoService {
         return s != null ? s.toUpperCase().trim() : null;
     }
 
-    public void eliminar(Long id) {
-        pagoRepository.deleteById(id);
-    }
+
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { authService } from "../services/api";
+import { authService, permisosService } from "../services/api";
 
 const BG_IMAGES = [
   "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80",
@@ -42,6 +42,11 @@ export default function Login({ onBack }: Props) {
         setLoading(false);
         return;
       }
+      if (match.activo === false) {
+        setError("Usuario inactivo. Contacta al administrador.");
+        setLoading(false);
+        return;
+      }
       const idEmpleado = match.empleado?.idEmpleado ?? undefined;
       let nombre = match.empleado?.nombre ?? "Usuario";
       if (idEmpleado) {
@@ -50,9 +55,17 @@ export default function Login({ onBack }: Props) {
           nombre = `${emp.nombre ?? ""} ${emp.apellidoP ?? ""}`.trim();
         } catch { /* usar nombre parcial */ }
       }
-      login({ idUsuario: match.idUsuario, nombreUsuario: match.nombreUsuario, nombre, rol: "Administrador", idEmpleado });
+      let permisos: Record<string, boolean> = {};
+      try {
+        const p = await permisosService.getByUsuario(match.idUsuario);
+        permisos = (p || []).reduce((acc: any, perm: any) => {
+          acc[perm.modulo] = perm.activo;
+          return acc;
+        }, {} as Record<string, boolean>);
+      } catch { /* sin permisos, se conceden todos */ }
+      login({ idUsuario: match.idUsuario, nombreUsuario: match.nombreUsuario, nombre, idEmpleado, permisos });
     } catch {
-      login({ idUsuario: 0, nombreUsuario: form.usuario, nombre: "Usuario Demo", rol: "Administrador", idEmpleado: undefined });
+      login({ idUsuario: 0, nombreUsuario: form.usuario, nombre: "Usuario Demo", idEmpleado: undefined, permisos: {} });
     } finally {
       setLoading(false);
     }

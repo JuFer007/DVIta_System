@@ -40,11 +40,7 @@ public class HabitacionController {
         return ResponseEntity.ok(habitacionService.actualizar(id, habitacion));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        habitacionService.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
+
 
     @GetMapping("/disponibles")
     public ResponseEntity<List<Habitacion>> habitacionesDisponibles(

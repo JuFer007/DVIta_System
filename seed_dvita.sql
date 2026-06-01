@@ -1,4 +1,3 @@
-CREATE DATABASE IF NOT EXISTS DVita;
 USE DVita;
 
 -- ============================================================
@@ -34,41 +33,41 @@ INSERT INTO empleado (nombre, apellido_p, apellido_m, dni, telefono, activo) VAL
 -- 3) USUARIO (15, pass: 123456)
 -- ============================================================
 INSERT INTO usuario (id_empleado, nombre_usuario, contrasena, activo) VALUES
-(1, 'malarcon', '123456', 1),
-(2, 'jotero', '123456', 1),
-(3, 'osantamaria', '123456', 1),
-(4, 'jzumaeta', '123456', 1),
-(5, 'agonzales', '123456', 1),
-(6, 'dvargas', '123456', 1),
-(7, 'dbot', '123456', 1),
-(8, 'mrodriguez', '123456', 1),
-(9, 'jmartinez', '123456', 1),
-(10, 'cfernandez', '123456', 1),
-(11, 'pramirez', '123456', 1),
-(12, 'esanchez', '123456', 1),
-(13, 'lgarcia', '123456', 1),
-(14, 'sherrera', '123456', 1),
-(15, 'avega', '123456', 1);
+(1, 'malarcon',     '123456', 1),
+(2, 'jotero',       '123456', 1),
+(3, 'osantamaria',  '123456', 1),
+(4, 'jzumaeta',     '123456', 1),
+(5, 'agonzales',    '123456', 1),
+(6, 'dvargas',      '123456', 1),
+(7, 'dbot',         '123456', 1),
+(8, 'mrodriguez',   '123456', 1),
+(9, 'jmartinez',    '123456', 1),
+(10,'cfernandez',   '123456', 1),
+(11,'pramirez',     '123456', 1),
+(12,'esanchez',     '123456', 1),
+(13,'lgarcia',      '123456', 1),
+(14,'sherrera',     '123456', 1),
+(15,'avega',        '123456', 1);
 
 -- ============================================================
 -- 4) CLIENTE (15)
 -- ============================================================
 INSERT INTO cliente (nombre, apellido_paterno, apellido_materno, dni, telefono, email) VALUES
-('CARLOS', 'MARTINEZ', 'LOPEZ', '11122233', '945111001', 'carlos.martinez@outlook.com'),
-('MARIA', 'LOPEZ', 'SANCHEZ', '22233344', '945111002', 'maria.lopez@outlook.com'),
-('PEDRO', 'QUISPE', 'AYALA', '33344455', '945111003', 'pedro.quispe@outlook.com'),
-('SOFIA', 'REYES', 'GOMEZ', '44455566', '945111004', 'sofia.reyes@outlook.com'),
-('ANDRES', 'DELGADO', 'TORRES', '55566677', '945111005', 'andres.delgado@outlook.com'),
-('CARMEN', 'HUAMAN', 'PEREZ', '66677788', '945111006', 'carmen.huaman@outlook.com'),
-('JOSE', 'RAMIREZ', 'CAMPOS', '77788899', '945111007', 'jose.ramirez@outlook.com'),
-('ROSA', 'CASTILLO', 'VEGA', '88899900', '945111008', 'rosa.castillo@outlook.com'),
-('CARLOS', 'MORALES', 'PAREDES', '99900011', '945111009', 'carlos.morales@outlook.com'),
-('LUCIA', 'TORRES', 'GUZMAN', '10020033', '945111010', 'lucia.torres@outlook.com'),
-('MANUEL', 'SALAZAR', 'ORTEGA', '10120233', '945111011', 'manuel.salazar@outlook.com'),
-('PATRICIA', 'FLORES', 'ROMERO', '10220333', '945111012', 'patricia.flores@outlook.com'),
-('RICARDO', 'MENDOZA', 'NAVARRO', '10320433', '945111013', 'ricardo.mendoza@outlook.com'),
-('LAURA', 'AGUILAR', 'BUSTOS', '10420533', '945111014', 'laura.aguilar@outlook.com'),
-('FERNANDO', 'CACERES', 'LINARES', '10520633', '945111015', 'fernando.caceres@outlook.com');
+('CARLOS',   'MARTINEZ', 'LOPEZ',   '11122233', '945111001', 'carlos.martinez@outlook.com'),
+('MARIA',    'LOPEZ',    'SANCHEZ', '22233344', '945111002', 'maria.lopez@outlook.com'),
+('PEDRO',    'QUISPE',   'AYALA',   '33344455', '945111003', 'pedro.quispe@outlook.com'),
+('SOFIA',    'REYES',    'GOMEZ',   '44455566', '945111004', 'sofia.reyes@outlook.com'),
+('ANDRES',   'DELGADO',  'TORRES',  '55566677', '945111005', 'andres.delgado@outlook.com'),
+('CARMEN',   'HUAMAN',   'PEREZ',   '66677788', '945111006', 'carmen.huaman@outlook.com'),
+('JOSE',     'RAMIREZ',  'CAMPOS',  '77788899', '945111007', 'jose.ramirez@outlook.com'),
+('ROSA',     'CASTILLO', 'VEGA',    '88899900', '945111008', 'rosa.castillo@outlook.com'),
+('CARLOS',   'MORALES',  'PAREDES', '99900011', '945111009', 'carlos.morales@outlook.com'),
+('LUCIA',    'TORRES',   'GUZMAN',  '10020033', '945111010', 'lucia.torres@outlook.com'),
+('MANUEL',   'SALAZAR',  'ORTEGA',  '10120233', '945111011', 'manuel.salazar@outlook.com'),
+('PATRICIA', 'FLORES',   'ROMERO',  '10220333', '945111012', 'patricia.flores@outlook.com'),
+('RICARDO',  'MENDOZA',  'NAVARRO', '10320433', '945111013', 'ricardo.mendoza@outlook.com'),
+('LAURA',    'AGUILAR',  'BUSTOS',  '10420533', '945111014', 'laura.aguilar@outlook.com'),
+('FERNANDO', 'CACERES',  'LINARES', '10520633', '945111015', 'fernando.caceres@outlook.com');
 
 -- ============================================================
 -- 5) HABITACION (20) — 5 por cada tipo
@@ -179,3 +178,29 @@ INSERT INTO incidencia (id_empleado_registra, id_cliente, id_habitacion, fecha, 
 (8,  14, 17, '2025-11-03', 'FALLA_EQUIPO',        'Aire acondicionado ruidoso en habitación 207', 'MEDIA', 'CERRADO', 'Mantenimiento preventivo'),
 (9,  NULL, 18,'2025-11-12', 'PROBLEMA_SERVICIO',   'Agua caliente tarda 10 min en salir', 'BAJA', 'RESUELTO', 'Válvula ajustada'),
 (10, 15, 19, '2025-11-22', 'DAÑO_HABITACION',     'Lámpara de mesa no prende', 'BAJA', 'RESUELTO', 'Bombillo reemplazado');
+
+-- ============================================================
+-- 10) RECEPCIONISTA (3)
+-- ============================================================
+INSERT INTO recepcionista (id_empleado, turno_trabajo) VALUES
+(8,  'MAÑANA'),
+(9,  'TARDE'),
+(12, 'MAÑANA');
+
+-- ============================================================
+-- 11) ADMINISTRADOR (2)
+-- ============================================================
+INSERT INTO administrador (id_empleado, correo_electronico) VALUES
+(3,  'oscar.santamaria@dvita.com'),
+(13, 'luis.garcia@dvita.com');
+
+-- ============================================================
+-- 12) HORARIO (6 registros)
+-- ============================================================
+INSERT INTO horario (id_recepcionista, fecha, hora_inicio, hora_fin, tipo_turno, estado, observaciones) VALUES
+(1, '2025-01-15', '06:00', '14:00', 'MAÑANA', 'COMPLETADO', NULL),
+(2, '2025-01-15', '14:00', '22:00', 'TARDE',  'COMPLETADO', NULL),
+(3, '2025-01-15', '22:00', '06:00', 'NOCHE',  'COMPLETADO', 'Turno nocturno'),
+(1, '2025-06-15', '06:00', '14:00', 'MAÑANA', 'COMPLETADO', NULL),
+(2, '2025-06-15', '14:00', '22:00', 'TARDE',  'COMPLETADO', NULL),
+(3, '2025-06-15', '22:00', '06:00', 'NOCHE',  'COMPLETADO', 'Turno nocturno');

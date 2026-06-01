@@ -31,7 +31,7 @@ public class Habitacion {
     private Integer numeroHabitacion;
 
     @NotBlank(message = "El estado es obligatorio")
-    @Pattern(regexp = "DISPONIBLE|OCUPADA|MANTENIMIENTO", message = "El estado debe ser: DISPONIBLE, OCUPADA o MANTENIMIENTO")
+    @Pattern(regexp = "DISPONIBLE|OCUPADA|MANTENIMIENTO|EN_LIMPIEZA", message = "El estado debe ser: DISPONIBLE, OCUPADA, MANTENIMIENTO o EN_LIMPIEZA")
     @Column(name = "estado", nullable = false, length = 20)
     private String estado;
 

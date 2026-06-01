@@ -37,9 +37,5 @@ public class AdministradorController {
         return ResponseEntity.ok(administradorService.actualizar(id, administrador));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        administradorService.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
+
 }

@@ -1,20 +1,21 @@
 import {
   LayoutDashboard, Users, BriefcaseBusiness, BedDouble, Bed,
-  Tag, CalendarCheck, CreditCard, ChevronLeft, ChevronRight,
-  User, Hotel, Clock, BarChart2
+  CalendarCheck, CreditCard, ChevronLeft, ChevronRight,
+  User, BarChart2, AlertTriangle
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const NAV = [
-  { id: "dashboard",    label: "Dashboard",        icon: LayoutDashboard },
-  { id: "clientes",     label: "Clientes",         icon: Users },
-  { id: "empleados",    label: "Empleados",        icon: BriefcaseBusiness },
-  { id: "habitaciones", label: "Habitaciones",     icon: BedDouble },
-  { id: "tipos",        label: "Tipos Habitación", icon: Bed },
-  { id: "reservas",     label: "Reservas",         icon: CalendarCheck },
-  { id: "pagos",        label: "Pagos",            icon: CreditCard },
-  { id: "usuarios",     label: "Usuarios",         icon: User },
-  { id: "horarios",     label: "Horarios",         icon: Clock },
-  { id: "reportes",     label: "Reportes",         icon: BarChart2 },
+  { id: "dashboard",       label: "Dashboard",        icon: LayoutDashboard,   permiso: null },
+  { id: "clientes",        label: "Clientes",         icon: Users,             permiso: "CLIENTES" },
+  { id: "empleados",       label: "Empleados",        icon: BriefcaseBusiness, permiso: "EMPLEADOS" },
+  { id: "habitaciones",    label: "Habitaciones",     icon: BedDouble,         permiso: "HABITACIONES" },
+  { id: "tipos",           label: "Tipos Habitación",  icon: Bed,               permiso: "TIPOS_HABITACION" },
+  { id: "reservas",        label: "Reservas",         icon: CalendarCheck,     permiso: "RESERVAS" },
+  { id: "pagos",           label: "Pagos",            icon: CreditCard,        permiso: "PAGOS" },
+  { id: "usuarios",        label: "Usuarios",         icon: User,              permiso: "USUARIOS" },
+  { id: "incidencias",     label: "Incidencias",      icon: AlertTriangle,     permiso: "INCIDENCIAS" },
+  { id: "reportes",        label: "Reportes",         icon: BarChart2,         permiso: null },
 ];
 
 interface Props {
@@ -25,6 +26,13 @@ interface Props {
 }
 
 export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Props) {
+  const { tienePermiso } = useAuth();
+
+  const visibleNav = NAV.filter((item) => {
+    if (!item.permiso) return true;
+    return tienePermiso(item.permiso);
+  });
+
   return (
     <aside
       className={`flex flex-col min-h-screen bg-brand-900 transition-all duration-300 flex-shrink-0 sticky top-0 h-screen overflow-y-auto overflow-x-hidden ${
@@ -57,7 +65,7 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Pro
             Gestión
           </p>
         )}
-        {NAV.map((item) => {
+        {visibleNav.map((item) => {
           const Icon = item.icon;
           const isActive = active === item.id;
           return (

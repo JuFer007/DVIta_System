@@ -37,7 +37,5 @@ public class TipoHabitacionService {
         return s != null ? s.toUpperCase().trim() : null;
     }
 
-    public void eliminar(Long id) {
-        tipoHabitacionRepository.deleteById(id);
-    }
+
 }

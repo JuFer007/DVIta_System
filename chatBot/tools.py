@@ -181,17 +181,13 @@ async def crear_reserva(
 async def cancelar_reserva(id: int) -> dict:
     if not id:
         return {"error": "id requerido"}
-    reserva = await _get(f"reservas/{id}")
-    if isinstance(reserva, dict) and "error" in reserva:
-        return reserva
-    reserva["estadoReserva"] = "CANCELADA"
-    if isinstance(reserva.get("cliente"), dict):
-        reserva["cliente"] = {"idCliente": reserva["cliente"]["idCliente"]}
-    if isinstance(reserva.get("habitacion"), dict):
-        reserva["habitacion"] = {"idHabitacion": reserva["habitacion"]["idHabitacion"]}
-    if isinstance(reserva.get("empleado"), dict):
-        reserva["empleado"] = {"idEmpleado": reserva["empleado"]["idEmpleado"]}
-    return await _put(f"reservas/{id}", reserva)
+    async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+        try:
+            r = await client.patch(f"{BASE}/api/reservas/{id}/cancelar")
+            r.raise_for_status()
+            return r.json()
+        except httpx.HTTPError as e:
+            return {"error": str(e)}
 
 async def checkin_reserva(id: int) -> dict:
     if not id:

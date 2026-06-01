@@ -1,4 +1,5 @@
 package com.systemWeb.DVita.Model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
 public class Empleado {
     @Id
@@ -44,4 +46,7 @@ public class Empleado {
     @Pattern(regexp = "\\d{9,15}", message = "El teléfono debe tener entre 9 y 15 dígitos")
     @Column(name = "telefono", nullable = false, length = 15)
     private String telefono;
+
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { LogOut, ChevronRight, Bell, X, Mail, Calendar, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { LogOut, ChevronRight, Bell, X, Mail, Calendar, Send, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const PAGE_NAMES: Record<string, string> = {
@@ -10,8 +10,8 @@ const PAGE_NAMES: Record<string, string> = {
   tipos:        "Tipos de Habitación",
   reservas:     "Reservas",
   pagos:        "Pagos",
-  usuarios:     "Usuarios",
-  horarios:     "Horarios",
+  usuarios:         "Usuarios",
+  incidencias:      "Incidencias",
   reportes:     "Reportes",
 };
 
@@ -73,6 +73,7 @@ export default function Topbar({ page, onLogout }: Props) {
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Cargar notificaciones del localStorage
@@ -330,11 +331,38 @@ export default function Topbar({ page, onLogout }: Props) {
             <span className="text-xs text-gray-400">Administrador</span>
           </div>
         </div>
-        <button onClick={onLogout} title="Cerrar sesión"
+        <button onClick={() => setLogoutConfirmOpen(true)} title="Cerrar sesión"
           className="w-8 h-8 flex items-center justify-center text-gray-400 border border-gray-200 rounded-lg hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors">
           <LogOut className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Modal de confirmación de cierre de sesión */}
+      {logoutConfirmOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50"
+          onClick={() => setLogoutConfirmOpen(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 p-6"
+            onClick={e => e.stopPropagation()}>
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Cerrar sesión</h3>
+              <p className="text-sm text-gray-500">¿Estás seguro de que deseas cerrar la sesión actual?</p>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button onClick={() => setLogoutConfirmOpen(false)}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                Cancelar
+              </button>
+              <button onClick={() => { onLogout(); setLogoutConfirmOpen(false); }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

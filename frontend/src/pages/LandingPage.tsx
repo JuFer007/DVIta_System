@@ -125,7 +125,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
   const [currentImage, setCurrentImage] = useState(0);
   const [scrolled, setScrolled]         = useState(false);
   const [modalOpen, setModalOpen]       = useState(false);
-  const [modalRoom, setModalRoom]       = useState("estandar");
  
   useEffect(() => {
     const interval = setInterval(
@@ -144,10 +143,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
  
-  const openModal = (room = "estandar") => {
-    setModalRoom(room);
-    setModalOpen(true);
-  };
+  const openModal = () => setModalOpen(true);
 
   return (
     <div className="min-h-screen bg-white font-body">
@@ -531,8 +527,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
       <ReservaModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onLogin={onLogin}
-        initialRoom={modalRoom}
       />
       {/* ── ChatBot flotante ── */}
       <ChatBot />

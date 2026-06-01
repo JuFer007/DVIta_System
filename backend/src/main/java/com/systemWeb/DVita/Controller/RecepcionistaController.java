@@ -37,9 +37,5 @@ public class RecepcionistaController {
         return ResponseEntity.ok(recepcionistaService.actualizar(id, recepcionista));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        recepcionistaService.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
+
 }

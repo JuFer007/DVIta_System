@@ -296,31 +296,31 @@ export default function ReservasPage() {
               const puedeCheckOut = row.estado === "CONFIRMADA" && hoy >= diaDespuesIngreso;
               const puedeCancelar = row.estado === "PENDIENTE" || row.estado === "CONFIRMADA";
               const puedeEditar   = row.estado !== "CANCELADA" && row.estado !== "COMPLETADA";
-              const cls = (cond: boolean, color: string) =>
-                `p-1.5 rounded transition-colors ${cond ? `${color} hover:bg-opacity-20 cursor-pointer` : "text-neutral-300 cursor-not-allowed"}`;
+              const btnCls = (cond: boolean, active: string, inactive: string) =>
+                `flex items-center gap-1 px-2 py-1 text-[11px] font-semibold rounded-lg transition-colors ${cond ? active : inactive}`;
               return (
-                <div className="flex items-center gap-0.5">
-                  <button onClick={() => puedeCheckIn && handleCheckIn(row)} title="Check-in"
+                <div className="flex items-center gap-1">
+                  <button onClick={() => puedeCheckIn && handleCheckIn(row)}
                     disabled={!puedeCheckIn}
-                    className={cls(puedeCheckIn, "text-green-600")}>
-                    <LogIn className="w-3.5 h-3.5" />
+                    className={btnCls(puedeCheckIn, "text-green-700 bg-green-100 hover:bg-green-200", "text-neutral-300 bg-neutral-100 cursor-not-allowed")}>
+                    <LogIn className="w-3.5 h-3.5" /> CHECK-IN
                   </button>
-                  <button onClick={() => puedeCheckOut && handleCheckOut(row)} title="Check-out"
+                  <button onClick={() => puedeCheckOut && handleCheckOut(row)}
                     disabled={!puedeCheckOut}
-                    className={cls(puedeCheckOut, "text-blue-600")}>
-                    <LogOut className="w-3.5 h-3.5" />
+                    className={btnCls(puedeCheckOut, "text-blue-700 bg-blue-100 hover:bg-blue-200", "text-neutral-300 bg-neutral-100 cursor-not-allowed")}>
+                    <LogOut className="w-3.5 h-3.5" /> CHECK-OUT
                   </button>
-                  <button onClick={() => puedeCancelar && handleCancel(row)} title="Cancelar"
+                  <button onClick={() => puedeCancelar && handleCancel(row)}
                     disabled={!puedeCancelar}
-                    className={cls(puedeCancelar, "text-red-500")}>
-                    <XCircle className="w-3.5 h-3.5" />
+                    className={btnCls(puedeCancelar, "text-red-700 bg-red-100 hover:bg-red-200", "text-neutral-300 bg-neutral-100 cursor-not-allowed")}>
+                    <XCircle className="w-3.5 h-3.5" /> CANCELAR
                   </button>
-                  <button onClick={() => puedeEditar && handleOpenEdit(row)} title="Editar"
+                  <button onClick={() => puedeEditar && handleOpenEdit(row)}
                     disabled={!puedeEditar}
-                    className={cls(puedeEditar, "text-brand-600")}>
+                    className={btnCls(puedeEditar, "text-brand-700 bg-brand-100 hover:bg-brand-200", "text-neutral-300 bg-neutral-100 cursor-not-allowed")}>
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
+                    </svg> EDITAR
                   </button>
                 </div>
               );

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Clock, Plus, Pencil, Trash2, Search, CalendarDays, User, ChevronDown, AlertCircle, X, Save, Loader2 } from "lucide-react";
+import { Clock, Plus, Pencil, Search, CalendarDays, User, ChevronDown, AlertCircle, X, Save, Loader2 } from "lucide-react";
 import { useCrud } from "../../hooks/useCrud";
-import ConfirmModal from "../../components/ConfirmModal";
 import { useModalState } from "../../hooks/useModalState";
 import { empleadosService, recepcionistasService } from "../../services/api";
 
@@ -10,7 +9,6 @@ const horariosService = {
   getAll:  () => fetch("/api/horarios").then(r => { if (!r.ok) throw new Error(); return r.json(); }),
   create:  (data: any) => fetch("/api/horarios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
   update:  (id: number, data: any) => fetch(`/api/horarios/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
-  delete:  (id: number) => fetch(`/api/horarios/${id}`, { method: "DELETE" }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); }),
 };
 
 // ─── Mappers ──────────────────────────────────────────────────────────────────
@@ -137,6 +135,9 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
     if (form.tipoTurno === "PERSONALIZADO") {
       if (!form.horaInicio) errs.horaInicio = "La hora de inicio es obligatoria";
       if (!form.horaFin)    errs.horaFin = "La hora de fin es obligatoria";
+      if (form.horaInicio && form.horaFin && form.horaInicio >= form.horaFin) {
+        errs.horaFin = "La hora de fin debe ser posterior a la de inicio";
+      }
     }
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
@@ -372,12 +373,6 @@ export default function HorariosPage() {
     if (ok) m.closeModal();
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) m.closeDelete();
-  };
-
   return (
     <>
       <div className="flex flex-col gap-5 w-full animate-fade-in">
@@ -520,11 +515,9 @@ export default function HorariosPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
-                        <button onClick={() => m.openEdit(row)} className="p-1.5 text-brand-600 hover:bg-brand-100 rounded transition-colors" title="Editar">
-                          <Pencil className="w-3.5 h-3.5" />
-                        </button>
-                        <button onClick={() => m.openDelete(row)} className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors" title="Eliminar">
-                          <Trash2 className="w-3.5 h-3.5" />
+                        <button onClick={() => m.openEdit(row)}
+                          className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-brand-700 bg-brand-100 hover:bg-brand-200 rounded-lg transition-colors">
+                          <Pencil className="w-3.5 h-3.5" /> EDITAR
                         </button>
                       </div>
                     </td>
@@ -550,14 +543,7 @@ export default function HorariosPage() {
         onClose={m.closeModal}
         onSave={handleSave}
       />
-      <ConfirmModal
-        open={m.deleteOpen}
-        title="horario"
-        description={`¿Eliminar el horario del ${m.deleting?.fecha} — ${m.deleting?.recepcionista} (${m.deleting?.tipoTurno})?`}
-        loading={crud.saving}
-        onClose={m.closeDelete}
-        onConfirm={handleDelete}
-      />
+
     </>
   );
 }

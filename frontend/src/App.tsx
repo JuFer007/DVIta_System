@@ -13,7 +13,7 @@ import TiposPage          from "./pages/entities/TiposPage";
 import ReservasPage       from "./pages/entities/ReservaPage";
 import PagosPage          from "./pages/entities/PagosPages";
 import UsuariosPage       from "./pages/entities/UsuariosPages";
-import HorariosPage       from "./pages/entities/HorariosPage";
+import IncidenciasPage    from "./pages/entities/IncidenciasPage";
 import { ToastProvider } from "./components/Toast";
 import { ConfirmProvider } from "./hooks/useConfirm";
 
@@ -41,7 +41,7 @@ function AppContent() {
         case "reservas":     return <ReservasPage />;
         case "pagos":        return <PagosPage />;
         case "usuarios":     return <UsuariosPage />;
-        case "horarios":     return <HorariosPage />;
+        case "incidencias":  return <IncidenciasPage />;
         case "reportes":     return <ReportesPage />;
         default:             return <Dashboard />;
       }

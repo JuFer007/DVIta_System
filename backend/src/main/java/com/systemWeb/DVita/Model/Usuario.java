@@ -1,4 +1,5 @@
 package com.systemWeb.DVita.Model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Entity
 @Table(name = "usuario")
@@ -24,6 +26,7 @@ public class Usuario {
     @NotNull(message = "El empleado es obligatorio")
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_empleado", nullable = false, unique = true)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Empleado empleado;
 
     @NotBlank(message = "El nombre de usuario es obligatorio")
@@ -32,7 +35,13 @@ public class Usuario {
     private String nombreUsuario;
 
     @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     @Column(name = "contrasena", nullable = false)
     private String contrasena;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Permisos> permisos;
+
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
 }

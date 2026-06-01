@@ -71,9 +71,5 @@ public class HorarioController {
         return ResponseEntity.ok(horarioService.cambiarEstado(id, estado));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        horarioService.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
+
 }

@@ -70,20 +70,24 @@ export async function crearCliente(payload: {
   return data.idCliente as number;
 }
  
+export async function buscarTiposHabitacion(): Promise<{ idTipoHabitacion: number; descripcion: string; precio: number }[]> {
+  try {
+    const res = await fetch("/api/tipos-habitacion");
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
 export async function buscarHabitacionDisponible(
-  tipoLabel: string, fechaIngreso: string, fechaSalida: string
+  tipoId: number, fechaIngreso: string, fechaSalida: string
 ): Promise<number | null> {
   try {
-    const res = await fetch(`/api/habitaciones/disponibles?fechaIngreso=${fechaIngreso}&fechaSalida=${fechaSalida}`);
+    const res = await fetch(`/api/habitaciones/disponibles?fechaIngreso=${fechaIngreso}&fechaSalida=${fechaSalida}&tipoId=${tipoId}`);
     if (!res.ok) return null;
     const habs: any[] = await res.json();
-    const match = habs.find(
-      (h) =>
-        h.estado !== "MANTENIMIENTO" &&
-        (h.tipoHabitacion?.descripcion ?? "")
-          .toLowerCase()
-          .includes(tipoLabel.toLowerCase())
-    );
+    const match = habs.find((h) => h.estado !== "MANTENIMIENTO");
     return match ? (match.idHabitacion as number) : null;
   } catch {
     return null;

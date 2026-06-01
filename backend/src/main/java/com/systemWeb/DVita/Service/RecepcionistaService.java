@@ -37,7 +37,5 @@ public class RecepcionistaService {
         return s != null ? s.toUpperCase().trim() : null;
     }
 
-    public void eliminar(Long id) {
-        recepcionistaRepository.deleteById(id);
-    }
+
 }

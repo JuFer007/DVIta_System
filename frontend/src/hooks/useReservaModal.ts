@@ -1,30 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ClienteData,
   buscarClienteEnBD,
   buscarEnReniec,
+  buscarTiposHabitacion,
   buscarHabitacionDisponible,
   crearReservaConDni,
   buscarEmpleadoChatbot,
 } from "../services/reservaWebService";
 
-export const ROOMS = [
-  { value: "estandar", label: "Habitación Estándar", price: 60,  tipoLabel: "Estándar", features: ["TV Cable", "Baño privado", "WiFi"] },
-  { value: "suite",    label: "Suite Deluxe",        price: 120, tipoLabel: "Suite",    features: ['TV 50"', "Sala de estar", "Mini bar"] },
-  { value: "familiar", label: "Habitación Familiar", price: 180, tipoLabel: "Familiar", features: ["3 camas", "Área adicional", "Frigobar"] },
-] as const;
-
-export type RoomValue = typeof ROOMS[number]["value"];
 export type Step = 1 | 2 | 3;
 export type DniStatus = "" | "bd" | "reniec" | "notfound";
+
+export interface TipoHab {
+  idTipoHabitacion: number;
+  descripcion: string;
+  precio: number;
+}
 
 export interface ReservaResult {
   idReserva: number;
 }
 
-export function useReservaModal(initialRoom: RoomValue = "estandar") {
+export function useReservaModal() {
   const today = new Date().toISOString().split("T")[0];
-  const [habitacion, setHabitacion] = useState<RoomValue>(initialRoom);
+  const [tipos, setTipos] = useState<TipoHab[]>([]);
+  const [tiposLoading, setTiposLoading] = useState(true);
+  const [habitacion, setHabitacion] = useState<number | null>(null);
   const [llegada,    setLlegada]    = useState("");
   const [salida,     setSalida]     = useState("");
   const [dni,        setDni]        = useState("");
@@ -45,7 +47,17 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
   const [sendError, setSendError] = useState("");
   const [result,    setResult]    = useState<ReservaResult | null>(null);
 
-  const selectedRoom = ROOMS.find((r) => r.value === habitacion) ?? ROOMS[0];
+  useEffect(() => {
+    buscarTiposHabitacion().then((data) => {
+      setTipos(data);
+      if (data.length > 0 && habitacion === null) {
+        setHabitacion(data[0].idTipoHabitacion);
+      }
+      setTiposLoading(false);
+    });
+  }, []);
+
+  const selectedRoom = tipos.find((t) => t.idTipoHabitacion === habitacion) ?? tipos[0];
 
   const nights = (() => {
     if (!llegada || !salida) return 0;
@@ -53,7 +65,7 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
     return Math.max(0, Math.floor(diff / 86400000));
   })();
 
-  const total = nights * selectedRoom.price;
+  const total = selectedRoom ? nights * selectedRoom.precio : 0;
 
   const canGoStep2 = !!habitacion && !!llegada && !!salida && nights > 0;
   const canGoStep3 = !!nombre && !!apellidoP && !!telefono && !!dni;
@@ -68,7 +80,7 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
 
   function reset() {
     setStep(1);
-    setHabitacion(initialRoom);
+    if (tipos.length > 0) setHabitacion(tipos[0].idTipoHabitacion);
     setLlegada(""); setSalida("");
     setDni(""); setAdultos("1"); setNotas("");
     resetDni();
@@ -111,14 +123,15 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
   }
 
   async function confirmar() {
+    if (!selectedRoom) return;
     setSending(true);
     setSendError("");
 
     try {
-      const idHabitacion = await buscarHabitacionDisponible(selectedRoom.tipoLabel, llegada, salida);
+      const idHabitacion = await buscarHabitacionDisponible(selectedRoom.idTipoHabitacion, llegada, salida);
       if (!idHabitacion) {
         throw new Error(
-          `No hay habitaciones de tipo "${selectedRoom.label}" disponibles. Llámanos al +51 922 626 148.`
+          `No hay habitaciones de tipo "${selectedRoom.descripcion}" disponibles. Llámanos al +51 922 626 148.`
         );
       }
 
@@ -151,7 +164,7 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
         const notif = {
           id: Date.now(), tipo: "reserva",
           fecha: new Date().toISOString(), leido: false,
-          habitacion: selectedRoom.label, llegada, salida,
+          habitacion: selectedRoom.descripcion, llegada, salida,
           noches: nights, total,
           nombre: `${nombre} ${apellidoP}`.trim(),
           dni, telefono, email, adultos, notas,
@@ -172,7 +185,7 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
   }
 
   return {
-    today, habitacion, setHabitacion,
+    today, tipos, tiposLoading, habitacion, setHabitacion,
     llegada, setLlegada, salida, setSalida,
     dni, setDni,
     nombre, setNombre,

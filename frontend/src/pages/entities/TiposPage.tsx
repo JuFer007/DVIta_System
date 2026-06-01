@@ -1,7 +1,6 @@
-import { Bed } from "lucide-react";
+import { Bed, Pencil } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
-import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
 import { tiposService } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
@@ -22,7 +21,7 @@ const DEMO: any[] = [
 
 const FIELDS: ModalField[] = [
   { key: "descripcion", label: "Descripción", required: true, placeholder: "Ej: Suite Deluxe", cols: 2 },
-  { key: "precio",      label: "Precio (S/.)", required: true, type: "number", placeholder: "120.00", hint: "Precio base por noche — debe ser mayor a 0" },
+  { key: "precio",      label: "Precio (S/.)", required: true, type: "number", placeholder: "120.00", min: 0.01, hint: "Precio base por noche — debe ser mayor a 0" },
 ];
 
 export default function TiposPage() {
@@ -56,18 +55,6 @@ export default function TiposPage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) {
-      toast.showToast("success", "Tipo eliminado",
-        `"${m.deleting.descripcion}" eliminado correctamente`);
-      m.closeDelete();
-    } else if (crud.saveError) {
-      toast.showToast("fail", "Error al eliminar", crud.saveError);
-    }
-  };
-
   return (
     <>
       <DataTable
@@ -76,18 +63,13 @@ export default function TiposPage() {
           { key: "descripcion", label: "Descripción" },
           { key: "precioFmt",   label: "Precio" },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit} onDelete={m.openDelete}
+        onNew={m.openNew} onEdit={m.openEdit}
       />
       <EntityModal
         open={m.modalOpen} title="Tipo de Habitación" icon={<Bed className="w-4 h-4" />}
         fields={FIELDS} data={getFormData(m.editing)}
         loading={crud.saving} error={crud.saveError}
         onClose={m.closeModal} onSave={handleSave}
-      />
-      <ConfirmModal
-        open={m.deleteOpen} title="tipo de habitación"
-        description={`¿Eliminar el tipo "${m.deleting?.descripcion}"? Esta acción no se puede deshacer.`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
       />
     </>
   );

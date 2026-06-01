@@ -37,7 +37,5 @@ public class AdministradorService {
         return s != null ? s.toUpperCase().trim() : null;
     }
 
-    public void eliminar(Long id) {
-        administradorRepository.deleteById(id);
-    }
+
 }

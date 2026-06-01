@@ -1,4 +1,5 @@
-import { BriefcaseBusiness, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { BriefcaseBusiness, Pencil, Power, Phone } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import ConfirmModal from "../../components/ConfirmModal";
@@ -16,6 +17,7 @@ const mapEmpleado = (e: any) => ({
   apellidoM: e.apellidoM,
   dni: e.dni,
   telefono: e.telefono,
+  activo: e.activo !== false,
   _raw: e,
 });
 
@@ -25,11 +27,11 @@ const DEMO: any[] = [
 ];
 
 const FIELDS: ModalField[] = [
-  { key: "nombre",    label: "Nombre",          required: true, placeholder: "Ej: Pedro" },
-  { key: "apellidoP", label: "Apellido Paterno", required: true, placeholder: "Ej: Huamán" },
-  { key: "apellidoM", label: "Apellido Materno", required: true, placeholder: "Ej: García" },
-  { key: "dni",       label: "DNI",              required: true, placeholder: "12345678", hint: "8 dígitos exactos" },
-  { key: "telefono",  label: "Teléfono",         required: true, placeholder: "912345678" },
+  { key: "nombre",    label: "Nombre",          required: true, maxLength: 50, placeholder: "Ej: Pedro" },
+  { key: "apellidoP", label: "Apellido Paterno", required: true, maxLength: 50, placeholder: "Ej: Huamán" },
+  { key: "apellidoM", label: "Apellido Materno", required: true, maxLength: 50, placeholder: "Ej: García" },
+  { key: "dni",       label: "DNI",              required: true, pattern: "\\d{8}", placeholder: "12345678", hint: "8 dígitos exactos", maxLength: 8 },
+  { key: "telefono",  label: "Teléfono",         required: true, pattern: "\\d{9}", placeholder: "912345678", hint: "9 dígitos exactos", maxLength: 9 },
 ];
 
 export default function EmpleadosPage() {
@@ -71,45 +73,71 @@ export default function EmpleadosPage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!m.deleting) return;
-    const ok = await crud.remove(m.deleting.id);
-    if (ok) {
-      toast.showToast("success", "Empleado eliminado",
-        `${m.deleting.nombre} ${m.deleting.apellidoP} eliminado correctamente`);
-      m.closeDelete();
-    } else if (crud.saveError) {
-      toast.showToast("fail", "Error al eliminar", crud.saveError);
-    }
-  };
-
   const esChatbot = (row: any) => row.dni === CHATBOT_DNI;
+
+  const [togglingEmpleado, setTogglingEmpleado] = useState<any>(null);
+
+  const handleToggleActivo = async () => {
+    if (!togglingEmpleado) return;
+    try {
+      const res = await fetch(`/api/empleados/${togglingEmpleado.id}/toggle-activo`, { method: "PATCH" });
+      if (res.ok) {
+        toast.showToast("success", "Estado actualizado", `${togglingEmpleado.nombre} ${togglingEmpleado.apellidoP}`);
+        crud.refetch();
+      } else {
+        toast.showToast("fail", "Error", "No se pudo cambiar el estado");
+      }
+    } catch {
+      toast.showToast("fail", "Error", "No se pudo cambiar el estado");
+    }
+    setTogglingEmpleado(null);
+  };
 
   return (
     <>
       <DataTable
         title="Empleados" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "nombre",    label: "Nombre" },
+          {
+            key: "nombre", label: "Nombre",
+            render: (v: string, row: any) => (
+              <div className="flex items-center gap-3">
+                <span className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center shrink-0">
+                  {(row.nombre || "?").charAt(0)}
+                </span>
+                <span className="font-medium text-gray-800">{row.nombre}</span>
+              </div>
+            ),
+          },
           { key: "apellidoP", label: "Ap. Paterno" },
           { key: "apellidoM", label: "Ap. Materno" },
           { key: "dni",       label: "DNI" },
-          { key: "telefono",  label: "Teléfono" },
           {
-            key: "_acciones", label: "",
+            key: "telefono", label: "Teléfono",
+            render: (v: string) => v ? <span className="inline-flex items-center gap-1.5 text-gray-600"><Phone className="w-3 h-3 text-gray-400" />{v}</span> : "—",
+          },
+          {
+            key: "activo", label: "Estado",
+            render: (v: boolean) => (
+              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${v ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${v ? "bg-green-600" : "bg-red-600"}`} />
+                {v ? "Activo" : "Inactivo"}
+              </span>
+            ),
+          },
+          {
+            key: "_acciones", label: "ACCIONES",
             render: (_, row: any) => {
               if (esChatbot(row)) return null;
               return (
                 <div className="flex items-center gap-1">
                   <button onClick={() => m.openEdit(row)}
-                    className="p-1.5 text-brand-600 hover:bg-brand-100 rounded transition-colors"
-                    title="Editar">
-                    <Pencil className="w-3.5 h-3.5" />
+                    className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-brand-700 bg-brand-100 hover:bg-brand-200 rounded-lg transition-colors">
+                    <Pencil className="w-3.5 h-3.5" /> EDITAR
                   </button>
-                  <button onClick={() => m.openDelete(row)}
-                    className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors"
-                    title="Eliminar">
-                    <Trash2 className="w-3.5 h-3.5" />
+                  <button onClick={() => setTogglingEmpleado(row)}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold rounded-lg transition-colors ${row.activo ? "text-red-700 bg-red-100 hover:bg-red-200" : "text-green-700 bg-green-100 hover:bg-green-200"}`}>
+                    <Power className="w-3.5 h-3.5" /> {row.activo ? "DESACTIVAR" : "ACTIVAR"}
                   </button>
                 </div>
               );
@@ -125,9 +153,12 @@ export default function EmpleadosPage() {
         onClose={m.closeModal} onSave={handleSave}
       />
       <ConfirmModal
-        open={m.deleteOpen} title="empleado"
-        description={`¿Eliminar a ${m.deleting?.nombre} ${m.deleting?.apellidoP}? Esta acción no se puede deshacer.`}
-        loading={crud.saving} onClose={m.closeDelete} onConfirm={handleDelete}
+        open={!!togglingEmpleado}
+        title={`${togglingEmpleado?.activo ? "desactivar" : "activar"} empleado`}
+        description={`¿${togglingEmpleado?.activo ? "Desactivar" : "Activar"} a ${togglingEmpleado?.nombre} ${togglingEmpleado?.apellidoP}?`}
+        loading={crud.saving}
+        onClose={() => setTogglingEmpleado(null)}
+        onConfirm={handleToggleActivo}
       />
     </>
   );
