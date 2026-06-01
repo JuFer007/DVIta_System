@@ -4,9 +4,10 @@
 import {
   X, CalendarDays, Phone, BedDouble, ChevronRight,
   CheckCircle2, Search, Loader2, Mail, AlertCircle,
-  User, CreditCard, Building2,
+  User, CreditCard, Building2, AlertTriangle,
 } from "lucide-react";
-import { useReservaModal, ROOMS, type RoomValue } from "../hooks/useReservaModal";
+import { useReservaModal, ROOMS, type RoomValue, type RoomAvailability } from "../hooks/useReservaModal";
+import { useToast } from "../components/Toast";
 
 interface Props {
   open: boolean;
@@ -16,6 +17,7 @@ interface Props {
 
 export default function ReservaModal({ open, onClose, initialRoom = "estandar" }: Props) {
   const h = useReservaModal(initialRoom as RoomValue);
+  const { showToast } = useToast();
 
   function handleClose() {
     h.reset();
@@ -40,9 +42,9 @@ export default function ReservaModal({ open, onClose, initialRoom = "estandar" }
 
         <div className="flex-1 overflow-y-auto px-6 py-6">
           {h.sent && <StepSuccess h={h} onClose={handleClose} />}
-          {!h.sent && h.step === 1 && <Step1 h={h} />}
+          {!h.sent && h.step === 1 && <Step1 h={h} showToast={showToast} />}
           {!h.sent && h.step === 2 && <Step2 h={h} />}
-          {!h.sent && h.step === 3 && <Step3 h={h} />}
+          {!h.sent && h.step === 3 && <Step3 h={h} showToast={showToast} />}
         </div>
 
         {!h.sent && (
@@ -54,6 +56,7 @@ export default function ReservaModal({ open, onClose, initialRoom = "estandar" }
             onNext={() => h.setStep((s) => (s + 1) as 1 | 2 | 3)}
             onConfirm={h.confirmar}
             onCancel={handleClose}
+            showToast={showToast}
           />
         )}
       </div>
@@ -117,11 +120,12 @@ function Stepper({ step }: { step: number }) {
 
 function ModalFooter({
   step, canNext, sending,
-  onBack, onNext, onConfirm, onCancel,
+  onBack, onNext, onConfirm, onCancel, showToast,
 }: {
   step: number; canNext: boolean; sending: boolean;
   onBack: () => void; onNext: () => void;
-  onConfirm: () => void; onCancel: () => void;
+  onConfirm: (showToast?: any) => void; onCancel: () => void;
+  showToast?: any;
 }) {
   return (
     <div className="px-6 py-4 border-t border-neutral-100 bg-neutral-50 flex items-center justify-between gap-3 flex-shrink-0">
@@ -150,7 +154,7 @@ function ModalFooter({
         </button>
       ) : (
         <button
-          onClick={onConfirm} disabled={sending}
+          onClick={() => onConfirm(showToast)} disabled={sending}
           className="flex items-center gap-2 px-6 py-2.5 bg-[#C9A96E] hover:bg-[#E8D5A0] text-brand-950 text-[12px] font-bold tracking-[0.1em] uppercase rounded-sm transition-colors disabled:opacity-50"
         >
           {sending
@@ -221,37 +225,93 @@ function StepSuccess({ h, onClose }: { h: ReturnType<typeof useReservaModal>; on
 
 // ─── Step 1: Habitación y fechas ──────────────────────────────────────────────
 
-function Step1({ h }: { h: ReturnType<typeof useReservaModal> }) {
+function Step1({ h, showToast }: { h: ReturnType<typeof useReservaModal>; showToast: any }) {
   return (
     <div className="flex flex-col gap-5">
-      {/* Selector de habitación */}
+      {/* Selector de habitación con disponibilidad */}
       <div>
         <label className="block text-[11px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-2.5">
           Tipo de habitación
         </label>
         <div className="grid grid-cols-3 gap-2.5">
-          {ROOMS.map((r) => (
-            <button
-              key={r.value}
-              onClick={() => h.setHabitacion(r.value)}
-              className={`p-3 rounded-sm border text-left transition-colors ${
-                h.habitacion === r.value
-                  ? "border-[#C9A96E] bg-brand-50 shadow-[0_0_0_1px_rgba(201,169,110,0.3)]"
-                  : "border-neutral-200 hover:border-brand-200"
-              }`}
-            >
-              <p className="text-[12px] font-bold text-neutral-800 leading-tight mb-1">{r.label}</p>
-              <p className="text-[14px] font-display font-bold text-brand-600">S/.{r.price}</p>
-              <p className="text-[10px] text-neutral-400 font-light">/ noche</p>
-            </button>
-          ))}
+          {ROOMS.map((r) => {
+            const availability = h.roomAvailability[r.value];
+            const isUnavailable = availability === "unavailable";
+            const isMaintenance = availability === "maintenance";
+            const isLoading = availability === "loading";
+
+            return (
+              <button
+                key={r.value}
+                onClick={() => {
+                  if (!isUnavailable && !isMaintenance) {
+                    h.setHabitacion(r.value);
+                  }
+                }}
+                disabled={isUnavailable || isMaintenance || isLoading}
+                className={`p-3 rounded-sm border text-left transition-all relative ${
+                  h.habitacion === r.value
+                    ? "border-[#C9A96E] bg-brand-50 shadow-[0_0_0_1px_rgba(201,169,110,0.3)]"
+                    : isUnavailable
+                    ? "border-red-200 bg-red-50 opacity-60 cursor-not-allowed"
+                    : isMaintenance
+                    ? "border-amber-200 bg-amber-50 opacity-60 cursor-not-allowed"
+                    : isLoading
+                    ? "border-neutral-200 bg-neutral-50 opacity-50 cursor-wait"
+                    : "border-neutral-200 hover:border-brand-200"
+                }`}
+              >
+                <p className="text-[12px] font-bold text-neutral-800 leading-tight mb-1">{r.label}</p>
+                <p className="text-[14px] font-display font-bold text-brand-600">S/.{r.price}</p>
+                <p className="text-[10px] text-neutral-400 font-light">/ noche</p>
+
+                {/* Availability indicator */}
+                {isLoading && (
+                  <div className="absolute top-2 right-2">
+                    <Loader2 className="w-3 h-3 text-neutral-400 animate-spin" />
+                  </div>
+                )}
+                {isUnavailable && (
+                  <div className="absolute top-2 right-2">
+                    <AlertCircle className="w-3 h-3 text-red-500" />
+                  </div>
+                )}
+                {isMaintenance && (
+                  <div className="absolute top-2 right-2">
+                    <AlertTriangle className="w-3 h-3 text-amber-500" />
+                  </div>
+                )}
+                {availability === "available" && h.habitacion !== r.value && (
+                  <div className="absolute top-2 right-2">
+                    <CheckCircle2 className="w-3 h-3 text-green-500" />
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Availability legend */}
+        <div className="flex items-center gap-4 mt-2 text-[10px] text-neutral-500">
+          <div className="flex items-center gap-1">
+            <CheckCircle2 className="w-3 h-3 text-green-500" />
+            <span>Disponible</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <AlertCircle className="w-3 h-3 text-red-500" />
+            <span>No disponible</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3 text-amber-500" />
+            <span>Mantenimiento</span>
+          </div>
         </div>
       </div>
 
-      {/* Fechas */}
+      {/* Fechas con validación */}
       <div className="grid grid-cols-2 gap-3">
         {[
-          { label: "Fecha de llegada", val: h.llegada, set: h.setLlegada, min: h.today,              max: h.salida || undefined },
+          { label: "Fecha de llegada", val: h.llegada, set: h.setLlegada, min: h.today, max: undefined },
           { label: "Fecha de salida",  val: h.salida,  set: h.setSalida,  min: h.llegada || h.today, max: undefined },
         ].map(({ label, val, set, min, max }) => (
           <div key={label}>
@@ -269,6 +329,14 @@ function Step1({ h }: { h: ReturnType<typeof useReservaModal> }) {
           </div>
         ))}
       </div>
+
+      {/* Date error message */}
+      {h.dateError && (
+        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-sm px-4 py-3 text-[12px] text-amber-800">
+          <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <p>{h.dateError}</p>
+        </div>
+      )}
 
       {/* Resumen precio */}
       {h.nights > 0 && (
@@ -445,7 +513,7 @@ function Step2({ h }: { h: ReturnType<typeof useReservaModal> }) {
 
 // ─── Step 3: Confirmación ─────────────────────────────────────────────────────
 
-function Step3({ h }: { h: ReturnType<typeof useReservaModal> }) {
+function Step3({ h, showToast }: { h: ReturnType<typeof useReservaModal>; showToast: any }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-sm px-4 py-3">

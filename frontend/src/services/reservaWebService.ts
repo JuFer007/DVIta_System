@@ -89,6 +89,18 @@ export async function buscarHabitacionDisponible(
     return null;
   }
 }
+
+export async function buscarHabitacionesDisponibles(
+  fechaIngreso: string, fechaSalida: string
+): Promise<any[]> {
+  try {
+    const res = await fetch(`/api/habitaciones/disponibles?fechaIngreso=${fechaIngreso}&fechaSalida=${fechaSalida}`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
  
 export async function crearReserva(payload: {
   cliente: { idCliente: number };

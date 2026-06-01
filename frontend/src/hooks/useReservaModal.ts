@@ -6,6 +6,7 @@ import {
   buscarHabitacionDisponible,
   crearReservaConDni,
   buscarEmpleadoChatbot,
+  buscarHabitacionesDisponibles,
 } from "../services/reservaWebService";
 
 export const ROOMS = [
@@ -17,9 +18,11 @@ export const ROOMS = [
 export type RoomValue = typeof ROOMS[number]["value"];
 export type Step = 1 | 2 | 3;
 export type DniStatus = "" | "bd" | "reniec" | "notfound";
+export type RoomAvailability = "available" | "unavailable" | "maintenance" | "loading";
 
 export interface ReservaResult {
   idReserva: number;
+  idPago?: number;
 }
 
 export function useReservaModal(initialRoom: RoomValue = "estandar") {
@@ -44,6 +47,12 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
   const [sent,      setSent]      = useState(false);
   const [sendError, setSendError] = useState("");
   const [result,    setResult]    = useState<ReservaResult | null>(null);
+  const [roomAvailability, setRoomAvailability] = useState<Record<RoomValue, RoomAvailability>>({
+    estandar: "available",
+    suite: "available",
+    familiar: "available",
+  });
+  const [dateError, setDateError] = useState("");
 
   const selectedRoom = ROOMS.find((r) => r.value === habitacion) ?? ROOMS[0];
 
@@ -55,8 +64,103 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
 
   const total = nights * selectedRoom.price;
 
-  const canGoStep2 = !!habitacion && !!llegada && !!salida && nights > 0;
+  const canGoStep2 = !!habitacion && !!llegada && !!salida && nights > 0 && !dateError;
   const canGoStep3 = !!nombre && !!apellidoP && !!telefono && !!dni;
+
+  // Validar fechas (máximo 5 meses)
+  function validateDates(newLlegada: string, newSalida: string) {
+    if (!newLlegada || !newSalida) {
+      setDateError("");
+      return;
+    }
+
+    const llegadaDate = new Date(newLlegada);
+    const salidaDate = new Date(newSalida);
+    const today = new Date();
+
+    // Validar que la fecha de salida sea posterior a la de llegada
+    if (salidaDate <= llegadaDate) {
+      setDateError("La fecha de salida debe ser posterior a la fecha de llegada");
+      return;
+    }
+
+    // Validar máximo 5 meses de anticipación
+    const maxDate = new Date();
+    maxDate.setMonth(maxDate.getMonth() + 5);
+
+    if (llegadaDate > maxDate) {
+      setDateError("Las reservas solo pueden hacerse con máximo 5 meses de anticipación");
+      return;
+    }
+
+    // Validar que la fecha de llegada no sea en el pasado
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    if (llegadaDate < todayStart) {
+      setDateError("La fecha de llegada no puede ser en el pasado");
+      return;
+    }
+
+    setDateError("");
+  }
+
+  // Cargar disponibilidad de habitaciones
+  async function loadRoomAvailability() {
+    if (!llegada || !salida) {
+      setRoomAvailability({
+        estandar: "available",
+        suite: "available",
+        familiar: "available",
+      });
+      return;
+    }
+
+    setRoomAvailability({
+      estandar: "loading",
+      suite: "loading",
+      familiar: "loading",
+    });
+
+    try {
+      const availableRooms = await buscarHabitacionesDisponibles(llegada, salida);
+
+      const availability: Record<RoomValue, RoomAvailability> = {
+        estandar: "unavailable",
+        suite: "unavailable",
+        familiar: "unavailable",
+      };
+
+      ROOMS.forEach((room) => {
+        const hasAvailable = availableRooms.some(
+          (h: any) =>
+            h.estado === "DISPONIBLE" &&
+            h.tipoHabitacion?.descripcion?.toLowerCase().includes(room.tipoLabel.toLowerCase())
+        );
+        const hasMaintenance = availableRooms.some(
+          (h: any) =>
+            h.estado === "MANTENIMIENTO" &&
+            h.tipoHabitacion?.descripcion?.toLowerCase().includes(room.tipoLabel.toLowerCase())
+        );
+
+        if (hasMaintenance) {
+          availability[room.value] = "maintenance";
+        } else if (hasAvailable) {
+          availability[room.value] = "available";
+        } else {
+          availability[room.value] = "unavailable";
+        }
+      });
+
+      setRoomAvailability(availability);
+    } catch (error) {
+      console.error("Error loading room availability:", error);
+      setRoomAvailability({
+        estandar: "available",
+        suite: "available",
+        familiar: "available",
+      });
+    }
+  }
 
   function resetDni() {
     setDniStatus("");
@@ -73,6 +177,30 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
     setDni(""); setAdultos("1"); setNotas("");
     resetDni();
     setSent(false); setSendError(""); setResult(null);
+    setRoomAvailability({
+      estandar: "loading",
+      suite: "loading",
+      familiar: "loading",
+    });
+    setDateError("");
+  }
+
+  // Wrapper para setLlegada con validación
+  function setLlegadaWithValidation(value: string) {
+    setLlegada(value);
+    validateDates(value, salida);
+    if (value && salida) {
+      loadRoomAvailability();
+    }
+  }
+
+  // Wrapper para setSalida con validación
+  function setSalidaWithValidation(value: string) {
+    setSalida(value);
+    validateDates(llegada, value);
+    if (llegada && value) {
+      loadRoomAvailability();
+    }
   }
 
   async function buscarDni() {
@@ -110,16 +238,17 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
     setDniLoading(false);
   }
 
-  async function confirmar() {
+  async function confirmar(showToast?: (type: "success" | "warning" | "fail", title: string, message: string) => void) {
     setSending(true);
     setSendError("");
 
     try {
       const idHabitacion = await buscarHabitacionDisponible(selectedRoom.tipoLabel, llegada, salida);
       if (!idHabitacion) {
-        throw new Error(
-          `No hay habitaciones de tipo "${selectedRoom.label}" disponibles. Llámanos al +51 922 626 148.`
-        );
+        const errorMsg = `No hay habitaciones de tipo "${selectedRoom.label}" disponibles. Llámanos al +51 922 626 148.`;
+        setSendError(errorMsg);
+        if (showToast) showToast("fail", "Habitación no disponible", errorMsg);
+        throw new Error(errorMsg);
       }
 
       const idEmpleado = await buscarEmpleadoChatbot();
@@ -164,8 +293,16 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
       setResult({ idReserva });
       setSent(true);
 
+      if (showToast) {
+        showToast("success", "¡Reserva confirmada!", `Tu reserva #${idReserva} ha sido registrada exitosamente.`);
+      }
+
     } catch (err: any) {
-      setSendError(err?.message ?? "Error inesperado. Por favor intenta de nuevo.");
+      const errorMsg = err?.message ?? "Error inesperado. Por favor intenta de nuevo.";
+      setSendError(errorMsg);
+      if (showToast && !err?.message?.includes("No hay habitaciones")) {
+        showToast("fail", "Error al crear reserva", errorMsg);
+      }
     } finally {
       setSending(false);
     }
@@ -173,7 +310,8 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
 
   return {
     today, habitacion, setHabitacion,
-    llegada, setLlegada, salida, setSalida,
+    llegada, setLlegada: setLlegadaWithValidation,
+    salida, setSalida: setSalidaWithValidation,
     dni, setDni,
     nombre, setNombre,
     apellidoP, setApellidoP,
@@ -189,5 +327,6 @@ export function useReservaModal(initialRoom: RoomValue = "estandar") {
     sending, sent, sendError, result, confirmar,
     selectedRoom, nights, total,
     reset,
+    roomAvailability, dateError,
   };
 }
