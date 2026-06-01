@@ -40,3 +40,6 @@ dist/
 # Python
 __pycache__/
 *.pyc
+
+# Maven local settings (machine-specific)
+.m2/settings.xml
