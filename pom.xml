@@ -99,8 +99,6 @@
 		<resources>
 			<resource>
 				<directory>backend/src/main/resources</directory>
-<<<<<<< HEAD
-=======
 				<filtering>true</filtering>
 >>>>>>> main
 			</resource>
