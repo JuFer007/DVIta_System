@@ -1,19 +1,17 @@
-# D'Vita System
+<div align="center">
+  <img src="frontend/public/DVita_Logo.png" alt="D'Vita System" width="320"/>
+  <br><br>
+  <p><strong>Sistema de gestión hotelera con reservas, administración de habitaciones, clientes, empleados, reportes y chatbot inteligente</strong></p>
 
-Sistema de gestión hotelera para **Hospedaje D'Vita**. Incluye módulo de reservas, administración de habitaciones, clientes, empleados, reportes y un chatbot inteligente (DViBot).
-
----
-
-## Stack Tecnológico
-
-| Capa | Tecnología |
-|------|-----------|
-| **Frontend** | React + TypeScript + Vite |
-| **Backend** | Java + Spring Boot + Maven |
-| **Base de datos** | MySQL |
-| **Chatbot API** | Python + FastAPI |
-| **IA Local** | Ollama |
-| **Estilos** | Tailwind CSS |
+  ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
+  ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+  ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+  ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?logo=springboot&logoColor=white)
+  ![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
+  ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+  ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+  ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
+</div>
 
 ---
 
@@ -30,14 +28,14 @@ Página principal con presentación del hospedaje, servicios y acceso al sistema
 ### Autenticación
 Inicio de sesión para recepcionistas y administradores.
 
-| |
+|
 |---|
 | ![Login](capturas/login.png) |
 
 ### Dashboard
 Panel principal con resumen de ocupación, reservas activas e ingresos.
 
-| |
+|
 |---|
 | ![Dashboard](capturas/dashboard.png) |
 
@@ -59,21 +57,21 @@ Administración de habitaciones, tipos y precios.
 ### Gestión de Clientes
 Registro y búsqueda de clientes con integración RENIEC.
 
-| |
+|
 |---|
 | ![Clientes](capturas/clientes.png) |
 
 ### Gestión de Empleados
 Administración del personal del hospedaje.
 
-| |
+|
 |---|
 | ![Empleados](capturas/empleados.png) |
 
 ### Usuarios del Sistema
 Gestión de usuarios, roles y permisos.
 
-| |
+|
 |---|
 | ![Usuarios](capturas/usuarios.png) |
 
