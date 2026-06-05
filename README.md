@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/public/DVita_Logo.png" alt="D'Vita System" width="320"/>
+  <img src="frontend/public/DVita_Logo.png" alt="D'Vita System" width="100"/>
   <br><br>
   <p><strong>Sistema de gestión hotelera con reservas, administración de habitaciones, clientes, empleados, reportes y chatbot inteligente</strong></p>
 
@@ -28,16 +28,13 @@ Página principal con presentación del hospedaje, servicios y acceso al sistema
 ### Autenticación
 Inicio de sesión para recepcionistas y administradores.
 
-|
-|---|
-| ![Login](capturas/login.png) |
+
+![Login](capturas/login.png) 
 
 ### Dashboard
 Panel principal con resumen de ocupación, reservas activas e ingresos.
 
-|
-|---|
-| ![Dashboard](capturas/dashboard.png) |
+![Dashboard](capturas/dashboard.png) 
 
 ### Gestión de Reservas
 Creación, cancelación y consulta de reservas con wizard guiado.
@@ -52,28 +49,23 @@ Administración de habitaciones, tipos y precios.
 | | |
 |---|---|
 | ![Habitaciones 1](capturas/habitaciones1.png) | ![Habitaciones 2](capturas/habitaciones2.png) |
-| ![Tipos de Habitación](capturas/tiposHabitacion.png) | |
 
 ### Gestión de Clientes
 Registro y búsqueda de clientes con integración RENIEC.
 
-|
-|---|
-| ![Clientes](capturas/clientes.png) |
+
+ ![Clientes](capturas/clientes.png) 
 
 ### Gestión de Empleados
 Administración del personal del hospedaje.
 
-|
-|---|
-| ![Empleados](capturas/empleados.png) |
+
+ ![Empleados](capturas/empleados.png)
 
 ### Usuarios del Sistema
 Gestión de usuarios, roles y permisos.
 
-|
-|---|
-| ![Usuarios](capturas/usuarios.png) |
+![Usuarios](capturas/usuarios.png) 
 
 ### Pagos
 Registro y consulta de pagos por reserva.
