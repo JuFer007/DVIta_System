@@ -118,8 +118,47 @@ export const incidenciasService = {
   getById: (id: number)          => request<any>(`incidencias/${id}`),
   create:  (data: any)           => request("incidencias",     { method: "POST", body: JSON.stringify(data) }),
   update:  (id: number, data: any) => request(`incidencias/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
-  cambiarEstado: (id: number, estado: string) =>
-    request(`incidencias/${id}/estado`, { method: "PATCH", body: JSON.stringify({ estado }) }),
+  cambiarEstado: (id: number, estado: string, solucion?: string, notasAuditoria?: string, idEmpleadoResuelve?: number) => request(`incidencias/${id}/estado`, { method: "PATCH", body: JSON.stringify({ estado, solucion, notasAuditoria, idEmpleadoResuelve }) }),
+  getRecurrentes: (habitacionId: number, tipo: string) => request<any[]>(`incidencias/recurrentes?habitacion=${habitacionId}&tipo=${encodeURIComponent(tipo)}`),
+  getResoluciones: (id: number) => request<any[]>(`incidencias/${id}/resoluciones`),
+  crearResolucion: (id: number, data: any) => request(`incidencias/${id}/resoluciones`, { method: "POST", body: JSON.stringify(data) }),
+};
+
+// ── PDF Download ──────────────────────────────
+export async function downloadPdf(url: string, _filename?: string) {
+  window.dispatchEvent(new CustomEvent("pdf-loading-start"));
+  const newTab = window.open("about:blank", "_blank");
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      let msg = `Error al generar PDF (${res.status})`;
+      try { const body = await res.text(); if (body) msg = body; } catch {}
+      throw new Error(msg);
+    }
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    if (newTab && !newTab.closed) {
+      newTab.location.href = blobUrl;
+    } else {
+      window.open(blobUrl, "_blank");
+    }
+    setTimeout(() => {
+      URL.revokeObjectURL(blobUrl);
+      window.dispatchEvent(new CustomEvent("pdf-loading-end"));
+    }, 3000);
+  } catch (e) {
+    console.error("PDF error:", e);
+    if (newTab && !newTab.closed) newTab.close();
+    window.dispatchEvent(new CustomEvent("pdf-loading-end"));
+  }
+}
+
+// ── Áreas ────────────────────────────────────
+export const areasService = {
+  getAll:  ()                   => request<any[]>("areas"),
+  getAllAdmin: ()               => request<any[]>("areas/todas"),
+  create:  (data: any)          => request("areas",     { method: "POST", body: JSON.stringify(data) }),
+  update:  (id: number, data: any) => request(`areas/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
 };
 
 // ── Permisos ──────────────────────────────────

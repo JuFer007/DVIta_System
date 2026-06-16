@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { BriefcaseBusiness, Pencil, Power, Phone } from "lucide-react";
+import { BriefcaseBusiness, Pencil, Power, Phone, FileText } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
-import { empleadosService } from "../../services/api";
+import { empleadosService, downloadPdf } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 import { useToast } from "../../components/Toast";
 
@@ -145,6 +145,12 @@ export default function EmpleadosPage() {
           },
         ]}
         onNew={m.openNew}
+        headerExtra={
+          <button onClick={() => downloadPdf("/api/empleados/pdf/reporte", "empleados.pdf")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
+            <FileText className="w-3.5 h-3.5" /> PDF General
+          </button>
+        }
       />
       <EntityModal
         open={m.modalOpen} title="Empleado" icon={<BriefcaseBusiness className="w-4 h-4" />}

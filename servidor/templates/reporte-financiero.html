@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Reporte Financiero — D'Vita</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--br:#3D1F0A;--text:#1C1A18;--text-2:#6B6560;--text-3:#9E9890;--border:#E2DED9;--bg-alt:#F7F6F4;--white:#FFFFFF}
+body{font-family:'Inter',system-ui,sans-serif;font-size:11px;line-height:1.55;color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased}
+
+.hdr{background:#995832;border-bottom:1px solid #874e2c;padding:20px 36px;display:flex;align-items:center;justify-content:space-between}
+.hdr-logo{display:flex;align-items:center;gap:12px}
+.hdr-logo img{width:34px;height:34px;border-radius:50%;opacity:.85}
+.hdr-brand{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:600;color:#fff;letter-spacing:.05em}
+.hdr-brand small{display:block;font-family:'Inter',sans-serif;font-size:8.5px;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
+.hdr-right{text-align:right}
+.hdr-title{font-size:13px;font-weight:600;color:#fff;letter-spacing:-.01em}
+.hdr-date{font-size:9px;color:rgba(255,255,255,.55);margin-top:3px;letter-spacing:.04em}
+
+.body{padding:28px 36px 36px}
+
+/* kpi row */
+.kpis{display:flex;border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:28px}
+.kpi{flex:1;padding:16px 18px;border-right:1px solid var(--border)}
+.kpi:last-child{border-right:none}
+.kpi:first-child{border-left:3px solid var(--br)}
+.kpi-n{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1}
+.kpi-l{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-top:5px;font-weight:500}
+
+.sec{display:flex;align-items:center;gap:12px;margin-bottom:10px;margin-top:22px}
+.sec:first-of-type{margin-top:0}
+.sec h2{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);white-space:nowrap}
+.sec-line{flex:1;height:1px;background:var(--border)}
+
+table{width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:4px}
+thead th{padding:8px 12px;background:var(--bg-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);text-align:left}
+thead th.c{text-align:center}
+thead th.r{text-align:right}
+tbody td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody td.c{text-align:center}
+tbody td.r{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:nth-child(even) td{background:var(--bg-alt)}
+.td-main{font-weight:500}
+.td-money{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.td-2{color:var(--text-2)}
+
+.ftr{padding:13px 36px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.ftr-l{font-size:8.5px;color:var(--text-3);line-height:1.6}
+.ftr-l strong{font-size:8.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em}
+.ftr-r{font-size:8.5px;color:var(--text-3);text-align:right}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">
+    <img src="http://localhost:3005/recursos/DVita_Logo.png" alt="" onerror="this.style.display='none'">
+    <div class="hdr-brand">D'VITA<small>Hospedaje: Sistema de Administración y Gestión Hotelera</small></div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-title">Reporte Financiero</div>
+    <div class="hdr-date">Generado el {{fechaGeneracion}}</div>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-n">{{ingresosMes}}</div>
+      <div class="kpi-l">Ingresos del mes</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n">{{totalPagos}}</div>
+      <div class="kpi-l">Pagos del mes</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n">{{habitacionesTotal}}</div>
+      <div class="kpi-l">Habitaciones</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n">{{ocupacion}}%</div>
+      <div class="kpi-l">Ocupación</div>
+    </div>
+  </div>
+
+  <div class="sec"><h2>Ingresos mensuales — últimos 6 meses</h2><div class="sec-line"></div></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="c">Mes</th>
+        <th class="r">Total ingresos</th>
+        <th class="c">N° pagos</th>
+      </tr>
+    </thead>
+    <tbody>{{ingresosMensuales}}</tbody>
+  </table>
+
+  <div class="sec"><h2>Distribución por método de pago</h2><div class="sec-line"></div></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Método de pago</th>
+        <th class="r">Monto total</th>
+        <th class="c">Cantidad</th>
+      </tr>
+    </thead>
+    <tbody>{{metodosPago}}</tbody>
+  </table>
+
+</div>
+
+<div class="ftr">
+  <div class="ftr-l"><strong>D'Vita Hospedaje &amp; Suites</strong><br>Víctor Raúl Haya de la Torre N° 281 · Chiclayo, Perú · +51 922 626 148</div>
+  <div class="ftr-r">Documento generado automáticamente<br>Sistema de Gestión Hotelera</div>
+</div>
+
+</body>
+</html>

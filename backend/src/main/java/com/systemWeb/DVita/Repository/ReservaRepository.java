@@ -31,4 +31,5 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     @Param("idReserva") Long idReserva);
 
     List<Reserva> findByFechaIngresoAndEstadoReservaNot(LocalDate fechaIngreso, String estadoReserva);
+    List<Reserva> findByFechaReservaBetween(LocalDate desde, LocalDate hasta);
 }

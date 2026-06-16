@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { CalendarCheck, Search, Loader2, User, CheckCircle2, AlertCircle, X, ChevronDown, Save, LogIn, LogOut, XCircle } from "lucide-react";
+import { CalendarCheck, Search, Loader2, User, CheckCircle2, AlertCircle, X, ChevronDown, Save, LogIn, LogOut, XCircle, FileText } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import StatusBadge from "../../components/StatusBadge";
 import { useCrud } from "../../hooks/useCrud";
-import { reservasService, clientesService, habitacionesService, tiposService, reniecService } from "../../services/api";
+import { reservasService, clientesService, habitacionesService, tiposService, reniecService, downloadPdf } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 import { useToast } from "../../components/Toast";
 import { useConfirm } from "../../hooks/useConfirm";
@@ -279,7 +279,12 @@ export default function ReservasPage() {
             ? a.ingreso.localeCompare(b.ingreso)
             : b.ingreso.localeCompare(a.ingreso);
         })}
-        loading={crud.loading} error={crud.error}
+        headerExtra={
+          <button onClick={() => downloadPdf("/api/reservas/pdf/reporte?desde=2020-01-01&hasta=" + new Date().toISOString().split("T")[0], "reporte-reservas.pdf")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
+            <FileText className="w-3.5 h-3.5" /> PDF
+          </button>
+        }
         columns={[
           { key: "cliente", label: "Cliente" },
           { key: "habitacion", label: "Hab." },

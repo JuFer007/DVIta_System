@@ -1,9 +1,13 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Pago;
 import com.systemWeb.DVita.Service.PagoService;
+import com.systemWeb.DVita.Service.MicroServicios.PagoPdfService;
+import com.systemWeb.DVita.Service.MicroServicios.TicketPdfService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -15,6 +19,17 @@ import java.util.List;
 public class PagoController {
 
     private final PagoService pagoService;
+    private final PagoPdfService pagoPdfService;
+    private final TicketPdfService ticketPdfService;
+
+    @GetMapping("/pdf/reporte")
+    public ResponseEntity<byte[]> descargarPdf() {
+        byte[] pdf = pagoPdfService.generarReportePagos();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=reporte-pagos.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
 
     @GetMapping
     public ResponseEntity<List<Pago>> listarTodos() {
@@ -26,6 +41,15 @@ public class PagoController {
         return pagoService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/ticket")
+    public ResponseEntity<byte[]> descargarTicket(@PathVariable Long id) {
+        byte[] pdf = ticketPdfService.generarTicket(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=ticket-pago-" + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     @PostMapping

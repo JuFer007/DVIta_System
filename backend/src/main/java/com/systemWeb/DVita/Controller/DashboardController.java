@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Service.DashboardService;
+import com.systemWeb.DVita.Service.MicroServicios.ReporteFinancieroPdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.*;
 
 public class DashboardController {
     private final DashboardService dashboardService;
+    private final ReporteFinancieroPdfService reporteFinancieroPdfService;
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats() {
@@ -45,5 +47,10 @@ public class DashboardController {
     @GetMapping("/ocupacion-por-tipo")
     public ResponseEntity<List<Map<String, Object>>> getOcupacionPorTipo() {
         return ResponseEntity.ok(dashboardService.getOcupacionPorTipo());
+    }
+
+    @GetMapping(value = "/pdf/reporte-financiero", produces = "application/pdf")
+    public ResponseEntity<byte[]> pdfReporteFinanciero() {
+        return ResponseEntity.ok(reporteFinancieroPdfService.generarReporteFinanciero());
     }
 }

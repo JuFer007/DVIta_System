@@ -1,6 +1,7 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Habitacion;
 import com.systemWeb.DVita.Service.HabitacionService;
+import com.systemWeb.DVita.Service.MicroServicios.HabitacionPdfService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 public class HabitacionController {
     private final HabitacionService habitacionService;
+    private final HabitacionPdfService habitacionPdfService;
 
     @GetMapping
     public ResponseEntity<List<Habitacion>> listarTodos() {
@@ -52,6 +54,11 @@ public class HabitacionController {
                 ? habitacionService.disponiblesPorTipo(tipoId, fechaIngreso, fechaSalida)
                 : habitacionService.habitacionesDisponibles(fechaIngreso, fechaSalida);
         return ResponseEntity.ok(disponibles);
+    }
+
+    @GetMapping(value = "/pdf/reporte", produces = "application/pdf")
+    public ResponseEntity<byte[]> pdfReporte() {
+        return ResponseEntity.ok(habitacionPdfService.generarReporteHabitaciones());
     }
 
     @PatchMapping("/{id}/estado")

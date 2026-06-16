@@ -1,6 +1,7 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Empleado;
 import com.systemWeb.DVita.Service.EmpleadoService;
+import com.systemWeb.DVita.Service.MicroServicios.EmpleadoPdfService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public class EmpleadoController {
     private final EmpleadoService empleadoService;
+    private final EmpleadoPdfService empleadoPdfService;
 
     @GetMapping
     public ResponseEntity<List<Empleado>> listarTodos() {
@@ -35,6 +37,11 @@ public class EmpleadoController {
     @PutMapping("/{id}")
     public ResponseEntity<Empleado> actualizar(@PathVariable Long id, @Valid @RequestBody Empleado empleado) {
         return ResponseEntity.ok(empleadoService.actualizar(id, empleado));
+    }
+
+    @GetMapping(value = "/pdf/reporte", produces = "application/pdf")
+    public ResponseEntity<byte[]> pdfReporte() {
+        return ResponseEntity.ok(empleadoPdfService.generarReporteEmpleados());
     }
 
     @PatchMapping("/{id}/toggle-activo")

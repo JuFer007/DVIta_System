@@ -1,0 +1,64 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: dvita-mysql
+    environment:
+      MYSQL_DATABASE: DVita
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pdf-server:
+    build:
+      context: .
+      dockerfile: contenedores/pdf-server.Dockerfile
+    container_name: dvita-pdf
+    ports:
+      - "3005:3005"
+
+  backend:
+    build:
+      context: .
+      dockerfile: contenedores/backend.Dockerfile
+    container_name: dvita-backend
+    ports:
+      - "8080:8080"
+    env_file: .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/DVita
+      PDF_SERVICE_URL: http://pdf-server:3005
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  chatbot:
+    build:
+      context: .
+      dockerfile: contenedores/chatbot.Dockerfile
+    container_name: dvita-chatbot
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      BACKEND_URL: http://backend:8080
+      OLLAMA_URL: http://host.docker.internal:11434
+
+  frontend:
+    build:
+      context: .
+      dockerfile: contenedores/frontend.Dockerfile
+    container_name: dvita-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

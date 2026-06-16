@@ -3,6 +3,7 @@ import { Clock, Plus, Pencil, Search, CalendarDays, User, ChevronDown, AlertCirc
 import { useCrud } from "../../hooks/useCrud";
 import { useModalState } from "../../hooks/useModalState";
 import { empleadosService, recepcionistasService } from "../../services/api";
+import { useToast } from "../../components/Toast";
 
 // ─── API service ──────────────────────────────────────────────────────────────
 const horariosService = {
@@ -339,6 +340,7 @@ export default function HorariosPage() {
   const crud     = useCrud(horariosService, mapHorario, DEMO_HORARIOS);
   const recepCrud = useCrud(recepcionistasService, mapRecepcionista, DEMO_RECEP);
   const m = useModalState();
+  const toast = useToast();
 
   const [search, setSearch] = useState("");
   const [filterTurno, setFilterTurno]   = useState("");
@@ -370,7 +372,12 @@ export default function HorariosPage() {
     const ok = m.editing
       ? await crud.update(m.editing.id, payload)
       : await crud.create(payload);
-    if (ok) m.closeModal();
+    if (ok) {
+      toast.showToast("success", m.editing ? "Horario actualizado" : "Horario creado", `${form.tipoTurno} — ${form.fecha}`);
+      m.closeModal();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al guardar", crud.saveError);
+    }
   };
 
   return (

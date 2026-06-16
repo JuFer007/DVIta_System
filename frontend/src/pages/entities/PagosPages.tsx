@@ -1,10 +1,10 @@
-// ─── PagosPage ────────────────────────────────────────────────────────────────
-import { CreditCard } from "lucide-react";
+import { CreditCard, FileText, Receipt, Pencil } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import { useCrud } from "../../hooks/useCrud";
-import { pagosService, reservasService } from "../../services/api";
+import { pagosService, reservasService, downloadPdf } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
+import { useToast } from "../../components/Toast";
 
 const mapReserva = (r: any) => ({
   id: r.idReserva,
@@ -34,6 +34,7 @@ export default function PagosPage() {
   const crud         = useCrud(pagosService,    mapPago,    DEMO_P);
   const reservasCrud = useCrud(reservasService, mapReserva, DEMO_R);
   const m = useModalState();
+  const toast = useToast();
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -41,12 +42,13 @@ export default function PagosPage() {
     {
       key: "idReserva", label: "Reserva", required: true, type: "select",
       options: reservasCrud.data.map((r) => ({ value: r.id, label: `#${r.id} — ${r.cliente} (Hab. ${r.habitacion})` })),
-      cols: 2,
+      hint: "Selecciona la reserva a la que pertenece el pago", cols: 2,
     },
-    { key: "monto",     label: "Monto (S/.)",    required: true, type: "number", placeholder: "240.00" },
-    { key: "fechaPago", label: "Fecha de Pago",  required: true, type: "date",   max: today },
+    { key: "monto",     label: "Monto (S/.)",    required: true, type: "number", placeholder: "240.00", min: 0.01, hint: "Debe ser mayor a 0" },
+    { key: "fechaPago", label: "Fecha de Pago",  required: true, type: "date",   max: today, hint: "No puede ser una fecha futura" },
     {
       key: "metodoPago", label: "Método de Pago", required: true, type: "select",
+      hint: "Efectivo, Tarjeta, Yape, Plin, etc.",
       options: [
         { value: "EFECTIVO",        label: "Efectivo" },
         { value: "TARJETA_CREDITO", label: "Tarjeta de Crédito" },
@@ -63,9 +65,31 @@ export default function PagosPage() {
     row ? { idReserva: row.reservaId, monto: row.monto, fechaPago: row.fecha, metodoPago: row.metodo } : { fechaPago: today };
 
   const handleSave = async (form: any) => {
-    const payload = { reserva: { idReserva: Number(form.idReserva) }, monto: parseFloat(form.monto), fechaPago: form.fechaPago, metodoPago: form.metodoPago };
+    if (!form.idReserva) {
+      toast.showToast("fail", "Validación", "Debes seleccionar una reserva");
+      return;
+    }
+    const monto = parseFloat(form.monto);
+    if (!monto || monto <= 0) {
+      toast.showToast("fail", "Validación", "El monto debe ser mayor a 0");
+      return;
+    }
+    if (!form.fechaPago) {
+      toast.showToast("fail", "Validación", "La fecha de pago es obligatoria");
+      return;
+    }
+    if (!form.metodoPago) {
+      toast.showToast("fail", "Validación", "Selecciona un método de pago");
+      return;
+    }
+    const payload = { reserva: { idReserva: Number(form.idReserva) }, monto, fechaPago: form.fechaPago, metodoPago: form.metodoPago };
     const ok = m.editing ? await crud.update(m.editing.id, payload) : await crud.create(payload);
-    if (ok) m.closeModal();
+    if (ok) {
+      toast.showToast("success", m.editing ? "Pago actualizado" : "Pago registrado", `S/.${monto.toFixed(2)} — ${form.metodoPago}`);
+      m.closeModal();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al guardar", crud.saveError);
+    }
   };
 
   return (
@@ -77,8 +101,33 @@ export default function PagosPage() {
           { key: "montoFmt", label: "Monto" },
           { key: "fecha",    label: "Fecha" },
           { key: "metodo",   label: "Método" },
+          {
+            key: "_acciones", label: "Acciones", sortable: false,
+            render: (_: any, row: any) => (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { m.openEdit(row); }}
+                  className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors"
+                >
+                  <Pencil className="w-3 h-3" /> Editar
+                </button>
+                <button
+                  onClick={() => downloadPdf(`/api/pagos/${row.id}/ticket`, `ticket-pago-${row.id}.pdf`)}
+                  className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-brand-700 bg-brand-100 hover:bg-brand-200 rounded-lg transition-colors"
+                >
+                  <Receipt className="w-3 h-3" /> Ticket
+                </button>
+              </div>
+            ),
+          },
         ]}
-        onNew={m.openNew} onEdit={m.openEdit}
+        onNew={m.openNew}
+        headerExtra={
+          <button onClick={() => downloadPdf("/api/pagos/pdf/reporte", "reporte-pagos.pdf")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
+            <FileText className="w-3.5 h-3.5" /> PDF General
+          </button>
+        }
       />
       <EntityModal
         open={m.modalOpen} title="Pago" icon={<CreditCard className="w-4 h-4" />}

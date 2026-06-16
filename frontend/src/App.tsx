@@ -14,8 +14,11 @@ import ReservasPage       from "./pages/entities/ReservaPage";
 import PagosPage          from "./pages/entities/PagosPages";
 import UsuariosPage       from "./pages/entities/UsuariosPages";
 import IncidenciasPage    from "./pages/entities/IncidenciasPage";
+import AreasPage          from "./pages/entities/AreasPage";
+import HorariosPage       from "./pages/entities/HorariosPage";
 import { ToastProvider } from "./components/Toast";
 import { ConfirmProvider } from "./hooks/useConfirm";
+import PdfLoadingOverlay from "./components/PdfLoading";
 
 type View = "landing" | "login";
 
@@ -42,6 +45,8 @@ function AppContent() {
         case "pagos":        return <PagosPage />;
         case "usuarios":     return <UsuariosPage />;
         case "incidencias":  return <IncidenciasPage />;
+        case "areas":        return <AreasPage />;
+        case "horarios":     return <HorariosPage />;
         case "reportes":     return <ReportesPage />;
         default:             return <Dashboard />;
       }
@@ -70,5 +75,5 @@ function AppContent() {
 }
 
 export default function App() {
-  return <AuthProvider><ToastProvider><ConfirmProvider><AppContent /></ConfirmProvider></ToastProvider></AuthProvider>;
+  return <AuthProvider><ToastProvider><ConfirmProvider><AppContent /><PdfLoadingOverlay /></ConfirmProvider></ToastProvider></AuthProvider>;
 }

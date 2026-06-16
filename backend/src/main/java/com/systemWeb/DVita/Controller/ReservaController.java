@@ -2,11 +2,14 @@ package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.DTO.ReservaDTO;
 import com.systemWeb.DVita.Model.Reserva;
 import com.systemWeb.DVita.Service.ReservaService;
+import com.systemWeb.DVita.Service.MicroServicios.ReservaPdfService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -15,6 +18,7 @@ import java.util.List;
 
 public class ReservaController {
     private final ReservaService reservaService;
+    private final ReservaPdfService reservaPdfService;
 
     @GetMapping
     public ResponseEntity<List<Reserva>> listarTodos() {
@@ -53,6 +57,13 @@ public class ReservaController {
     @PatchMapping("/{id}/checkout")
     public ResponseEntity<Reserva> checkOut(@PathVariable Long id) {
         return ResponseEntity.ok(reservaService.checkOut(id));
+    }
+
+    @GetMapping(value = "/pdf/reporte", produces = "application/pdf")
+    public ResponseEntity<byte[]> pdfReporte(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        return ResponseEntity.ok(reservaPdfService.generarReporteReservas(desde, hasta));
     }
 
     @PatchMapping("/{id}/cancelar")

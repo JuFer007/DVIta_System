@@ -1,8 +1,8 @@
-import { Users, Pencil, Mail, Phone } from "lucide-react";
+import { Users, Pencil, Mail, Phone, FileText } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import { useCrud } from "../../hooks/useCrud";
-import { clientesService } from "../../services/api";
+import { clientesService, downloadPdf } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 import { useToast } from "../../components/Toast";
 
@@ -77,7 +77,7 @@ export default function ClientesPage() {
 
   return (
     <>
-      <DataTable
+        <DataTable
         title="Clientes" data={crud.data} loading={crud.loading} error={crud.error}
         columns={[
           {
@@ -108,6 +108,12 @@ export default function ClientesPage() {
           },
         ]}
         onNew={m.openNew} onEdit={m.openEdit}
+        headerExtra={
+          <button onClick={() => downloadPdf("/api/clientes/pdf/reporte", "clientes.pdf")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
+            <FileText className="w-3.5 h-3.5" /> PDF General
+          </button>
+        }
       />
       <EntityModal
         open={m.modalOpen} title="Cliente" icon={<Users className="w-4 h-4" />}

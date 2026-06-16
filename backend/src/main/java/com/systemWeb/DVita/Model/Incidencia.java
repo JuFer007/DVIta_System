@@ -29,6 +29,14 @@ public class Incidencia {
     @JoinColumn(name = "id_habitacion")
     private Habitacion habitacion;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_area")
+    private Area area;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_incidencia_original")
+    private Incidencia incidenciaOriginal;
+
     @NotNull(message = "La fecha es obligatoria")
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
@@ -64,4 +72,12 @@ public class Incidencia {
     @Size(max = 500, message = "Las notas internas no pueden superar 500 caracteres")
     @Column(name = "notas_internas", length = 500)
     private String notasInternas;
+
+    @Column(name = "es_recurrente")
+    @Builder.Default
+    private Boolean esRecurrente = false;
+
+    @Column(name = "veces_resuelta")
+    @Builder.Default
+    private Integer vecesResuelta = 0;
 }

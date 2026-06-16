@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS DVita;
-USE DVita;
-
 -- ============================================================
 -- 1) TIPO HABITACION (4)
 -- ============================================================
@@ -86,7 +83,19 @@ INSERT INTO habitacion (id_tipo_habitacion, numero_habitacion, estado) VALUES
 (4, 209, 'MANTENIMIENTO'), (4, 210, 'DISPONIBLE');
 
 -- ============================================================
--- 6) MODULO PERMISO (15 usuarios × 8 módulos = 120)
+-- 6) AREA (7)
+-- ============================================================
+INSERT INTO area (nombre, prioridad_base, nivel_prioridad, descripcion, activo) VALUES
+('RESERVAS',       'URGENTE', 4, 'Área de reservas y atención al cliente', true),
+('RECEPCION',      'ALTA',    3, 'Recepción y front desk', true),
+('MANTENIMIENTO',  'MEDIA',   2, 'Mantenimiento de habitaciones e instalaciones', true),
+('LIMPIEZA',       'MEDIA',   2, 'Housekeeping y limpieza', true),
+('SEGURIDAD',      'MEDIA',   2, 'Seguridad del hotel', true),
+('ADMINISTRACION', 'BAJA',    1, 'Administración y gerencia', true),
+('OTRO',           'MEDIA',   2, 'Otras áreas no especificadas', true);
+
+-- ============================================================
+-- 7) MODULO PERMISO (15 usuarios × 8 módulos = 120)
 -- ============================================================
 INSERT INTO modulo_permiso (id_usuario, modulo, puede_acceder) VALUES
 (1, 'CLIENTES',true),(1, 'EMPLEADOS',true),(1, 'HABITACIONES',true),(1, 'TIPOS_HABITACION',true),(1, 'RESERVAS',true),(1, 'PAGOS',true),(1, 'USUARIOS',true),(1, 'INCIDENCIAS',true),
@@ -106,7 +115,7 @@ INSERT INTO modulo_permiso (id_usuario, modulo, puede_acceder) VALUES
 (15,'CLIENTES',true),(15,'EMPLEADOS',true),(15,'HABITACIONES',true),(15,'TIPOS_HABITACION',true),(15,'RESERVAS',true),(15,'PAGOS',true),(15,'USUARIOS',true),(15,'INCIDENCIAS',true);
 
 -- ============================================================
--- 7) RESERVA (20)
+-- 8) RESERVA (20)
 -- ============================================================
 INSERT INTO reserva (id_cliente, id_empleado, id_habitacion, fecha_reserva, fecha_ingreso, fecha_salida, estado_reserva) VALUES
 (1,  1,  6, '2025-01-10', '2025-01-15', '2025-01-18', 'COMPLETADA'),
@@ -131,7 +140,7 @@ INSERT INTO reserva (id_cliente, id_empleado, id_habitacion, fecha_reserva, fech
 (10, 6, 20, '2025-08-20', '2025-08-25', '2025-08-28', 'COMPLETADA');
 
 -- ============================================================
--- 8) PAGO (20)
+-- 9) PAGO (20)
 -- ============================================================
 INSERT INTO pago (id_reserva, monto, fecha_pago, metodo_pago) VALUES
 (1,  200.00, '2025-01-15', 'TARJETA_CREDITO'),
@@ -156,26 +165,45 @@ INSERT INTO pago (id_reserva, monto, fecha_pago, metodo_pago) VALUES
 (20, 410.00, '2025-08-25', 'TRANSFERENCIA');
 
 -- ============================================================
--- 9) INCIDENCIA (20)
+-- 10) INCIDENCIA (20)
+--     id_area: 1=RESERVAS, 2=RECEPCION, 3=MANTENIMIENTO,
+--              4=LIMPIEZA, 5=SEGURIDAD, 6=ADMINISTRACION, 7=OTRO
 -- ============================================================
-INSERT INTO incidencia (id_empleado_registra, id_cliente, id_habitacion, fecha, tipo, descripcion, prioridad, estado, notas_internas) VALUES
-(1,  1,  6,  '2025-01-16', 'DAÑO_HABITACION',     'Aire acondicionado no enfría en habitación 106', 'ALTA', 'RESUELTO', 'Reparado el 17/01'),
-(3,  NULL, 3, '2025-02-12', 'FALLA_EQUIPO',        'TV no enciende en habitación 103', 'MEDIA', 'RESUELTO', 'Cambiado fusible'),
-(5,  3,  NULL,'2025-03-06', 'QUEJA_HUESPED',       'Huésped del 105 reporta ruido de construcción', 'URGENTE', 'CERRADO', 'Notificado a construcción'),
-(2,  4,  1,  '2025-03-22', 'OTRO',                'Llave magnética no funciona en habitación 101', 'BAJA', 'CERRADO', 'Reprogramada tarjeta'),
-(6,  5,  6,  '2025-04-02', 'DAÑO_HABITACION',     'Ducha sin agua caliente en habitación 106', 'ALTA', 'RESUELTO', 'Terma reparada'),
-(8,  NULL, 7, '2025-04-08', 'FALLA_EQUIPO',        'Secador de pelo no funciona en habitación 107', 'BAJA', 'RESUELTO', 'Reemplazado'),
-(9,  6,  NULL,'2025-05-07', 'PROBLEMA_SERVICIO',   'Toallas no cambiadas en habitación 201', 'MEDIA', 'CERRADO', 'Ama de llaves notificada'),
-(10, 7,  8,  '2025-05-18', 'QUEJA_HUESPED',       'Ruido de fiesta en habitación contigua', 'URGENTE', 'RESUELTO', 'Seguridad intervino'),
-(11, NULL, 9, '2025-06-12', 'DAÑO_HABITACION',     'Cama rota en habitación 109', 'ALTA', 'CERRADO', 'Cambio de mobiliario'),
-(12, 8,  10, '2025-07-06', 'OTRO',                'Huésped olvidó pertenencias', 'BAJA', 'CERRADO', 'Entregado en recepción'),
-(13, 9, NULL,'2025-07-20', 'QUEJA_HUESPED',       'Wifi inestable en piso 2', 'MEDIA', 'RESUELTO', 'Router reemplazado'),
-(14, 10, 11, '2025-08-03', 'DAÑO_HABITACION',     'Inodoro tapado en habitación 201', 'ALTA', 'RESUELTO', 'Destapado con éxito'),
-(15, NULL, 12,'2025-08-10', 'FALLA_EQUIPO',        'Microondas no calienta en habitación 202', 'MEDIA', 'CERRADO', 'Reemplazado'),
-(1,  11, 13, '2025-09-04', 'PROBLEMA_SERVICIO',   'No hubo servicio de limpieza por 2 días', 'MEDIA', 'RESUELTO', 'Programación corregida'),
-(3,  12, 14, '2025-09-22', 'QUEJA_HUESPED',       'Personal de mantenimiento entró sin avisar', 'URGENTE', 'CERRADO', 'Capacitación al personal'),
-(5,  NULL, 15,'2025-10-06', 'DAÑO_HABITACION',     'Persiana rota en habitación 205', 'BAJA', 'RESUELTO', 'Persiana reemplazada'),
-(6,  13, 16, '2025-10-16', 'OTRO',                'Maleta dañada por personal de hotel', 'ALTA', 'RESUELTO', 'Compensación al huésped'),
-(8,  14, 17, '2025-11-03', 'FALLA_EQUIPO',        'Aire acondicionado ruidoso en habitación 207', 'MEDIA', 'CERRADO', 'Mantenimiento preventivo'),
-(9,  NULL, 18,'2025-11-12', 'PROBLEMA_SERVICIO',   'Agua caliente tarda 10 min en salir', 'BAJA', 'RESUELTO', 'Válvula ajustada'),
-(10, 15, 19, '2025-11-22', 'DAÑO_HABITACION',     'Lámpara de mesa no prende', 'BAJA', 'RESUELTO', 'Bombillo reemplazado');
+INSERT INTO incidencia (id_empleado_registra, id_cliente, id_habitacion, id_area, fecha, tipo, descripcion, prioridad, estado, fecha_resolucion, notas_internas, es_recurrente, veces_resuelta) VALUES
+(1,  1,  6,  3, '2025-01-16', 'DAÑO_HABITACION',     'Aire acondicionado no enfría en habitación 106', 'ALTA', 'RESUELTO', '2025-01-17', 'Reparado el 17/01', false, 1),
+(3,  NULL, 3, 3, '2025-02-12', 'FALLA_EQUIPO',        'TV no enciende en habitación 103', 'MEDIA', 'RESUELTO', '2025-02-13', 'Cambiado fusible', false, 1),
+(5,  3,  NULL, 2,'2025-03-06', 'QUEJA_HUESPED',       'Huésped del 105 reporta ruido de construcción', 'URGENTE', 'CERRADO', NULL, 'Notificado a construcción', false, 0),
+(2,  4,  1,  7, '2025-03-22', 'OTRO',                'Llave magnética no funciona en habitación 101', 'BAJA', 'CERRADO', NULL, 'Reprogramada tarjeta', false, 0),
+(6,  5,  6,  3, '2025-04-02', 'DAÑO_HABITACION',     'Ducha sin agua caliente en habitación 106', 'ALTA', 'RESUELTO', '2025-04-03', 'Terma reparada', false, 1),
+(8,  NULL, 7, 3, '2025-04-08', 'FALLA_EQUIPO',        'Secador de pelo no funciona en habitación 107', 'BAJA', 'RESUELTO', '2025-04-09', 'Reemplazado', false, 1),
+(9,  6,  NULL, 4,'2025-05-07', 'PROBLEMA_SERVICIO',   'Toallas no cambiadas en habitación 201', 'MEDIA', 'CERRADO', NULL, 'Ama de llaves notificada', false, 0),
+(10, 7,  8,  2, '2025-05-18', 'QUEJA_HUESPED',       'Ruido de fiesta en habitación contigua', 'URGENTE', 'RESUELTO', '2025-05-19', 'Seguridad intervino', false, 1),
+(11, NULL, 9, 3, '2025-06-12', 'DAÑO_HABITACION',     'Cama rota en habitación 109', 'ALTA', 'CERRADO', NULL, 'Cambio de mobiliario', false, 0),
+(12, 8,  10, 7, '2025-07-06', 'OTRO',                'Huésped olvidó pertenencias', 'BAJA', 'CERRADO', NULL, 'Entregado en recepción', false, 0),
+(13, 9, NULL, 2,'2025-07-20', 'QUEJA_HUESPED',       'Wifi inestable en piso 2', 'MEDIA', 'RESUELTO', '2025-07-21', 'Router reemplazado', false, 1),
+(14, 10, 11, 3, '2025-08-03', 'DAÑO_HABITACION',     'Inodoro tapado en habitación 201', 'ALTA', 'RESUELTO', '2025-08-04', 'Destapado con éxito', false, 1),
+(15, NULL, 12,3, '2025-08-10', 'FALLA_EQUIPO',        'Microondas no calienta en habitación 202', 'MEDIA', 'CERRADO', NULL, 'Reemplazado', false, 0),
+(1,  11, 13, 4, '2025-09-04', 'PROBLEMA_SERVICIO',   'No hubo servicio de limpieza por 2 días', 'MEDIA', 'RESUELTO', '2025-09-05', 'Programación corregida', false, 1),
+(3,  12, 14, 2, '2025-09-22', 'QUEJA_HUESPED',       'Personal de mantenimiento entró sin avisar', 'URGENTE', 'CERRADO', NULL, 'Capacitación al personal', false, 0),
+(5,  NULL, 15,3, '2025-10-06', 'DAÑO_HABITACION',     'Persiana rota en habitación 205', 'BAJA', 'RESUELTO', '2025-10-07', 'Persiana reemplazada', false, 1),
+(6,  13, 16, 7, '2025-10-16', 'OTRO',                'Maleta dañada por personal de hotel', 'ALTA', 'RESUELTO', '2025-10-17', 'Compensación al huésped', false, 1),
+(8,  14, 17, 3, '2025-11-03', 'FALLA_EQUIPO',        'Aire acondicionado ruidoso en habitación 207', 'MEDIA', 'CERRADO', NULL, 'Mantenimiento preventivo', false, 0),
+(9,  NULL, 18,4, '2025-11-12', 'PROBLEMA_SERVICIO',   'Agua caliente tarda 10 min en salir', 'BAJA', 'RESUELTO', '2025-11-13', 'Válvula ajustada', false, 1),
+(10, 15, 19, 3, '2025-11-22', 'DAÑO_HABITACION',     'Lámpara de mesa no prende', 'BAJA', 'RESUELTO', '2025-11-23', 'Bombillo reemplazado', false, 1);
+
+-- ============================================================
+-- 11) INCIDENCIA_RESOLUCION — Historial de resoluciones (12)
+-- ============================================================
+INSERT INTO incidencia_resolucion (id_incidencia, version, fecha_resolucion, solucion, id_empleado_resuelve, notas_auditoria) VALUES
+(1,  1, '2025-01-17', 'Resuelto: Reparado el 17/01',          NULL, 'Migrado del sistema anterior'),
+(2,  1, '2025-02-13', 'Resuelto: Cambiado fusible',           NULL, 'Migrado del sistema anterior'),
+(5,  1, '2025-04-03', 'Resuelto: Terma reparada',             NULL, 'Migrado del sistema anterior'),
+(6,  1, '2025-04-09', 'Resuelto: Reemplazado',                NULL, 'Migrado del sistema anterior'),
+(8,  1, '2025-05-19', 'Resuelto: Seguridad intervino',        NULL, 'Migrado del sistema anterior'),
+(11, 1, '2025-07-21', 'Resuelto: Router reemplazado',         NULL, 'Migrado del sistema anterior'),
+(12, 1, '2025-08-04', 'Resuelto: Destapado con éxito',        NULL, 'Migrado del sistema anterior'),
+(14, 1, '2025-09-05', 'Resuelto: Programación corregida',     NULL, 'Migrado del sistema anterior'),
+(16, 1, '2025-10-07', 'Resuelto: Persiana reemplazada',       NULL, 'Migrado del sistema anterior'),
+(17, 1, '2025-10-17', 'Resuelto: Compensación al huésped',    NULL, 'Migrado del sistema anterior'),
+(19, 1, '2025-11-13', 'Resuelto: Válvula ajustada',           NULL, 'Migrado del sistema anterior'),
+(20, 1, '2025-11-23', 'Resuelto: Bombillo reemplazado',       NULL, 'Migrado del sistema anterior');

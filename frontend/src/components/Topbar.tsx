@@ -12,6 +12,8 @@ const PAGE_NAMES: Record<string, string> = {
   pagos:        "Pagos",
   usuarios:         "Usuarios",
   incidencias:      "Incidencias",
+  areas:            "Áreas",
+  horarios:         "Horarios",
   reportes:     "Reportes",
 };
 

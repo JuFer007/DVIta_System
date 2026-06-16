@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { downloadPdf } from "../services/api";
 import {
   BarChart2, TrendingUp, DollarSign, BedDouble,
   Calendar, RefreshCw, AlertCircle, ArrowUp, ArrowDown, Minus,
-  CalendarCheck, Users, CreditCard,
+  CalendarCheck, Users, CreditCard, FileText,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -335,6 +336,13 @@ export default function ReportesPage() {
             <Calendar className="w-3.5 h-3.5 text-brand-500" />
             {today}
           </div>
+          <button
+            onClick={() => downloadPdf("/api/dashboard/pdf/reporte-financiero", "reporte-financiero.pdf")}
+            className="flex items-center gap-1.5 px-4 py-2 text-rose-700 bg-rose-100 hover:bg-rose-200 text-[12px] font-semibold rounded-sm transition-colors shadow-sm"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            PDF
+          </button>
           <button
             onClick={() => window.location.reload()}
             className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-[12px] font-semibold rounded-sm transition-colors shadow-sm"

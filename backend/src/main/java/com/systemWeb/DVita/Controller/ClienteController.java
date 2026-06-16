@@ -1,6 +1,7 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Cliente;
 import com.systemWeb.DVita.Service.ClienteService;
+import com.systemWeb.DVita.Service.MicroServicios.ClientePdfService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public class ClienteController {
     private final ClienteService clienteService;
+    private final ClientePdfService clientePdfService;
 
     @GetMapping
     public ResponseEntity<List<Cliente>> listarTodos() {
@@ -44,5 +46,8 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.actualizar(id, cliente));
     }
 
-
+    @GetMapping(value = "/pdf/reporte", produces = "application/pdf")
+    public ResponseEntity<byte[]> pdfReporte() {
+        return ResponseEntity.ok(clientePdfService.generarDirectorioClientes());
+    }
 }

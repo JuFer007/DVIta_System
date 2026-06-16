@@ -16,6 +16,7 @@ interface Props<T> {
   error?: string | null;
   onNew?: () => void;
   onEdit?: (row: T) => void;
+  headerExtra?: ReactNode;
 }
 
 type SortDir = "asc" | "desc";
@@ -48,6 +49,7 @@ export default function DataTable<T extends Record<string, any>>({
   error,
   onNew,
   onEdit,
+  headerExtra,
 }: Props<T>) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(columns[0]?.key as string ?? null);
@@ -87,6 +89,7 @@ export default function DataTable<T extends Record<string, any>>({
           </span>
         </div>
         <div className="flex items-center gap-2">
+          {headerExtra}
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
             <input
@@ -116,18 +119,18 @@ export default function DataTable<T extends Record<string, any>>({
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="w-full">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
-              <th className="px-4 py-2.5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap w-10">
+                <th className="px-2 py-2.5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap w-6">
                 #
               </th>
               {columns.map((col) => (
                 <th
                   key={String(col.key)}
                   onClick={() => col.sortable !== false && handleSort(String(col.key))}
-                  className={`px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap ${
+                  className={`px-3 py-2.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap ${
                     col.sortable !== false
                       ? "cursor-pointer select-none hover:text-gray-700 hover:bg-gray-100 transition-colors"
                       : "text-gray-500"
@@ -138,7 +141,7 @@ export default function DataTable<T extends Record<string, any>>({
                 </th>
               ))}
               {onEdit && (
-                <th className="px-4 py-2.5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                <th className="px-3 py-2.5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap w-40">
                   ACCIONES
                 </th>
               )}
@@ -147,14 +150,14 @@ export default function DataTable<T extends Record<string, any>>({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={colspan} className="px-4 py-16 text-center">
+                <td colSpan={colspan} className="px-3 py-16 text-center">
                   <Loader2 className="w-6 h-6 animate-spin text-brand-500 mx-auto mb-2" />
                   <p className="text-sm text-gray-400">Cargando datos…</p>
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={colspan} className="px-4 py-16 text-center">
+                <td colSpan={colspan} className="px-3 py-16 text-center">
                   <Inbox className="w-10 h-10 text-gray-300 mx-auto mb-3" />
                   <p className="text-sm font-medium text-gray-500 mb-1">Sin registros</p>
                   <p className="text-xs text-gray-400">{search ? "No hay resultados para esta búsqueda" : "Aún no hay datos registrados"}</p>
@@ -166,16 +169,16 @@ export default function DataTable<T extends Record<string, any>>({
                   key={i}
                   className="border-b border-gray-50 hover:bg-brand-50 transition-colors"
                 >
-                  <td className="px-4 py-3 text-left text-gray-400 text-xs whitespace-nowrap">{i + 1}</td>
+                  <td className="px-2 py-3 text-center text-gray-400 text-xs whitespace-nowrap w-6">{i + 1}</td>
                   {columns.map((col) => (
-                    <td key={String(col.key)} className="px-4 py-3 text-left text-gray-700 whitespace-nowrap">
+                    <td key={String(col.key)} className="px-3 py-3 text-left text-gray-700">
                       {col.render
                         ? col.render(row[col.key as string], row)
                         : row[col.key as string] ?? "—"}
                     </td>
                   ))}
                   {onEdit && (
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-3">
                       <button
                         onClick={() => onEdit(row)}
                         className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-semibold text-brand-700 bg-brand-100 hover:bg-brand-200 rounded-lg transition-colors"

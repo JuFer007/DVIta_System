@@ -14,7 +14,6 @@ const mapCliente = (c: any) => ({
   id: c.idCliente, nombre: c.nombre, apellidoP: c.apellidoPaterno,
   apellidoM: c.apellidoMaterno, dni: c.dni, telefono: c.telefono,
   email: c.email || "",
-  // Guardar raw para edición
   _raw: c,
 });
 
@@ -91,8 +90,6 @@ const mapAdministrador = (a: any) => ({
   _raw: a,
 });
 
-// ── Fallback demo data ─────────────────────────────────────────────────────────
-
 const DEMO_CLIENTES: any[] = [
   { id: 1, nombre: "María López", apellidoP: "López", apellidoM: "Ríos", dni: "12345678", telefono: "987654321", email: "maria@gmail.com", _raw: {} },
   { id: 2, nombre: "Carlos Ruiz", apellidoP: "Ruiz", apellidoM: "Torres", dni: "23456789", telefono: "976543210", email: "carlos@gmail.com", _raw: {} },
@@ -124,8 +121,6 @@ const DEMO_RECEPCIONISTAS: any[] = [
 const DEMO_ADMINISTRADORES: any[] = [
   { id: 1, empleadoId: 1, empleado: "Pedro Huamán", correo: "pedro.admin@dvita.pe", _raw: {} },
 ];
-
-// ── Hook de estado del modal ───────────────────────────────────────────────────
 
 function useModalState() {
   const [modalOpen, setModalOpen] = useState(false);
