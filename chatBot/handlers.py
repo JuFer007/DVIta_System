@@ -323,27 +323,27 @@ def handle_contacto_horario() -> str:
 
 def handle_info_ubicacion() -> str:
     return (
-        "📍 Estamos ubicados en **Victor Raul Haya de la Torre N 281, Chiclayo, Peru**.\n\n"
+        "Estamos ubicados en **Victor Raul Haya de la Torre N 281, Chiclayo, Peru**.\n\n"
         "Atencion 24 horas. Te esperamos!"
     )
 
 def handle_info_telefono() -> str:
     return (
-        "📞 Puedes contactarnos al:\n\n"
+        "Puedes contactarnos al:\n\n"
         "  **Telefono / WhatsApp**: +51 922 626 148\n\n"
         "Estamos disponibles 24/7 para atenderte."
     )
 
 def handle_info_correo() -> str:
     return (
-        "📧 Puedes escribirnos a:\n\n"
+        "Puedes escribirnos a:\n\n"
         "  **Correo electronico**: DVitaHospedaje@gmail.com\n\n"
         "Te responderemos a la brevedad."
     )
 
 def handle_info_horario() -> str:
     return (
-        "🕐 **Horario de atencion:**\n\n"
+        "**Horario de atencion:**\n\n"
         "  **Lunes a Domingo** — 24 horas\n"
         "  **Feriados** — 24 horas\n\n"
         "Siempre hay personal en recepcion para asistirte."
@@ -351,7 +351,7 @@ def handle_info_horario() -> str:
 
 def handle_info_servicios() -> str:
     return (
-        "✨ **Servicios incluidos en todas las habitaciones:**\n\n"
+        "**Servicios incluidos en todas las habitaciones:**\n\n"
         "  **Desayuno** continental incluido\n"
         "  **WiFi** de alta velocidad\n"
         "  **TV Cable**\n"

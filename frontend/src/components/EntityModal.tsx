@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Save, Loader2, AlertCircle, ChevronDown } from "lucide-react";
 
-// ── Tipos ────────────────────────────────────────────────────────────────────
-
 export type FieldType =
   | "text"
   | "email"
@@ -25,29 +23,27 @@ export interface ModalField {
   type?: FieldType;
   placeholder?: string;
   required?: boolean;
-  options?: SelectOption[];           // para type="select"
+  options?: SelectOption[];
   min?: string | number;
   max?: string | number;
   minLength?: number;
   maxLength?: number;
   pattern?: string;
-  hint?: string;                      // texto de ayuda bajo el campo
-  cols?: 1 | 2;                       // span en grid (default 1)
+  hint?: string;
+  cols?: 1 | 2;
 }
 
 export interface EntityModalProps {
   open: boolean;
-  title: string;                      // ej: "Cliente"
+  title: string;
   icon?: React.ReactNode;
   fields: ModalField[];
-  data: Record<string, any> | null;   // null = nuevo
+  data: Record<string, any> | null;
   loading?: boolean;
   error?: string | null;
   onClose: () => void;
   onSave: (data: Record<string, any>) => void | Promise<void>;
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function buildInitialForm(
   fields: ModalField[],
@@ -59,8 +55,6 @@ function buildInitialForm(
   }
   return base;
 }
-
-// ── Componentes internos ─────────────────────────────────────────────────────
 
 interface FieldProps {
   field: ModalField;
@@ -166,8 +160,6 @@ function PasswordField({
   );
 }
 
-// ── Modal principal ──────────────────────────────────────────────────────────
-
 export default function EntityModal({
   open,
   title,
@@ -187,7 +179,6 @@ export default function EntityModal({
   const [saving, setSaving] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  // Re-inicializar cuando cambie data o se abra el modal
   useEffect(() => {
     if (open) {
       setForm(buildInitialForm(fields, data));
@@ -249,7 +240,6 @@ export default function EntityModal({
             "0 32px 80px rgba(29,13,4,0.35), 0 0 0 1px rgba(201,169,110,0.12)",
         }}
       >
-        {/* Header */}
         <div className="flex items-center gap-3 px-6 py-5 bg-brand-900 flex-shrink-0">
           {icon && (
             <div className="w-9 h-9 rounded-lg bg-brand-700/50 flex items-center justify-center text-brand-200 flex-shrink-0">
@@ -272,7 +262,6 @@ export default function EntityModal({
           </button>
         </div>
 
-        {/* Error global */}
         {error && (
           <div className="flex items-center gap-2.5 mx-6 mt-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg flex-shrink-0">
             <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
@@ -280,7 +269,6 @@ export default function EntityModal({
           </div>
         )}
 
-        {/* Body — scrollable */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <div
             className={`grid gap-x-4 gap-y-4 ${
@@ -318,7 +306,6 @@ export default function EntityModal({
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50 flex-shrink-0">
           <button
             onClick={onClose}

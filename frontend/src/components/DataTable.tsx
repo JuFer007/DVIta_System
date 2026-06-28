@@ -52,7 +52,7 @@ export default function DataTable<T extends Record<string, any>>({
   headerExtra,
 }: Props<T>) {
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<string | null>(columns[0]?.key as string ?? null);
+  const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const handleSort = (key: string) => {
@@ -80,7 +80,6 @@ export default function DataTable<T extends Record<string, any>>({
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-gray-800">{title}</h2>
@@ -111,14 +110,12 @@ export default function DataTable<T extends Record<string, any>>({
         </div>
       </div>
 
-      {/* Error */}
       {error && (
         <div className="px-5 py-2 bg-yellow-50 border-b border-yellow-100 text-yellow-700 text-xs">
           ⚠ {error}
         </div>
       )}
 
-      {/* Table */}
       <div className="w-full">
         <table className="w-full text-sm">
           <thead>
@@ -195,7 +192,6 @@ export default function DataTable<T extends Record<string, any>>({
         </table>
       </div>
 
-      {/* Footer */}
       <div className="px-5 py-2.5 bg-gray-50 border-t border-gray-100">
         <span className="text-xs text-gray-400">{filtered.length} registro(s)</span>
       </div>

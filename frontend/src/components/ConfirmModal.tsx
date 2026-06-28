@@ -39,7 +39,6 @@ export default function ConfirmModal({
           boxShadow: "0 32px 80px rgba(29,13,4,0.35), 0 0 0 1px rgba(163,48,48,0.12)",
         }}
       >
-        {/* Header */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-neutral-100">
           <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
             <AlertTriangle className="w-4.5 h-4.5 text-red-500" />
@@ -55,7 +54,6 @@ export default function ConfirmModal({
           </button>
         </div>
 
-        {/* Body */}
         <div className="px-6 py-5">
           <p className="text-[13px] text-neutral-600 leading-relaxed">
             {description ||
@@ -63,7 +61,6 @@ export default function ConfirmModal({
           </p>
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 bg-neutral-50 border-t border-neutral-100">
           <button
             onClick={onClose}

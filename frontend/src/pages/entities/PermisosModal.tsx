@@ -68,7 +68,6 @@ export default function PermisosModal({ open, usuarioId, usuarioNombre, readOnly
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
-        {/* Header */}
         <div className="flex items-center gap-3 px-6 py-4 bg-brand-900">
           <Shield className="w-5 h-5 text-brand-300" />
           <div>
@@ -81,7 +80,6 @@ export default function PermisosModal({ open, usuarioId, usuarioNombre, readOnly
           </div>
         </div>
 
-        {/* Body */}
         <div className="px-6 py-5 max-h-[60vh] overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center py-8">
@@ -111,7 +109,6 @@ export default function PermisosModal({ open, usuarioId, usuarioNombre, readOnly
           )}
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-100">
           <button onClick={onClose}
             className="px-4 py-2 text-[12px] font-semibold text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors">

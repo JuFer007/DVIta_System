@@ -3,7 +3,6 @@ import { Phone, Mail, MapPin, Wifi, Coffee, Car, Shield, Send, CheckCircle2, Loa
 import ReservaModal from "./ReservaModal";
 import ChatBot from "../components/ChatBot";
 
-/* ─── DATA ─── */
 const ROOMS = [
   {
     name: "Habitación Estándar",
@@ -58,7 +57,6 @@ const CONTACTS = [
   { Icon: MapPin, label: "Ubicación", value: "Chiclayo, Victor Raúl Haya de la Torre N° 281" },
 ];
 
-/* ─── REVEAL HOOK ─── */
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -75,7 +73,6 @@ function useReveal() {
   return { ref, visible };
 }
 
-/* ─── REVEAL WRAPPER ─── */
 function Reveal({
   children,
   delay = 0,
@@ -101,7 +98,6 @@ function Reveal({
   );
 }
 
-/* ─── COMPONENT ─── */
 export default function LandingPage({ onLogin }: { onLogin: () => void }) {
   const [consultaNombre, setConsultaNombre] = useState("");
   const [consultaEmail, setConsultaEmail] = useState("");
@@ -147,7 +143,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
 
   return (
     <div className="min-h-screen bg-white font-body">
-      {/* ── Navbar ──*/}
       <nav
         className={`fixed top-0 inset-x-0 z-50 flex items-center justify-between px-10 transition-all duration-300 ${
           scrolled ? "h-20 bg-brand-900 shadow-xl" : "h-[68px] bg-brand-900/92"
@@ -178,14 +173,12 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           ))}
         </div>
         <div className="flex items-center gap-3">
-          {/* Iniciar sesión */}
           <button
             onClick={onLogin}
             className="hidden md:flex items-center gap-1.5 px-4 py-2.5 border border-white/25 text-white/80 text-[11px] font-semibold tracking-[0.1em] uppercase rounded-sm hover:border-white/50 hover:text-white hover:bg-white/10 transition-all duration-200"
           >
             Iniciar sesión
           </button>
-          {/* Reservar */}
           <button
             onClick={() => openModal()}
             className="px-6 py-2.5 bg-brand-600 text-white text-[12px] font-bold tracking-[0.12em] uppercase rounded-sm hover:bg-brand-500 hover:-translate-y-px transition-all duration-200 shadow-md"
@@ -194,7 +187,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </button>
         </div>
       </nav>
-      {/* ── Hero ── */}
       <section className="relative h-screen min-h-[700px] flex items-end overflow-hidden">
         <div className="absolute inset-0">
           {HERO_IMAGES.map((img, i) => (
@@ -268,7 +260,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           ))}
         </div>
       </section>
-      {/* ── Rooms ── */}
       <section id="habitaciones" className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-8">
           <Reveal>
@@ -349,7 +340,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
       </section>
-      {/* ── CTA Band ── */}
       <div className="py-20 px-10 bg-brand-50 border-y border-brand-100">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-10 flex-wrap">
           <div>
@@ -380,9 +370,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
       </div>
-      {/* ── Services Section ── */}
       <section id="servicios" className="py-24 bg-brand-900 relative overflow-hidden">
-        {/* Elemento decorativo sutil con la paleta brand */}
         <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-800/30 skew-x-12 translate-x-24" />
         
         <div className="max-w-5xl mx-auto px-8 relative z-10">
@@ -401,7 +389,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
             {SERVICES.map(({ Icon, title, desc }, i) => (
               <Reveal key={i} delay={i * 100}>
                 <div className="group">
-                  {/* Contenedor del Icono usando brand-800 y bordes brand-300 */}
                   <div className="mb-6 w-14 h-14 rounded-sm border border-brand-300/20 flex items-center justify-center bg-brand-800/50 group-hover:bg-brand-500 group-hover:border-brand-400 transition-all duration-500 ease-out">
                     <Icon className="w-6 h-6 text-brand-200 group-hover:text-white transition-colors" />
                   </div>
@@ -419,9 +406,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
       </section>      
-      {/* ── Contacto ── */}
       <section id="contacto" className="grid md:grid-cols-2">
-        {/* Panel izquierdo */}
         <div className="bg-brand-800 px-14 py-20 flex flex-col justify-center">
           <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#C9A96E] mb-3.5">
             <span className="inline-block w-6 h-px bg-[#C9A96E]" />Contáctanos
@@ -511,7 +496,6 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
         </div>
       </section>
 
-      {/* ── Footer ──*/}
       <footer className="bg-brand-900 border-t border-[#C9A96E]/15 py-10 px-10 flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full border border-[#C9A96E]/40 flex items-center justify-center">
@@ -523,12 +507,10 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           © 2026 · Chiclayo, Perú · Todos los derechos reservados
         </p>
       </footer>
-      {/* ── Modal de Reserva ── */}
       <ReservaModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       />
-      {/* ── ChatBot flotante ── */}
       <ChatBot />
     </div>
   );

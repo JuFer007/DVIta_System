@@ -133,7 +133,6 @@ export default function ReservasPage() {
       setDniStatus("found-bd");
       return;
     } catch {
-      // Not found in local DB, try RENIEC
     }
 
     try {
@@ -148,7 +147,6 @@ export default function ReservasPage() {
         return;
       }
     } catch {
-      // RENIEC unavailable
     }
 
     setClienteEncontrado({ id: null, nombre: "", apellidoP: "", apellidoM: "", dni, telefono: "", email: "" });
@@ -362,8 +360,6 @@ export default function ReservasPage() {
   );
 }
 
-// ─── Modal personalizado ──────────────────────────────────────────────────────
-
 function ReservaFormModal({
   open, isEdit, saving, onClose, onSave,
   dni, setDni, dniStatus, setDniStatus, dniError, setDniError,
@@ -411,7 +407,6 @@ function ReservaFormModal({
         className="relative w-full bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden"
         style={{ maxWidth: "640px", maxHeight: "90vh" }}
       >
-        {/* Header */}
         <div className="flex items-center gap-3 px-6 py-5 bg-brand-900 flex-shrink-0">
           <div className="w-9 h-9 rounded-lg bg-brand-700/50 flex items-center justify-center text-brand-200 flex-shrink-0">
             <CalendarCheck className="w-4 h-4" />
@@ -429,11 +424,9 @@ function ReservaFormModal({
           </button>
         </div>
 
-        {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <div className="grid grid-cols-2 gap-x-4 gap-y-4">
 
-            {/* Cliente - DNI section (same as before) */}
             <div className="col-span-2">
               <div className="flex items-center justify-between mb-2">
                 <label className="text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500">
@@ -461,7 +454,6 @@ function ReservaFormModal({
 
               {showDniSection ? (
                 <div className="space-y-3">
-                  {/* DNI input + search button */}
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
@@ -490,7 +482,6 @@ function ReservaFormModal({
                     )}
                   </div>
 
-                  {/* Loading */}
                   {dniStatus === "loading" && (
                     <p className="text-[12px] text-neutral-500 flex items-center gap-1.5">
                       <Loader2 className="w-3 h-3 animate-spin" />
@@ -498,7 +489,6 @@ function ReservaFormModal({
                     </p>
                   )}
 
-                  {/* Found in BD */}
                   {dniStatus === "found-bd" && clienteEncontrado && (
                     <div className="flex items-center gap-2 px-3.5 py-2.5 bg-green-50 border border-green-200 rounded-lg">
                       <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
@@ -508,7 +498,6 @@ function ReservaFormModal({
                     </div>
                   )}
 
-                  {/* Found in RENIEC */}
                   {dniStatus === "found-reniec" && clienteEncontrado && (
                     <div className="space-y-2.5">
                       <div className="flex items-center gap-2 px-3.5 py-2.5 bg-amber-50 border border-amber-200 rounded-lg">
@@ -538,7 +527,6 @@ function ReservaFormModal({
                     </div>
                   )}
 
-                  {/* Not found / Manual */}
                   {(dniStatus === "notfound" || dniStatus === "manual") && (
                     <div className="grid grid-cols-2 gap-2.5">
                       <div>
@@ -574,7 +562,6 @@ function ReservaFormModal({
                     </div>
                   )}
 
-                  {/* DNI Error */}
                   {dniError && (
                     <p className="text-[11px] text-red-600 flex items-center gap-1">
                       <AlertCircle className="w-3 h-3" /> {dniError}
@@ -589,7 +576,6 @@ function ReservaFormModal({
               )}
             </div>
 
-            {/* Tipo de habitación */}
             <div className="col-span-2">
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                 Tipo de Habitación <span className="text-brand-500">*</span>
@@ -610,7 +596,6 @@ function ReservaFormModal({
               </div>
             </div>
 
-            {/* Fechas */}
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">Fecha de Ingreso *</label>
               <input type="date" value={form.fechaIngreso} min={today}
@@ -624,7 +609,6 @@ function ReservaFormModal({
                 className="w-full px-3.5 py-2.5 border border-neutral-200 rounded-lg text-[13px] text-neutral-800 focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-50" />
             </div>
 
-            {/* Habitaciones disponibles */}
             {(habitacionesDisponibles.length > 0 || editingRow) && (
               <div className="col-span-2">
                 <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
@@ -668,12 +652,9 @@ function ReservaFormModal({
               </div>
             )}
 
-            {/* Estado oculto — siempre PENDIENTE por defecto */}
-
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50 flex-shrink-0">
           <button onClick={onClose} disabled={saving}
             className="px-5 py-2 border border-neutral-200 text-neutral-600 text-[12px] font-semibold rounded-lg hover:border-neutral-300 hover:bg-white transition-colors disabled:opacity-50">
@@ -692,8 +673,6 @@ function ReservaFormModal({
     </div>
   );
 }
-
-// ─── Select de clientes ───────────────────────────────────────────────────────
 
 function ClienteSelect({ selectedClienteId, setSelectedClienteId }: { selectedClienteId: string; setSelectedClienteId: (v: string) => void }) {
   const clientesCrud = useCrud(clientesService, mapCliente, [{ id: 1, nombre: "María López", apellidoP: "López", dni: "12345678", telefono: "", email: "", _raw: {} }]);

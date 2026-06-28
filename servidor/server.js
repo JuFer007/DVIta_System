@@ -3,7 +3,6 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
-
 const app = express();
 
 app.use(cors());
@@ -78,12 +77,12 @@ app.post("/generar-ticket-pago", async (req, res) => {
     await page.setContent(template, { waitUntil: "networkidle0" });
     const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
     const pdf = await page.pdf({
-      width: "80mm", height: `${bodyHeight + 8}px`,
-      printBackground: true, margin: { top: 0, right: 0, bottom: 0, left: 0 }
+      width: "80mm", height: `${bodyHeight + 12}px`,
+      printBackground: true, margin: { top: 6, right: 4, bottom: 6, left: 4 }
     });
     await browser.close();
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar ticket:", err);
     res.status(500).json({ error: err.message });
@@ -122,7 +121,7 @@ app.post("/generar-historial-incidencia", async (req, res) => {
 
     const pdf = await generatePdf(tpl);
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar historial:", err);
     res.status(500).json({ error: err.message });
@@ -163,7 +162,7 @@ app.post("/generar-reporte-incidencias", async (req, res) => {
 
     const pdf = await generatePdf(tpl);
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar reporte incidencias:", err);
     res.status(500).json({ error: err.message });
@@ -196,7 +195,7 @@ app.post("/generar-reporte-habitaciones", async (req, res) => {
 
     const pdf = await generatePdf(tpl);
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar reporte habitaciones:", err);
     res.status(500).json({ error: err.message });
@@ -234,7 +233,7 @@ app.post("/generar-reporte-financiero", async (req, res) => {
 
     const pdf = await generatePdf(tpl);
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar reporte financiero:", err);
     res.status(500).json({ error: err.message });
@@ -274,7 +273,7 @@ app.post("/generar-reporte-reservas", async (req, res) => {
 
     const pdf = await generatePdf(tpl);
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar reporte reservas:", err);
     res.status(500).json({ error: err.message });
@@ -303,7 +302,7 @@ app.post("/generar-reporte-clientes", async (req, res) => {
 
     const pdf = await generatePdf(tpl);
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar reporte clientes:", err);
     res.status(500).json({ error: err.message });
@@ -334,7 +333,7 @@ app.post("/generar-reporte-pagos", async (req, res) => {
 
     const pdf = await generatePdf(tpl);
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar reporte pagos:", err);
     res.status(500).json({ error: err.message });
@@ -365,13 +364,14 @@ app.post("/generar-reporte-empleados", async (req, res) => {
 
     const pdf = await generatePdf(tpl);
     res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.send(Buffer.from(pdf));
   } catch (err) {
     console.error("Error al generar reporte empleados:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-app.listen(3005, () => {
-  console.log("D'Vita PDF Service running on port 3005");
+const PORT = process.env.PORT || 3005;
+app.listen(PORT, () => {
+  console.log(`D'Vita PDF Service running on port ${PORT}`);
 });

@@ -22,15 +22,35 @@ public class PagoService {
 
     public Pago guardar(Pago pago) {
         pago.setMetodoPago(upper(pago.getMetodoPago()));
+        if (pago.getEstado() == null) {
+            pago.setEstado("PENDIENTE");
+        }
         return pagoRepository.save(pago);
     }
 
     public Pago actualizar(Long id, Pago pagoActualizado) {
         return pagoRepository.findById(id).map(pago -> {
+            if ("COMPLETADO".equals(pago.getEstado())) {
+                throw new RuntimeException("No se puede editar un pago ya completado");
+            }
             pago.setReserva(pagoActualizado.getReserva());
             pago.setMonto(pagoActualizado.getMonto());
             pago.setFechaPago(pagoActualizado.getFechaPago());
             pago.setMetodoPago(upper(pagoActualizado.getMetodoPago()));
+            if (pagoActualizado.getEstado() != null) {
+                pago.setEstado(pagoActualizado.getEstado());
+            }
+            return pagoRepository.save(pago);
+        }).orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
+    }
+
+    public Pago completar(Long id, String metodoPago) {
+        return pagoRepository.findById(id).map(pago -> {
+            if ("COMPLETADO".equals(pago.getEstado())) {
+                throw new RuntimeException("El pago ya está completado");
+            }
+            pago.setEstado("COMPLETADO");
+            pago.setMetodoPago(upper(metodoPago));
             return pagoRepository.save(pago);
         }).orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
     }

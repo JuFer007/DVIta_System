@@ -41,7 +41,6 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Pro
         collapsed ? "w-20" : "w-70"
       }`}
     >
-      {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-white/10 min-h-[72px]">
         <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center bg-white/10 rounded-lg">
           <img src="/DVita_Logo.png" alt="Logo" className="w-full h-full object-contain" />
@@ -60,7 +59,6 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Pro
         </button>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 flex flex-col gap-1 p-4">
         {!collapsed && (
           <p className="text-brand-500 text-[10px] font-semibold uppercase tracking-widest px-3 py-2">
@@ -88,7 +86,6 @@ export default function Sidebar({ active, onNavigate, collapsed, onToggle }: Pro
         })}
       </nav>
 
-      {/* Footer */}
       {!collapsed && (
         <div className="px-5 py-4 border-t border-white/10">
           <p className="text-brand-200 text-[11px]">© 2026 · Chiclayo, Perú</p>

@@ -74,12 +74,10 @@ export default function Login({ onBack }: Props) {
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
 
-      {/* ── Fondo con imagen + blur + overlay oscuro tipo navbar ── */}
       <div
         className="absolute inset-0 bg-cover bg-center scale-110"
         style={{ backgroundImage: `url(${BG_IMAGES[currentImg]})` }}
       />
-      {/* Overlay igual al navbar: brand-900/92 con blur */}
       <div
         className="absolute inset-0"
         style={{
@@ -88,7 +86,6 @@ export default function Login({ onBack }: Props) {
           WebkitBackdropFilter: "blur(14px)",
         }}
       />
-      {/* Viñeta sutil en bordes */}
       <div
         className="absolute inset-0"
         style={{
@@ -97,7 +94,6 @@ export default function Login({ onBack }: Props) {
         }}
       />
 
-      {/* ── Tarjeta split ── */}
       <div
         className="relative z-10 flex w-full max-w-[820px] mx-4 rounded-2xl overflow-hidden"
         style={{
@@ -105,7 +101,6 @@ export default function Login({ onBack }: Props) {
         }}
       >
 
-        {/* ── Panel izquierdo: bienvenida con glassmorphism ── */}
         <div
           className="hidden md:flex flex-col justify-between flex-none w-[42%] px-10 py-12 relative overflow-hidden"
           style={{
@@ -115,7 +110,6 @@ export default function Login({ onBack }: Props) {
             borderRight: "1px solid rgba(201,169,110,0.18)",
           }}
         >
-          {/* Patrón de puntos sutil */}
           <div
             className="absolute inset-0 opacity-[0.04]"
             style={{
@@ -123,11 +117,9 @@ export default function Login({ onBack }: Props) {
               backgroundSize: "24px 24px",
             }}
           />
-          {/* Círculo decorativo */}
           <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-brand-500/10" />
           <div className="absolute -bottom-24 -left-12 w-64 h-64 rounded-full bg-brand-900/30" />
 
-          {/* Logo */}
           <div className="relative z-10 flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-full border border-[#C9A96E]/50 flex items-center justify-center bg-brand-900/40">
               <img src="/DVita_Logo.png" alt="Logo" className="w-7 h-7 object-contain" />
@@ -139,7 +131,6 @@ export default function Login({ onBack }: Props) {
             </div>
           </div>
 
-          {/* Texto central */}
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-5">
               <div className="w-6 h-px bg-[#C9A96E]" />
@@ -154,7 +145,6 @@ export default function Login({ onBack }: Props) {
             </p>
           </div>
 
-          {/* Footer panel */}
           <div className="relative z-10">
             {onBack && (
               <button
@@ -168,7 +158,6 @@ export default function Login({ onBack }: Props) {
           </div>
         </div>
 
-        {/* ── Panel derecho: formulario con glassmorphism blanco ── */}
         <div
           className="flex flex-col justify-center flex-1 px-10 py-12"
           style={{
@@ -177,7 +166,6 @@ export default function Login({ onBack }: Props) {
             WebkitBackdropFilter: "none",
           }}
         >
-          {/* Header móvil */}
           <div className="flex items-center gap-2.5 mb-7 md:hidden">
             <div className="w-9 h-9 rounded-full border border-brand-200 flex items-center justify-center">
               <img src="/DVita_Logo.png" alt="Logo" className="w-6 h-6 object-contain" />
@@ -185,7 +173,6 @@ export default function Login({ onBack }: Props) {
             <p className="font-display font-bold text-brand-900 text-[16px]">D'Vita Hospedaje</p>
           </div>
 
-          {/* Encabezado */}
           <div className="mb-7">
             <h2 className="font-display text-[26px] font-bold text-brand-900 leading-tight mb-1">
               Iniciar sesión
@@ -195,10 +182,8 @@ export default function Login({ onBack }: Props) {
             </p>
           </div>
 
-          {/* Formulario */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-            {/* Usuario */}
             <div>
               <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-brand-600 mb-2">
                 Usuario
@@ -216,7 +201,6 @@ export default function Login({ onBack }: Props) {
               </div>
             </div>
  
-            {/* Contraseña */}
             <div>
               <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-brand-600 mb-2">
                 Contraseña
@@ -241,7 +225,6 @@ export default function Login({ onBack }: Props) {
               </div>
             </div>
 
-            {/* Error */}
             {error && (
               <div className="flex items-center gap-2 bg-brand-50 border border-brand-200 rounded-lg px-4 py-2.5">
                 <div className="w-4 h-4 rounded-full border border-brand-400 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-brand-500">!</div>
@@ -249,7 +232,6 @@ export default function Login({ onBack }: Props) {
               </div>
             )}
 
-            {/* Botón */}
             <button
               type="submit"
               disabled={loading}
@@ -270,14 +252,12 @@ export default function Login({ onBack }: Props) {
             </button>
           </form>
 
-          {/* Divisor */}
           <div className="flex items-center gap-3 my-5">
             <div className="flex-1 h-px bg-brand-100" />
             <span className="text-[10px] text-brand-300 font-medium tracking-[0.1em] uppercase">acceso interno</span>
             <div className="flex-1 h-px bg-brand-100" />
           </div>
 
-          {/* Info de acceso */}
           <div className="flex items-start gap-3 bg-brand-50/80 border border-brand-100 rounded-xl p-4">
             <div className="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center flex-shrink-0">
               <svg className="w-4 h-4 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

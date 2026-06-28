@@ -26,7 +26,6 @@ interface Notificacion {
   email?: string;
   telefono?: string;
   mensaje?: string;
-  // campos de reserva
   habitacion?: string;
   llegada?: string;
   salida?: string;
@@ -35,7 +34,6 @@ interface Notificacion {
   dni?: string;
 }
 
-// ── Servicio de email via EmailJS (API pública gratuita) ─────────────────────
 async function enviarEmail(params: {
   to_email: string;
   to_name: string;
@@ -43,16 +41,14 @@ async function enviarEmail(params: {
   message: string;
   subject: string;
 }): Promise<boolean> {
-  // Usamos EmailJS con parámetros de template
-  // Servicio: gmail, Template configurado en emailjs.com
   try {
     const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        service_id: "service_dvita",       // Reemplaza con tu service_id de EmailJS
-        template_id: "template_reply",     // Reemplaza con tu template_id
-        user_id: "YOUR_EMAILJS_PUBLIC_KEY",// Reemplaza con tu public key
+        service_id: "service_dvita",
+        template_id: "template_reply",
+        user_id: "YOUR_EMAILJS_PUBLIC_KEY",
         template_params: params,
       }),
     });
@@ -78,7 +74,6 @@ export default function Topbar({ page, onLogout }: Props) {
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Cargar notificaciones del localStorage
   const cargarNotifs = () => {
     try {
       const data = JSON.parse(localStorage.getItem("dvita_notificaciones") || "[]");
@@ -90,12 +85,10 @@ export default function Topbar({ page, onLogout }: Props) {
 
   useEffect(() => {
     cargarNotifs();
-    // Polling cada 10 segundos para nuevas notificaciones
     const interval = setInterval(cargarNotifs, 10000);
     return () => clearInterval(interval);
   }, []);
 
-  // Cerrar panel al hacer click fuera
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
@@ -153,7 +146,6 @@ export default function Topbar({ page, onLogout }: Props) {
 
   return (
     <header className="flex items-center justify-between px-6 h-14 bg-white border-b border-gray-100 sticky top-0 z-10 gap-4">
-      {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 text-sm text-gray-400">
         <span>Inicio</span>
         <ChevronRight className="w-3.5 h-3.5" />
@@ -162,7 +154,6 @@ export default function Topbar({ page, onLogout }: Props) {
 
       <div className="flex items-center gap-2">
 
-        {/* ── Campanita ── */}
         <div className="relative" ref={panelRef}>
           <button
             onClick={() => { setPanelOpen((o) => !o); setSelected(null); setSent(false); }}
@@ -177,12 +168,10 @@ export default function Topbar({ page, onLogout }: Props) {
             )}
           </button>
 
-          {/* Panel de notificaciones */}
           {panelOpen && (
             <div className="absolute right-0 top-11 w-[380px] bg-white border border-neutral-200 rounded-xl shadow-2xl overflow-hidden z-50"
               style={{ boxShadow: "0 20px 60px rgba(29,13,4,0.18), 0 0 0 1px rgba(201,169,110,0.10)" }}
             >
-              {/* Header del panel */}
               <div className="flex items-center justify-between px-4 py-3 bg-brand-900 border-b border-brand-800">
                 <div className="flex items-center gap-2">
                   <Bell className="w-4 h-4 text-brand-300" />
@@ -200,7 +189,6 @@ export default function Topbar({ page, onLogout }: Props) {
               </div>
 
               <div className="flex" style={{ height: "420px" }}>
-                {/* Lista de notificaciones */}
                 <div className={`flex flex-col overflow-y-auto border-r border-neutral-100 ${selected ? "w-[140px] flex-shrink-0" : "flex-1"}`}>
                   {notifs.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-neutral-400 gap-2 px-4 text-center">
@@ -237,11 +225,9 @@ export default function Topbar({ page, onLogout }: Props) {
                   ))}
                 </div>
 
-                {/* Panel de detalle y respuesta */}
                 {selected && (
                   <div className="flex-1 flex flex-col overflow-hidden">
                     <div className="flex-1 overflow-y-auto p-4">
-                      {/* Tipo badge */}
                       <div className="flex items-center gap-2 mb-3">
                         <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
                           selected.tipo === "reserva" ? "bg-brand-100 text-brand-700" : "bg-blue-100 text-blue-700"
@@ -251,7 +237,6 @@ export default function Topbar({ page, onLogout }: Props) {
                         <span className="text-[10px] text-neutral-400">{formatFecha(selected.fecha)}</span>
                       </div>
 
-                      {/* Info del cliente */}
                       <div className="mb-3">
                         <p className="text-[13px] font-bold text-neutral-800">{selected.nombre}</p>
                         {selected.email && <p className="text-[11px] text-neutral-400">{selected.email}</p>}
@@ -259,7 +244,6 @@ export default function Topbar({ page, onLogout }: Props) {
                         {selected.dni && <p className="text-[11px] text-neutral-400">DNI: {selected.dni}</p>}
                       </div>
 
-                      {/* Detalle reserva */}
                       {selected.tipo === "reserva" && (
                         <div className="bg-brand-50 border border-brand-100 rounded-lg p-3 mb-3 text-[11px]">
                           <p className="font-bold text-brand-700 mb-1.5">Detalles de la reserva</p>
@@ -273,7 +257,6 @@ export default function Topbar({ page, onLogout }: Props) {
                         </div>
                       )}
 
-                      {/* Mensaje consulta */}
                       {selected.tipo === "consulta" && selected.mensaje && (
                         <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 mb-3">
                           <p className="text-[11px] font-bold text-neutral-500 mb-1">Mensaje:</p>
@@ -282,7 +265,6 @@ export default function Topbar({ page, onLogout }: Props) {
                       )}
                     </div>
 
-                    {/* Responder */}
                     <div className="border-t border-neutral-100 p-3 flex-shrink-0">
                       {sent ? (
                         <div className="flex items-center gap-2 text-[12px] text-green-600 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
@@ -323,7 +305,6 @@ export default function Topbar({ page, onLogout }: Props) {
           )}
         </div>
 
-        {/* Usuario y logout */}
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg">
           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-400 to-brand-700 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
             {user?.nombre?.charAt(0) ?? "U"}
@@ -339,7 +320,6 @@ export default function Topbar({ page, onLogout }: Props) {
         </button>
       </div>
 
-      {/* Modal de confirmación de cierre de sesión */}
       {logoutConfirmOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50"
           onClick={() => setLogoutConfirmOpen(false)}>

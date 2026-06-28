@@ -1,4 +1,4 @@
-const BASE_URL = "/api";
+export const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}/${endpoint}`, {
@@ -23,13 +23,11 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
-// ── Auth ──────────────────────────────────────
 export const authService = {
   getUsuarios: () => request<any[]>("usuarios"),
   getEmpleado: (id: number) => request<any>(`empleados/${id}`),
 };
 
-// ── Dashboard ─────────────────────────────────
 export const dashboardService = {
   getStats:            () => request<any>("dashboard/stats"),
   getReservasRecientes:() => request<any[]>("dashboard/reservas-recientes"),
@@ -40,7 +38,6 @@ export const dashboardService = {
   getOcupacionPorTipo: () => request<any[]>("dashboard/ocupacion-por-tipo"),
 };
 
-// ── Clientes ──────────────────────────────────
 export const clientesService = {
   getAll:   ()                    => request<any[]>("clientes"),
   getByDni: (dni: string)         => request<any>(`clientes/dni/${dni}`),
@@ -48,14 +45,12 @@ export const clientesService = {
   update:   (id: number, data: any) => request(`clientes/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
 };
 
-// ── Empleados ─────────────────────────────────
 export const empleadosService = {
   getAll:  ()                   => request<any[]>("empleados"),
   create:  (data: any)          => request("empleados",     { method: "POST", body: JSON.stringify(data) }),
   update:  (id: number, data: any) => request(`empleados/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
 };
 
-// ── Habitaciones ──────────────────────────────
 export const habitacionesService = {
   getAll:         ()                    => request<any[]>("habitaciones"),
   getDisponibles: (ingreso: string, salida: string, tipoId?: number) =>
@@ -66,14 +61,12 @@ export const habitacionesService = {
     request(`habitaciones/${id}/estado`, { method: "PATCH", body: JSON.stringify({ estado }) }),
 };
 
-// ── Tipos Habitación ──────────────────────────
 export const tiposService = {
   getAll:  ()                   => request<any[]>("tipos-habitacion"),
   create:  (data: any)          => request("tipos-habitacion",     { method: "POST", body: JSON.stringify(data) }),
   update:  (id: number, data: any) => request(`tipos-habitacion/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
 };
 
-// ── Reservas ──────────────────────────────────
 export const reservasService = {
   getAll:     ()                    => request<any[]>("reservas"),
   create:     (data: any)           => request("reservas",     { method: "POST", body: JSON.stringify(data) }),
@@ -84,35 +77,31 @@ export const reservasService = {
   cancelar:   (id: number)          => request(`reservas/${id}/cancelar`, { method: "PATCH" }),
 };
 
-// ── Pagos ─────────────────────────────────────
 export const pagosService = {
-  getAll:  ()                   => request<any[]>("pagos"),
-  create:  (data: any)          => request("pagos",     { method: "POST", body: JSON.stringify(data) }),
-  update:  (id: number, data: any) => request(`pagos/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
+  getAll:    ()                       => request<any[]>("pagos"),
+  create:    (data: any)              => request("pagos",     { method: "POST", body: JSON.stringify(data) }),
+  update:    (id: number, data: any)  => request(`pagos/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
+  completar: (id: number, data: any)  => request(`pagos/${id}/completar`, { method: "PUT", body: JSON.stringify(data) }),
 };
 
-// ── Usuarios ──────────────────────────────────
 export const usuariosService = {
   getAll:  ()                   => request<any[]>("usuarios"),
   create:  (data: any)          => request("usuarios",     { method: "POST", body: JSON.stringify(data) }),
   update:  (id: number, data: any) => request(`usuarios/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
 };
 
-// ── Recepcionistas ────────────────────────────
 export const recepcionistasService = {
   getAll:  ()                   => request<any[]>("recepcionistas"),
   create:  (data: any)          => request("recepcionistas",     { method: "POST", body: JSON.stringify(data) }),
   update:  (id: number, data: any) => request(`recepcionistas/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
 };
 
-// ── Administradores ───────────────────────────
 export const administradoresService = {
   getAll:  ()                   => request<any[]>("administradores"),
   create:  (data: any)          => request("administradores",     { method: "POST", body: JSON.stringify(data) }),
   update:  (id: number, data: any) => request(`administradores/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
 };
 
-// ── Incidencias ───────────────────────────────
 export const incidenciasService = {
   getAll:  ()                    => request<any[]>("incidencias"),
   getById: (id: number)          => request<any>(`incidencias/${id}`),
@@ -124,36 +113,43 @@ export const incidenciasService = {
   crearResolucion: (id: number, data: any) => request(`incidencias/${id}/resoluciones`, { method: "POST", body: JSON.stringify(data) }),
 };
 
-// ── PDF Download ──────────────────────────────
 export async function downloadPdf(url: string, _filename?: string) {
   window.dispatchEvent(new CustomEvent("pdf-loading-start"));
-  const newTab = window.open("about:blank", "_blank");
   try {
     const res = await fetch(url);
+    const ct = res.headers.get("content-type") || "";
+    console.log("PDF response:", res.status, ct, res.url);
     if (!res.ok) {
       let msg = `Error al generar PDF (${res.status})`;
       try { const body = await res.text(); if (body) msg = body; } catch {}
+      window.dispatchEvent(new CustomEvent("pdf-loading-error", { detail: msg }));
       throw new Error(msg);
     }
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    if (newTab && !newTab.closed) {
-      newTab.location.href = blobUrl;
-    } else {
-      window.open(blobUrl, "_blank");
+    if (!ct.includes("application/pdf")) {
+      const body = await res.text();
+      console.error("Respuesta no es PDF:", body.slice(0, 300));
+      window.dispatchEvent(new CustomEvent("pdf-loading-error", { detail: "El servidor no devolvió un PDF. Revisa la consola para más detalles." }));
+      throw new Error("Respuesta no es PDF: " + ct);
     }
-    setTimeout(() => {
-      URL.revokeObjectURL(blobUrl);
-      window.dispatchEvent(new CustomEvent("pdf-loading-end"));
-    }, 3000);
+    const blob = await res.blob();
+    console.log("PDF blob:", blob.size, "bytes");
+    const blobUrl = URL.createObjectURL(blob);
+    const newTab = window.open(blobUrl, "_blank");
+    if (!newTab || newTab.closed) {
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = _filename || "documento.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    window.dispatchEvent(new CustomEvent("pdf-loading-end"));
   } catch (e) {
     console.error("PDF error:", e);
-    if (newTab && !newTab.closed) newTab.close();
     window.dispatchEvent(new CustomEvent("pdf-loading-end"));
   }
 }
 
-// ── Áreas ────────────────────────────────────
 export const areasService = {
   getAll:  ()                   => request<any[]>("areas"),
   getAllAdmin: ()               => request<any[]>("areas/todas"),
@@ -161,14 +157,12 @@ export const areasService = {
   update:  (id: number, data: any) => request(`areas/${id}`, { method: "PUT",  body: JSON.stringify(data) }),
 };
 
-// ── Permisos ──────────────────────────────────
 export const permisosService = {
   getByUsuario: (id: number)     => request<any[]>(`permisos/usuario/${id}`),
   update:       (id: number, data: any[]) =>
     request(`permisos/usuario/${id}`, { method: "PUT", body: JSON.stringify(data) }),
 };
 
-// ── RENIEC ────────────────────────────────────
 export const reniecService = {
   consultar: (dni: string) => request<any>(`reniec/dni/${dni}`),
 };

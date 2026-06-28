@@ -5,14 +5,12 @@ import { useModalState } from "../../hooks/useModalState";
 import { empleadosService, recepcionistasService } from "../../services/api";
 import { useToast } from "../../components/Toast";
 
-// ─── API service ──────────────────────────────────────────────────────────────
 const horariosService = {
   getAll:  () => fetch("/api/horarios").then(r => { if (!r.ok) throw new Error(); return r.json(); }),
   create:  (data: any) => fetch("/api/horarios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
   update:  (id: number, data: any) => fetch(`/api/horarios/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
 };
 
-// ─── Mappers ──────────────────────────────────────────────────────────────────
 const mapRecepcionista = (r: any) => ({
   id: r.idRecepcionista,
   nombre: `${r.empleado?.nombre || ""} ${r.empleado?.apellidoP || ""}`.trim() || "—",
@@ -33,7 +31,6 @@ const mapHorario = (h: any) => ({
   _raw: h,
 });
 
-// ─── Demo data ────────────────────────────────────────────────────────────────
 const DEMO_HORARIOS: any[] = [
   { id: 1, recepcionistaId: 1, recepcionista: "Rosa Condori", fecha: "2026-04-21", horaInicio: "06:00", horaFin: "14:00", tipoTurno: "MAÑANA",   estado: "PROGRAMADO",   observaciones: "" },
   { id: 2, recepcionistaId: 1, recepcionista: "Rosa Condori", fecha: "2026-04-22", horaInicio: "14:00", horaFin: "22:00", tipoTurno: "TARDE",    estado: "PROGRAMADO",   observaciones: "" },
@@ -45,7 +42,6 @@ const DEMO_RECEP: any[] = [
   { id: 2, nombre: "Pedro Huamán",  turno: "TARDE",  _raw: {} },
 ];
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
 const TURNO_OPTIONS = [
   { value: "MAÑANA",       label: "Mañana (06:00 – 14:00)" },
   { value: "TARDE",        label: "Tarde (14:00 – 22:00)" },
@@ -78,7 +74,6 @@ const TURNO_ICONS: Record<string, string> = {
   MAÑANA: "🌅", TARDE: "🌤️", NOCHE: "🌙", PERSONALIZADO: "⚙️",
 };
 
-// ─── Modal de Horario ─────────────────────────────────────────────────────────
 interface HorarioModalProps {
   open: boolean;
   editing: any | null;
@@ -114,7 +109,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
     }
   }, [open, editing]);
 
-  // Auto-fill horas por turno
   useEffect(() => {
     const turno = form.tipoTurno;
     if (turno === "MAÑANA")  { setForm((f: any) => ({ ...f, horaInicio: "06:00", horaFin: "14:00" })); }
@@ -171,7 +165,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
       <div className="relative w-full max-w-[560px] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden"
         style={{ maxHeight: "90vh", boxShadow: "0 32px 80px rgba(29,13,4,0.35), 0 0 0 1px rgba(201,169,110,0.12)" }}
       >
-        {/* Header */}
         <div className="flex items-center gap-3 px-6 py-5 bg-brand-900 flex-shrink-0">
           <div className="w-9 h-9 rounded-lg bg-brand-700/50 flex items-center justify-center text-brand-200 flex-shrink-0">
             <Clock className="w-4 h-4" />
@@ -187,7 +180,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
           </button>
         </div>
 
-        {/* Error global */}
         {error && (
           <div className="flex items-center gap-2.5 mx-6 mt-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg flex-shrink-0">
             <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
@@ -195,11 +187,9 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
           </div>
         )}
 
-        {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <div className="grid grid-cols-2 gap-x-4 gap-y-4">
 
-            {/* Recepcionista — full width */}
             <div className="col-span-2">
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                 Recepcionista <span className="text-brand-500">*</span>
@@ -214,7 +204,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
               {fieldErrors.idRecepcionista && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.idRecepcionista}</p>}
             </div>
 
-            {/* Fecha */}
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                 Fecha <span className="text-brand-500">*</span>
@@ -223,7 +212,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
               {fieldErrors.fecha && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.fecha}</p>}
             </div>
 
-            {/* Tipo de turno */}
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                 Tipo de Turno <span className="text-brand-500">*</span>
@@ -236,7 +224,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
               </div>
             </div>
 
-            {/* Hora inicio */}
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                 Hora Inicio {isPersonalizado && <span className="text-brand-500">*</span>}
@@ -249,7 +236,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
               {fieldErrors.horaInicio && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.horaInicio}</p>}
             </div>
 
-            {/* Hora fin */}
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                 Hora Fin {isPersonalizado && <span className="text-brand-500">*</span>}
@@ -262,7 +248,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
               {fieldErrors.horaFin && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.horaFin}</p>}
             </div>
 
-            {/* Estado */}
             <div className="col-span-2">
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                 Estado <span className="text-brand-500">*</span>
@@ -284,7 +269,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
               </div>
             </div>
 
-            {/* Observaciones */}
             <div className="col-span-2">
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
                 Observaciones <span className="text-neutral-300 font-normal normal-case">(opcional)</span>
@@ -298,7 +282,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
             </div>
           </div>
 
-          {/* Turno preview */}
           {form.tipoTurno && (
             <div className="mt-4 p-3 bg-brand-50 border border-brand-100 rounded-lg flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center flex-shrink-0">
@@ -318,7 +301,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
           )}
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50 flex-shrink-0">
           <button onClick={onClose} disabled={saving || loading} className="px-5 py-2 border border-neutral-200 text-neutral-600 text-[12px] font-semibold rounded-lg hover:border-neutral-300 hover:bg-white transition-colors disabled:opacity-50">
             Cancelar
@@ -335,7 +317,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
   );
 }
 
-// ─── Página principal ─────────────────────────────────────────────────────────
 export default function HorariosPage() {
   const crud     = useCrud(horariosService, mapHorario, DEMO_HORARIOS);
   const recepCrud = useCrud(recepcionistasService, mapRecepcionista, DEMO_RECEP);
@@ -354,7 +335,6 @@ export default function HorariosPage() {
     return matchesSearch && matchesTurno && matchesEstado;
   });
 
-  // Stats rápidas
   const totalHoy = crud.data.filter(h => h.fecha === new Date().toISOString().split("T")[0]).length;
   const enCurso  = crud.data.filter(h => h.estado === "EN_CURSO").length;
   const programados = crud.data.filter(h => h.estado === "PROGRAMADO").length;
@@ -384,7 +364,6 @@ export default function HorariosPage() {
     <>
       <div className="flex flex-col gap-5 w-full animate-fade-in">
 
-        {/* ── Header ── */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="font-display text-[24px] font-bold text-neutral-900 flex items-center gap-2.5">
@@ -404,7 +383,6 @@ export default function HorariosPage() {
           </button>
         </div>
 
-        {/* ── KPI strip ── */}
         <div className="grid grid-cols-3 gap-3">
           {[
             { label: "Turnos hoy",     value: totalHoy,    color: "border-t-brand-500  text-brand-600",  bg: "bg-brand-50" },
@@ -418,17 +396,14 @@ export default function HorariosPage() {
           ))}
         </div>
 
-        {/* ── Tabla ── */}
         <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
 
-          {/* Toolbar */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 flex-wrap gap-3">
             <div className="flex items-center gap-2">
               <h2 className="font-semibold text-neutral-800 text-[14px]">Todos los horarios</h2>
               <span className="bg-brand-100 text-brand-700 text-[11px] font-bold px-2 py-0.5 rounded-full">{filtered.length}</span>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              {/* Búsqueda */}
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400 w-3.5 h-3.5" />
                 <input
@@ -438,7 +413,6 @@ export default function HorariosPage() {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              {/* Filtro turno */}
               <div className="relative">
                 <select
                   value={filterTurno}
@@ -450,7 +424,6 @@ export default function HorariosPage() {
                 </select>
                 <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400 pointer-events-none" />
               </div>
-              {/* Filtro estado */}
               <div className="relative">
                 <select
                   value={filterEstado}
@@ -465,14 +438,12 @@ export default function HorariosPage() {
             </div>
           </div>
 
-          {/* Error */}
           {crud.error && (
             <div className="px-5 py-2 bg-yellow-50 border-b border-yellow-100 text-yellow-700 text-[12px] flex items-center gap-2">
               <AlertCircle className="w-3.5 h-3.5" /> {crud.error}
             </div>
           )}
 
-          {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-[13px]">
               <thead>
@@ -540,7 +511,6 @@ export default function HorariosPage() {
         </div>
       </div>
 
-      {/* Modales */}
       <HorarioModal
         open={m.modalOpen}
         editing={m.editing}

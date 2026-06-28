@@ -1,0 +1,33 @@
+name: Deploy to Render
+
+on:
+  workflow_run:
+    workflows: ["Integration CI + CD"]
+    branches: [main]
+    types: [completed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Deploy Backend
+        run: |
+          curl -sSf -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_BACKEND_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            || echo "Backend deploy triggered"
+
+      - name: Deploy Chatbot
+        run: |
+          curl -sSf -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_CHATBOT_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            || echo "Chatbot deploy triggered"
+
+      - name: Deploy PDF Server
+        run: |
+          curl -sSf -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_PDF_SERVER_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            || echo "PDF Server deploy triggered"

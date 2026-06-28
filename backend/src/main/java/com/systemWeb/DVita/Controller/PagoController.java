@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pagos")
@@ -21,6 +22,12 @@ public class PagoController {
     private final PagoService pagoService;
     private final PagoPdfService pagoPdfService;
     private final TicketPdfService ticketPdfService;
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleError(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(e.getMessage());
+    }
 
     @GetMapping("/pdf/reporte")
     public ResponseEntity<byte[]> descargarPdf() {
@@ -45,11 +52,25 @@ public class PagoController {
 
     @GetMapping("/{id}/ticket")
     public ResponseEntity<byte[]> descargarTicket(@PathVariable Long id) {
+        Pago pago = pagoService.buscarPorId(id)
+                .orElseThrow(() -> new RuntimeException("Pago no encontrado: " + id));
+        if (!"COMPLETADO".equals(pago.getEstado())) {
+            return ResponseEntity.badRequest().body(("El pago debe estar COMPLETADO para generar el ticket").getBytes());
+        }
         byte[] pdf = ticketPdfService.generarTicket(id);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=ticket-pago-" + id + ".pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
+    }
+
+    @PutMapping("/{id}/completar")
+    public ResponseEntity<Pago> completar(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String metodoPago = body.get("metodoPago");
+        if (metodoPago == null || metodoPago.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(pagoService.completar(id, metodoPago));
     }
 
     @PostMapping

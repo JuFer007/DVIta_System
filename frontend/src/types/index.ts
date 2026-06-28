@@ -1,5 +1,3 @@
-// src/types/index.ts
-
 export interface User {
   idUsuario: number;
   nombreUsuario: string;

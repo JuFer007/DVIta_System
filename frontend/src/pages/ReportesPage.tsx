@@ -6,13 +6,11 @@ import {
   CalendarCheck, Users, CreditCard, FileText,
 } from "lucide-react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface MesData    { mes: string; anio: number; total: number; pagos: number }
 interface MetodoData { metodo: string; total: number; cantidad: number }
 interface OcupData   { tipo: string; disponibles: number; ocupadas: number; mantenimiento: number; total: number }
 interface EstadoMap  { [key: string]: number }
 
-// ─── Demo data ────────────────────────────────────────────────────────────────
 const DEMO_MESES: MesData[] = [
   { mes: "Nov", anio: 2025, total: 3200,  pagos: 18 },
   { mes: "Dic", anio: 2025, total: 4800,  pagos: 26 },
@@ -37,7 +35,6 @@ const DEMO_ESTADOS: EstadoMap = {
   PENDIENTE: 8, CONFIRMADA: 14, CANCELADA: 3, COMPLETADA: 22,
 };
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 function fmt(n: number) {
   return `S/.${n.toLocaleString("es-PE", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 }
@@ -63,7 +60,6 @@ function useData<T>(url: string, fallback: T): [T, boolean, boolean] {
   return [data, loading, isDemo];
 }
 
-// ─── Gráfico de barras — Ingresos mensuales ───────────────────────────────────
 function BarChart({ data }: { data: MesData[] }) {
   if (!data.length) return null;
   const max = Math.max(...data.map(d => d.total), 1);
@@ -73,7 +69,6 @@ function BarChart({ data }: { data: MesData[] }) {
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ fontFamily: "DM Sans, system-ui, sans-serif" }}>
-      {/* Grid lines */}
       {[0, 0.25, 0.5, 0.75, 1].map(f => {
         const y = PT + cH - f * cH;
         return (
@@ -86,7 +81,6 @@ function BarChart({ data }: { data: MesData[] }) {
         );
       })}
 
-      {/* Bars */}
       {data.map((d, i) => {
         const x    = PL + (cW / data.length) * i + (cW / data.length - bW) / 2;
         const bH   = Math.max((d.total / max) * cH, 2);
@@ -94,17 +88,13 @@ function BarChart({ data }: { data: MesData[] }) {
         const last = i === data.length - 1;
         return (
           <g key={i}>
-            {/* Bar background */}
             <rect x={x} y={PT} width={bW} height={cH} rx="4" fill="#FBF3EE" />
-            {/* Bar fill */}
             <rect x={x} y={y} width={bW} height={bH} rx="4" fill={last ? "#B8622A" : "#D99B6E"} />
-            {/* Value label */}
             {bH > 18 && (
               <text x={x + bW / 2} y={y - 5} textAnchor="middle" fontSize="9" fill={last ? "#7A3D14" : "#9A5020"} fontWeight="600">
                 {d.total >= 1000 ? `${(d.total / 1000).toFixed(1)}k` : d.total}
               </text>
             )}
-            {/* Month label */}
             <text x={x + bW / 2} y={H - 8} textAnchor="middle" fontSize="10" fill={last ? "#3D1F0A" : "#5C5751"} fontWeight={last ? "700" : "400"}>
               {d.mes}
             </text>
@@ -112,13 +102,10 @@ function BarChart({ data }: { data: MesData[] }) {
         );
       })}
 
-      {/* Axis */}
       <line x1={PL} y1={PT + cH} x2={W - PR} y2={PT + cH} stroke="#EDEBE8" strokeWidth="1" />
     </svg>
   );
 }
-
-// ─── Componentes de UI ────────────────────────────────────────────────────────
 
 function Skeleton({ className = "" }: { className?: string }) {
   return <div className={`animate-pulse bg-neutral-100 rounded ${className}`} />;
@@ -133,7 +120,6 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
   );
 }
 
-// ─── KPI Card ─────────────────────────────────────────────────────────────────
 function KPICard({
   label, value, sub, delta, icon: Icon,
 }: {
@@ -141,13 +127,11 @@ function KPICard({
   delta?: number; icon: any;
 }) {
   const DeltaIcon = delta === undefined ? null : delta > 0 ? ArrowUp : delta < 0 ? ArrowDown : Minus;
-  // Mantenemos el color semántico para el delta (verde/rojo) por legibilidad
   const deltaColor = delta === undefined ? "" : delta > 0 ? "text-green-600" : delta < 0 ? "text-red-500" : "text-neutral-400";
 
   return (
     <div className="rounded-sm border border-neutral-200 p-5 shadow-sm flex flex-col gap-3 bg-white">
       <div className="flex items-center justify-between">
-        {/* Usamos el color #D99B6E (brand-300 aproximado) en el fondo del icono */}
         <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#FBF3EE]">
           <Icon className="w-4 h-4 text-[#B8622A]" /> 
         </div>
@@ -160,7 +144,6 @@ function KPICard({
       </div>
       <div>
         <p className="font-display text-[28px] font-bold leading-none mb-1 text-neutral-900">{value}</p>
-        {/* Aplicamos el color solicitado al label para dar identidad */}
         <p className="text-[12px] font-semibold text-[#D99B6E]">{label}</p>
         <p className="text-[11px] mt-0.5 text-neutral-400">{sub}</p>
       </div>
@@ -168,7 +151,6 @@ function KPICard({
   );
 }
 
-// ─── Barra de progreso para métodos de pago ───────────────────────────────────
 function MetodoRow({ metodo, total, cantidad, totalGlobal, index }: {
   metodo: string; total: number; cantidad: number; totalGlobal: number; index: number;
 }) {
@@ -201,7 +183,6 @@ function MetodoRow({ metodo, total, cantidad, totalGlobal, index }: {
   );
 }
 
-// ─── Card de ocupación por tipo ───────────────────────────────────────────────
 function OcupacionCard({ data }: { data: OcupData }) {
   const pctOcupada = data.total > 0 ? (data.ocupadas / data.total) * 100 : 0;
   const pctLibre   = data.total > 0 ? (data.disponibles / data.total) * 100 : 0;
@@ -219,7 +200,6 @@ function OcupacionCard({ data }: { data: OcupData }) {
         </div>
       </div>
 
-      {/* Barra segmentada */}
       <div className="flex h-2.5 rounded-full overflow-hidden gap-0.5 mb-4">
         {data.ocupadas > 0 && (
           <div className="rounded-full bg-brand-500" style={{ width: `${(data.ocupadas / data.total) * 100}%` }} />
@@ -232,7 +212,6 @@ function OcupacionCard({ data }: { data: OcupData }) {
         )}
       </div>
 
-      {/* Leyenda */}
       <div className="flex items-center gap-4 text-[11px]">
         <span className="flex items-center gap-1.5 text-neutral-600">
           <span className="w-2 h-2 rounded-full bg-brand-500 inline-block" />
@@ -253,7 +232,6 @@ function OcupacionCard({ data }: { data: OcupData }) {
   );
 }
 
-// ─── Tabla de reservas por estado ─────────────────────────────────────────────
 function EstadoRow({ estado, count, total }: { estado: string; count: number; total: number }) {
   const pct = total > 0 ? (count / total) * 100 : 0;
   const STYLES: Record<string, { dot: string; text: string; bg: string }> = {
@@ -281,7 +259,6 @@ function EstadoRow({ estado, count, total }: { estado: string; count: number; to
   );
 }
 
-// ─── Página ───────────────────────────────────────────────────────────────────
 export default function ReportesPage() {
   const [meses,   loadM,  demoM]  = useData<MesData[]>("/api/dashboard/ingresos-mensuales", DEMO_MESES);
   const [metodos, loadMt, demoMt] = useData<MetodoData[]>("/api/dashboard/metodos-pago", DEMO_METODOS);
@@ -291,7 +268,6 @@ export default function ReportesPage() {
   const loading = loadM || loadMt || loadO || loadE;
   const isDemo  = demoM || demoMt || demoO || demoE;
 
-  // Cálculos
   const totalIngresos = meses.reduce((s, m) => s + m.total, 0);
   const totalPagos    = meses.reduce((s, m) => s + m.pagos, 0);
   const mesActual     = meses[meses.length - 1];
@@ -315,7 +291,6 @@ export default function ReportesPage() {
   return (
     <div className="flex flex-col gap-8 w-full animate-fade-in">
 
-      {/* ── Header ── */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
           <h1 className="font-display text-[26px] font-bold text-neutral-900 leading-tight flex items-center gap-2.5">
@@ -353,7 +328,6 @@ export default function ReportesPage() {
         </div>
       </div>
 
-      {/* ── KPIs ── */}
       {loading
         ? <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{Array.from({length:4}).map((_,i)=><Skeleton key={i} className="h-36 rounded-sm"/>)}</div>
         : (
@@ -387,10 +361,8 @@ export default function ReportesPage() {
         )
       }
 
-      {/* ── Fila principal: Ingresos + Reservas por estado ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* Gráfico de barras — ocupa 2/3 */}
         <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-sm shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
             <div>
@@ -418,7 +390,6 @@ export default function ReportesPage() {
           )}
         </div>
 
-        {/* Reservas por estado — 1/3 */}
         <div className="bg-white border border-neutral-200 rounded-sm shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-neutral-100">
             <h3 className="font-semibold text-neutral-800 text-[14px]">Reservas por estado</h3>
@@ -435,7 +406,6 @@ export default function ReportesPage() {
         </div>
       </div>
 
-      {/* ── Métodos de pago ── */}
       <div className="bg-white border border-neutral-200 rounded-sm shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
           <div>
@@ -466,7 +436,6 @@ export default function ReportesPage() {
         </div>
       </div>
 
-      {/* ── Ocupación por tipo ── */}
       <div>
         <SectionHeader title="Ocupación por tipo de habitación" subtitle="Estado actual del inventario" />
         {loading

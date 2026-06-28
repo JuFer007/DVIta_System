@@ -14,7 +14,7 @@ import java.time.Duration;
 public class PdfService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(30))
+            .connectTimeout(Duration.ofSeconds(10))
             .build();
 
     @Value("${pdf.service.url:http://localhost:3005}")

@@ -3,7 +3,7 @@ import { AlertTriangle, Loader2, Pencil, ArrowRight, CheckCheck, XCircle, Histor
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import { useCrud } from "../../hooks/useCrud";
-import { incidenciasService, clientesService, habitacionesService, areasService, downloadPdf } from "../../services/api";
+import { incidenciasService, clientesService, habitacionesService, areasService, downloadPdf, BASE_URL } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 import { useToast } from "../../components/Toast";
 import { useAuth } from "../../context/AuthContext";
@@ -85,7 +85,6 @@ export default function IncidenciasPage() {
   const [historialData, setHistorialData] = useState<any[]>([]);
   const [historialLoading, setHistorialLoading] = useState(false);
 
-  // Resolve dialog state
   const [resolveRow, setResolveRow] = useState<any | null>(null);
   const [resolveSolucion, setResolveSolucion] = useState("");
   const [resolveNotas, setResolveNotas] = useState("");
@@ -315,7 +314,7 @@ export default function IncidenciasPage() {
                         <History className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => downloadPdf(`/api/incidencias/pdf/historial/${row.id}`, `historial-incidencia-${row.id}.pdf`)}
+                        onClick={() => downloadPdf(`${BASE_URL}/incidencias/pdf/historial/${row.id}`, `historial-incidencia-${row.id}.pdf`)}
                         className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors text-rose-700 bg-rose-100 hover:bg-rose-200"
                         title="Descargar PDF del historial"
                       >
@@ -337,7 +336,6 @@ export default function IncidenciasPage() {
         onClose={m.closeModal} onSave={handleSave}
       />
 
-      {/* Resolve Dialog */}
       {resolveRow && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ backgroundColor: "rgba(20,8,2,0.65)", backdropFilter: "blur(4px)" }}
@@ -395,7 +393,6 @@ export default function IncidenciasPage() {
         </div>
       )}
 
-      {/* Historial Modal */}
       {historialRow && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ backgroundColor: "rgba(20,8,2,0.65)", backdropFilter: "blur(4px)" }}

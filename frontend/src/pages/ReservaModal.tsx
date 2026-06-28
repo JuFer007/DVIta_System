@@ -1,6 +1,3 @@
-// src/pages/ReservaModal.tsx
-// Solo UI — toda la lógica vive en useReservaModal
-
 import {
   X, CalendarDays, Phone, BedDouble, ChevronRight,
   CheckCircle2, Search, Loader2, Mail, AlertCircle,
@@ -60,8 +57,6 @@ export default function ReservaModal({ open, onClose }: Props) {
     </div>
   );
 }
-
-// ─── Sub-componentes ──────────────────────────────────────────────────────────
 
 function ModalHeader({ sent, onClose }: { sent: boolean; onClose: () => void }) {
   return (
@@ -163,8 +158,6 @@ function ModalFooter({
   );
 }
 
-// ─── Pantalla de éxito ────────────────────────────────────────────────────────
-
 function StepSuccess({ h, onClose }: { h: ReturnType<typeof useReservaModal>; onClose: () => void }) {
   return (
     <div className="flex flex-col items-center text-center py-8 gap-5">
@@ -219,12 +212,9 @@ function StepSuccess({ h, onClose }: { h: ReturnType<typeof useReservaModal>; on
   );
 }
 
-// ─── Step 1: Habitación y fechas ──────────────────────────────────────────────
-
 function Step1({ h }: { h: ReturnType<typeof useReservaModal> }) {
   return (
     <div className="flex flex-col gap-5">
-      {/* Selector de habitación */}
       <div>
         <label className="block text-[11px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-2.5">
           Tipo de habitación
@@ -254,7 +244,6 @@ function Step1({ h }: { h: ReturnType<typeof useReservaModal> }) {
         )}
       </div>
 
-      {/* Fechas */}
       <div className="grid grid-cols-2 gap-3">
         {[
           { label: "Fecha de llegada", val: h.llegada, set: h.setLlegada, min: h.today,              max: h.salida || undefined },
@@ -276,7 +265,6 @@ function Step1({ h }: { h: ReturnType<typeof useReservaModal> }) {
         ))}
       </div>
 
-      {/* Resumen precio */}
       {h.selectedRoom && h.nights > 0 && (
         <div className="flex items-center justify-between bg-brand-50 border border-brand-100 rounded-sm px-4 py-3">
           <div className="flex items-center gap-2 text-[13px] text-brand-700">
@@ -292,13 +280,10 @@ function Step1({ h }: { h: ReturnType<typeof useReservaModal> }) {
   );
 }
 
-// ─── Step 2: Datos del cliente ────────────────────────────────────────────────
-
 function Step2({ h }: { h: ReturnType<typeof useReservaModal> }) {
   return (
     <div className="flex flex-col gap-4">
 
-      {/* Mini resumen */}
       <div className="flex items-center justify-between bg-neutral-50 border border-neutral-200 rounded-sm px-4 py-3">
         <div>
           <p className="text-[12px] font-bold text-neutral-600">{h.selectedRoom?.descripcion ?? "—"}</p>
@@ -309,7 +294,6 @@ function Step2({ h }: { h: ReturnType<typeof useReservaModal> }) {
         <span className="font-display font-bold text-[18px] text-brand-700">S/.{h.total}</span>
       </div>
 
-      {/* Búsqueda de DNI */}
       <div className="border border-neutral-200 rounded-sm overflow-hidden">
         <div className="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center gap-2">
           <Search className="w-3.5 h-3.5 text-neutral-500" />
@@ -350,7 +334,6 @@ function Step2({ h }: { h: ReturnType<typeof useReservaModal> }) {
             </button>
           </div>
 
-          {/* Feedback DNI */}
           {h.dniError && (
             <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1.5">
               <AlertCircle className="w-3 h-3 flex-shrink-0" /> {h.dniError}
@@ -377,7 +360,6 @@ function Step2({ h }: { h: ReturnType<typeof useReservaModal> }) {
         </div>
       </div>
 
-      {/* Datos personales */}
       <div className="grid grid-cols-2 gap-3">
         <FormField label="Nombre(s)" required>
           <input type="text" placeholder="Ej: María" value={h.nombre}
@@ -429,7 +411,6 @@ function Step2({ h }: { h: ReturnType<typeof useReservaModal> }) {
           className={inputCls + " resize-none"} />
       </FormField>
 
-      {/* Aviso cliente nuevo */}
       {(h.dniStatus === "reniec" || h.dniStatus === "notfound") && h.nombre && h.telefono && (
         <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-sm px-4 py-3 text-[12px] text-amber-800">
           <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
@@ -439,8 +420,6 @@ function Step2({ h }: { h: ReturnType<typeof useReservaModal> }) {
     </div>
   );
 }
-
-// ─── Step 3: Confirmación ─────────────────────────────────────────────────────
 
 function Step3({ h }: { h: ReturnType<typeof useReservaModal> }) {
   return (
@@ -492,8 +471,6 @@ function Step3({ h }: { h: ReturnType<typeof useReservaModal> }) {
     </div>
   );
 }
-
-// ─── Helpers de UI ────────────────────────────────────────────────────────────
 
 const inputCls =
   "w-full px-3.5 py-2.5 border border-neutral-200 rounded-sm text-[13px] text-neutral-800 focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-50 placeholder:text-neutral-300 transition-all";

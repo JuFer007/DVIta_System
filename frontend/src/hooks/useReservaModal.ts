@@ -20,6 +20,7 @@ export interface TipoHab {
 
 export interface ReservaResult {
   idReserva: number;
+  idPago?: number;
 }
 
 export function useReservaModal() {

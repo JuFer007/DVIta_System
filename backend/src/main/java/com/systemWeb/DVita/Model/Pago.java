@@ -35,7 +35,12 @@ public class Pago {
     @Column(name = "fecha_pago", nullable = false)
     private LocalDate fechaPago;
 
-    @Pattern(regexp = "PENDIENTE|EFECTIVO|TARJETA_CREDITO|TARJETA_DEBITO|TRANSFERENCIA|YAPE|PLIN", message = "El método de pago no es válido")
+    @Pattern(regexp = "EFECTIVO|TARJETA_CREDITO|TARJETA_DEBITO|TRANSFERENCIA|YAPE|PLIN", message = "El método de pago no es válido")
     @Column(name = "metodo_pago", nullable = false, length = 30)
     private String metodoPago;
+
+    @NotBlank(message = "El estado del pago es obligatorio")
+    @Pattern(regexp = "PENDIENTE|COMPLETADO", message = "El estado debe ser PENDIENTE o COMPLETADO")
+    @Column(name = "estado", nullable = false, length = 20)
+    private String estado;
 }

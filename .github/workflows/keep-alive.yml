@@ -1,0 +1,31 @@
+name: Keep Alive
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Backend Health
+        run: |
+          curl -sSf -o /dev/null \
+            "https://d-vita-backend.onrender.com/api/actuator/health" \
+            || echo "Backend not reachable"
+      - name: Ping Chatbot
+        run: |
+          curl -sSf -o /dev/null \
+            "https://d-vita-chatbot.onrender.com/health" \
+            || echo "Chatbot not reachable"
+      - name: Ping PDF Server
+        run: |
+          curl -sSf -o /dev/null \
+            "https://d-vita-pdf-server.onrender.com" \
+            || echo "PDF server not reachable"
+      - name: Ping Frontend (Vercel)
+        run: |
+          curl -sSf -o /dev/null \
+            "https://dv-ita-system.vercel.app" \
+            || echo "Frontend not reachable"

@@ -9,7 +9,6 @@ import StatsCard from "../components/StatsCard";
 import StatusBadge from "../components/StatusBadge";
 import { dashboardService } from "../services/api";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface Stats {
   reservasActivas: number;
   reservasHoy: number;
@@ -41,7 +40,6 @@ interface HabitacionEstado {
   precio: number;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 function fmt(n: number) {
   return `S/.${n.toLocaleString("es-PE", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 }
@@ -71,12 +69,10 @@ const activityIcon = (estado: string) => {
   return <AlertCircle className="w-3.5 h-3.5 text-yellow-500" />;
 };
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 function Skeleton({ className = "" }: { className?: string }) {
   return <div className={`animate-pulse bg-neutral-100 rounded ${className}`} />;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const [stats,      setStats]      = useState<Stats | null>(null);
   const [reservas,   setReservas]   = useState<ReservaReciente[]>([]);
@@ -100,7 +96,6 @@ export default function Dashboard() {
       setLastUpdate(new Date());
     } catch {
       setError("No se pudo conectar con el servidor. Mostrando datos de ejemplo.");
-      // Demo fallback
       setStats({
         reservasActivas: 24, reservasHoy: 3,
         habitacionesDisponibles: 12, habitacionesTotal: 30,
@@ -136,7 +131,6 @@ export default function Dashboard() {
   const capitalized = today.charAt(0).toUpperCase() + today.slice(1);
   const greeting = getGreeting();
 
-  // Derived
   const pctOcupacion = stats
     ? stats.habitacionesTotal > 0
       ? (((stats.habitacionesTotal - stats.habitacionesDisponibles) / stats.habitacionesTotal) * 100).toFixed(0)
@@ -177,7 +171,6 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-6 w-full">
 
-      {/* ── Header ── */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
           <h1 className="font-display text-[26px] font-bold text-neutral-900 leading-tight flex items-center gap-2.5">
@@ -210,7 +203,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {loading
           ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)
@@ -218,7 +210,6 @@ export default function Dashboard() {
         }
       </div>
 
-      {/* ── Check-in / Check-out strip ── */}
       {stats && (
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white border border-neutral-200 rounded-sm p-4 shadow-sm flex items-center gap-3">
@@ -242,10 +233,8 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Fila principal ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-        {/* Reservas recientes — 2/3 */}
         <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-sm overflow-hidden shadow-sm">
           <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
             <div className="flex items-center gap-2.5">
@@ -296,7 +285,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Actividad reciente — 1/3 */}
         <div className="bg-white border border-neutral-200 rounded-sm overflow-hidden shadow-sm">
           <div className="flex items-center gap-2.5 px-5 py-4 border-b border-neutral-100">
             <TrendingUp className="w-4 h-4 text-brand-500" />
@@ -323,7 +311,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Estado habitaciones ── */}
       <div className="bg-white border border-neutral-200 rounded-sm overflow-hidden shadow-sm">
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
           <div className="flex items-center gap-2.5">
@@ -366,7 +353,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* ── Resumen ocupación ── */}
       {stats && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[

@@ -157,27 +157,30 @@ INSERT IGNORE INTO reserva (id_reserva, id_cliente, id_empleado, id_habitacion, 
 -- ============================================================
 -- 9) PAGO (20)
 -- ============================================================
-INSERT IGNORE INTO pago (id_pago, id_reserva, monto, fecha_pago, metodo_pago) VALUES
-(1, 1, 200.00, '2025-01-15', 'TARJETA_CREDITO'),
-(2, 2, 147.00, '2025-01-25', 'EFECTIVO'),
-(3, 3, 276.00, '2025-02-10', 'TRANSFERENCIA'),
-(4, 4, 95.00, '2025-02-20', 'YAPE'),
-(5, 5, 246.00, '2025-03-05', 'TARJETA_DEBITO'),
-(6, 6, 160.00, '2025-03-14', 'EFECTIVO'),
-(7, 7, 265.00, '2025-03-26', 'TRANSFERENCIA'),
-(8, 8, 180.00, '2025-04-05', 'YAPE'),
-(9, 9, 50.00, '2025-04-15', 'PLIN'),
-(10, 10, 140.00, '2025-04-25', 'TARJETA_CREDITO'),
-(11, 11, 400.00, '2025-05-06', 'TRANSFERENCIA'),
-(12, 12, 360.00, '2025-05-16', 'YAPE'),
-(13, 13, 80.00, '2025-05-28', 'EFECTIVO'),
-(14, 14, 260.00, '2025-06-10', 'TARJETA_DEBITO'),
-(15, 15, 750.00, '2025-06-20', 'TRANSFERENCIA'),
-(16, 16, 350.00, '2025-07-05', 'TARJETA_CREDITO'),
-(17, 17, 450.00, '2025-07-18', 'YAPE'),
-(18, 18, 240.00, '2025-08-05', 'PLIN'),
-(19, 19, 100.00, '2025-08-15', 'EFECTIVO'),
-(20, 20, 410.00, '2025-08-25', 'TRANSFERENCIA');
+INSERT IGNORE INTO pago (id_pago, id_reserva, monto, fecha_pago, metodo_pago, estado) VALUES
+(1, 1, 200.00, '2025-01-15', 'TARJETA_CREDITO', 'COMPLETADO'),
+(2, 2, 147.00, '2025-01-25', 'EFECTIVO', 'COMPLETADO'),
+(3, 3, 276.00, '2025-02-10', 'TRANSFERENCIA', 'COMPLETADO'),
+(4, 4, 95.00, '2025-02-20', 'YAPE', 'COMPLETADO'),
+(5, 5, 246.00, '2025-03-05', 'TARJETA_DEBITO', 'COMPLETADO'),
+(6, 6, 160.00, '2025-03-14', 'EFECTIVO', 'COMPLETADO'),
+(7, 7, 265.00, '2025-03-26', 'TRANSFERENCIA', 'COMPLETADO'),
+(8, 8, 180.00, '2025-04-05', 'YAPE', 'COMPLETADO'),
+(9, 9, 50.00, '2025-04-15', 'PLIN', 'COMPLETADO'),
+(10, 10, 140.00, '2025-04-25', 'TARJETA_CREDITO', 'COMPLETADO'),
+(11, 11, 400.00, '2025-05-06', 'TRANSFERENCIA', 'COMPLETADO'),
+(12, 12, 360.00, '2025-05-16', 'YAPE', 'COMPLETADO'),
+(13, 13, 80.00, '2025-05-28', 'EFECTIVO', 'COMPLETADO'),
+(14, 14, 260.00, '2025-06-10', 'TARJETA_DEBITO', 'COMPLETADO'),
+(15, 15, 750.00, '2025-06-20', 'TRANSFERENCIA', 'COMPLETADO'),
+(16, 16, 350.00, '2025-07-05', 'TARJETA_CREDITO', 'COMPLETADO'),
+(17, 17, 450.00, '2025-07-18', 'YAPE', 'COMPLETADO'),
+(18, 18, 240.00, '2025-08-05', 'PLIN', 'COMPLETADO'),
+(19, 19, 100.00, '2025-08-15', 'EFECTIVO', 'COMPLETADO'),
+(20, 20, 410.00, '2025-08-25', 'TRANSFERENCIA', 'COMPLETADO');
+
+-- Migración: fijar estado de pagos existentes (por si la columna se agregó después)
+UPDATE pago SET estado = 'COMPLETADO' WHERE estado IS NULL;
 
 -- ============================================================
 -- 10) INCIDENCIA (20)

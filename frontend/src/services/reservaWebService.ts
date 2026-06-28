@@ -1,3 +1,5 @@
+import { BASE_URL } from "./api";
+
 export interface ClienteData {
   idCliente?: number;
   nombre: string;
@@ -8,10 +10,10 @@ export interface ClienteData {
   email: string;
   esNuevo: boolean;
 }
- 
+
 export async function buscarClienteEnBD(dni: string): Promise<ClienteData | null> {
   try {
-    const res = await fetch("/api/clientes");
+    const res = await fetch(`${BASE_URL}/clientes`);
     if (!res.ok) return null;
     const clientes: any[] = await res.json();
     const c = clientes.find((x) => x.dni === dni);
@@ -30,10 +32,10 @@ export async function buscarClienteEnBD(dni: string): Promise<ClienteData | null
     return null;
   }
 }
- 
+
 export async function buscarEnReniec(dni: string): Promise<Partial<ClienteData> | null> {
   try {
-    const res = await fetch(`/api/reniec/dni/${dni}`);
+    const res = await fetch(`${BASE_URL}/reniec/dni/${dni}`);
     if (!res.ok) return null;
 
     const data = await res.json();
@@ -51,7 +53,7 @@ export async function buscarEnReniec(dni: string): Promise<Partial<ClienteData> 
     return null;
   }
 }
- 
+
 export async function crearCliente(payload: {
   nombre: string;
   apellidoPaterno: string;
@@ -60,7 +62,7 @@ export async function crearCliente(payload: {
   telefono: string;
   email: string | null;
 }): Promise<number> {
-  const res = await fetch("/api/clientes", {
+  const res = await fetch(`${BASE_URL}/clientes`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -69,10 +71,10 @@ export async function crearCliente(payload: {
   const data = await res.json();
   return data.idCliente as number;
 }
- 
+
 export async function buscarTiposHabitacion(): Promise<{ idTipoHabitacion: number; descripcion: string; precio: number }[]> {
   try {
-    const res = await fetch("/api/tipos-habitacion");
+    const res = await fetch(`${BASE_URL}/tipos-habitacion`);
     if (!res.ok) return [];
     return await res.json();
   } catch {
@@ -84,7 +86,7 @@ export async function buscarHabitacionDisponible(
   tipoId: number, fechaIngreso: string, fechaSalida: string
 ): Promise<number | null> {
   try {
-    const res = await fetch(`/api/habitaciones/disponibles?fechaIngreso=${fechaIngreso}&fechaSalida=${fechaSalida}&tipoId=${tipoId}`);
+    const res = await fetch(`${BASE_URL}/habitaciones/disponibles?fechaIngreso=${fechaIngreso}&fechaSalida=${fechaSalida}&tipoId=${tipoId}`);
     if (!res.ok) return null;
     const habs: any[] = await res.json();
     const match = habs.find((h) => h.estado !== "MANTENIMIENTO");
@@ -93,7 +95,7 @@ export async function buscarHabitacionDisponible(
     return null;
   }
 }
- 
+
 export async function crearReserva(payload: {
   cliente: { idCliente: number };
   habitacion: { idHabitacion: number };
@@ -102,7 +104,7 @@ export async function crearReserva(payload: {
   fechaSalida: string;
   estadoReserva: string;
 }): Promise<number> {
-  const res = await fetch("/api/reservas", {
+  const res = await fetch(`${BASE_URL}/reservas`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -127,7 +129,7 @@ export async function crearReservaConDni(payload: {
   fechaSalida: string;
   estadoReserva: string;
 }): Promise<number> {
-  const res = await fetch("/api/reservas/con-dni", {
+  const res = await fetch(`${BASE_URL}/reservas/con-dni`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -139,7 +141,7 @@ export async function crearReservaConDni(payload: {
 
 export async function buscarEmpleadoChatbot(): Promise<number | null> {
   try {
-    const res = await fetch("/api/empleados");
+    const res = await fetch(`${BASE_URL}/empleados`);
     if (!res.ok) return null;
     const emp: any[] = await res.json();
     const bot = emp.find((e: any) => e.dni === "00000000");
@@ -148,4 +150,3 @@ export async function buscarEmpleadoChatbot(): Promise<number | null> {
     return null;
   }
 }
- 
