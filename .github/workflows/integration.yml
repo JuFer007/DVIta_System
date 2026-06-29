@@ -20,6 +20,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Create .env file for docker-compose
+        run: touch .env
+
       - uses: docker/bake-action@v5
         with:
           files: docker-compose.yml
