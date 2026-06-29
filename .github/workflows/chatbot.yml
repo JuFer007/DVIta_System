@@ -4,12 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [main, develop]
-    paths:
-      - 'chatBot/**'
   pull_request:
     branches: [main]
-    paths:
-      - 'chatBot/**'
 
 jobs:
   build:

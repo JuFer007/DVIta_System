@@ -4,12 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [main, develop]
-    paths:
-      - 'servidor/**'
   pull_request:
     branches: [main]
-    paths:
-      - 'servidor/**'
 
 jobs:
   build:

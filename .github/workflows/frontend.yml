@@ -4,12 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [main, develop]
-    paths:
-      - 'frontend/**'
   pull_request:
     branches: [main]
-    paths:
-      - 'frontend/**'
 
 jobs:
   build:
