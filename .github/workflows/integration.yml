@@ -23,13 +23,8 @@ jobs:
       - name: Create .env file for docker-compose
         run: touch .env
 
-      - uses: docker/bake-action@v5
-        with:
-          files: docker-compose.yml
-          targets: pdf-server,backend,chatbot,frontend
-          set: |
-            *.cache-from=type=gha
-            *.cache-to=type=gha,mode=max
+      - name: Build images
+        run: docker compose -p dvita_system build pdf-server backend chatbot frontend
 
       - name: Tag and push to Docker Hub
         run: |
