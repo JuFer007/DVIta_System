@@ -11,12 +11,6 @@
   ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
   ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
   ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
-
-  [![Backend CI](https://github.com/JuFer007/DVIta_System/actions/workflows/backend.yml/badge.svg)](https://github.com/JuFer007/DVIta_System/actions/workflows/backend.yml)
-  [![Frontend CI](https://github.com/JuFer007/DVIta_System/actions/workflows/frontend.yml/badge.svg)](https://github.com/JuFer007/DVIta_System/actions/workflows/frontend.yml)
-  [![Chatbot CI](https://github.com/JuFer007/DVIta_System/actions/workflows/chatbot.yml/badge.svg)](https://github.com/JuFer007/DVIta_System/actions/workflows/chatbot.yml)
-  [![PDF Server CI](https://github.com/JuFer007/DVIta_System/actions/workflows/pdf-server.yml/badge.svg)](https://github.com/JuFer007/DVIta_System/actions/workflows/pdf-server.yml)
-  [![Integration CI](https://github.com/JuFer007/DVIta_System/actions/workflows/integration.yml/badge.svg)](https://github.com/JuFer007/DVIta_System/actions/workflows/integration.yml)
 </div>
 
 ---
