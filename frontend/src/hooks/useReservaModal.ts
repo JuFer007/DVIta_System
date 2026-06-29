@@ -138,7 +138,7 @@ export function useReservaModal() {
 
       const idEmpleado = await buscarEmpleadoChatbot();
 
-      let payload: any = {
+      const payload: any = {
         idHabitacion,
         idEmpleado: idEmpleado ?? undefined,
         fechaReserva: today,

@@ -22,7 +22,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-      - run: mvn clean test jacoco:report jacoco:check
+      - run: mvn clean verify
       - run: mvn package -DskipTests
       - uses: actions/upload-artifact@v4
         with:

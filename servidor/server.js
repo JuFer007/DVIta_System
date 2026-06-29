@@ -75,7 +75,7 @@ app.post("/generar-ticket-pago", async (req, res) => {
     const browser = await puppeteer.launch({ args: ["--no-sandbox"], headless: "new" });
     const page = await browser.newPage();
     await page.setContent(template, { waitUntil: "networkidle0" });
-    const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
+    const bodyHeight = await page.evaluate(() => document.body.scrollHeight); // eslint-disable-line no-undef
     const pdf = await page.pdf({
       width: "80mm", height: `${bodyHeight + 12}px`,
       printBackground: true, margin: { top: 6, right: 4, bottom: 6, left: 4 }

@@ -173,7 +173,7 @@ function renderText(text: string) {
 
     if (!t) { closeBlock(); out.push("<br />"); continue; }
 
-    const bulletMatch = t.match(/^[•\-]\s+(.*)/);
+    const bulletMatch = t.match(/^[•-]\s+(.*)/);
     const numberMatch = t.match(/^(\d+)\.\s+(.*)/);
     const indent = raw.startsWith("  ");
 

@@ -80,11 +80,16 @@ def es_cancelacion(message: str) -> bool:
         m.lower()
     ))
 
+def _normalizar(text: str) -> str:
+    accents = {'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+               'ü': 'u', 'ñ': 'n'}
+    return ''.join(accents.get(c, c) for c in text)
+
 def detect_intent(message: str) -> str | None:
     m = _validar(message)
     if not m:
         return None
-    msg = m.lower()
+    msg = _normalizar(m.lower())
     patterns = {
         "menu": [
             r"\b(men[uú]|menu|opciones|inicio|que\s+puedo\s+hacer|mostrar\s+menu|mu[eé]strame\s+el\s+menu|panel|inicio)\b",
@@ -144,7 +149,7 @@ def detect_intent(message: str) -> str | None:
             r"\b(ando\s+buscando|busco|buscar)\s+(una\s+)?habitaci[oó]n",
         ],
         "buscar_reserva": [
-            r"\b(mis\s+reservas?|consulta\s+(mi\s+)?reserva|estado\s+de\s+mi\s+reserva)\b",
+            r"\b(mis\s+reservas?|consultar?\s+(mi\s+)?reserva|estado\s+de\s+mi\s+reserva)\b",
             r"quier[oe]\s+ver\s+(mis\s+)?reservas?",
             r"c[oó]mo\s+est[aá]\s+(mi\s+)?reserva",
             r"tengo\s+(una\s+)?reserva",
