@@ -8,8 +8,7 @@
   ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
   ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?logo=springboot&logoColor=white)
   ![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
-  ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
-  ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+  ![Python](https://img.shields.io/badge/Python-FFD43B?logo=python&logoColor=3776AB)
   ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
 </div>
 
