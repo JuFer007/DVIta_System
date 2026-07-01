@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Repository;
 import com.systemWeb.DVita.Model.Habitacion;
+import com.systemWeb.DVita.Model.enums.EstadoHabitacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +23,9 @@ public interface HabitacionRepository extends JpaRepository<Habitacion, Long> {
     "SELECT 1 FROM Reserva r WHERE r.habitacion.idHabitacion = h.idHabitacion " +
     "AND r.estadoReserva <> 'CANCELADA' AND r.fechaIngreso >= :hoy AND r.fechaIngreso <= :limite)")
     List<Habitacion> findMantenimientoConReservaProxima(@Param("hoy") LocalDate hoy, @Param("limite") LocalDate limite);
+
+    long countByEstado(EstadoHabitacion estado);
+
+    @Query("SELECT h.tipoHabitacion.descripcion, h.estado, COUNT(h) FROM Habitacion h WHERE h.tipoHabitacion IS NOT NULL GROUP BY h.tipoHabitacion.descripcion, h.estado")
+    List<Object[]> countGroupByTipoAndEstado();
 }

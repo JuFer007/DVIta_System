@@ -1,5 +1,7 @@
 package com.systemWeb.DVita.Service.MicroServicios;
 import com.systemWeb.DVita.Model.Cliente;
+import com.systemWeb.DVita.Model.Consulta;
+import com.systemWeb.DVita.Model.Empleado;
 import com.systemWeb.DVita.Model.Reserva;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +68,22 @@ public class EmailService {
                 reserva.getCliente().getEmail(),
                 "Recordatorio de Check-In - D'Vita Hospedaje",
                 cargarTemplate("templates/emails/reserva-recordatorio.html", reserva)
+        );
+    }
+
+    @Async("emailExecutor")
+    public void enviarRespuestaConsulta(Consulta consulta, Empleado empleado) {
+        if (consulta.getEmail() == null) return;
+        String nombreEmpleado = empleado.getNombre() + " " + empleado.getApellidoP() + " " + (empleado.getApellidoM() != null ? empleado.getApellidoM() : "");
+        enviarCorreoConLogo(
+                consulta.getEmail(),
+                "Respuesta a tu consulta - D'Vita Hospedaje",
+                cargarTemplate("templates/emails/consulta-respuesta.html", Map.ofEntries(
+                        Map.entry("nombre", consulta.getNombre()),
+                        Map.entry("mensajeOriginal", consulta.getMensaje()),
+                        Map.entry("respuesta", consulta.getRespuesta()),
+                        Map.entry("empleado", nombreEmpleado)
+                ))
         );
     }
 

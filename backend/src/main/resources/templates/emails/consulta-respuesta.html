@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background-color:#F4F2EF;font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#F4F2EF;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background-color:#FFFFFF;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.04);">
+
+          <!-- TOP BAR -- subtle brand line -->
+          <tr>
+            <td style="height:3px;background:linear-gradient(90deg,#C9A96E,#3D1F0A);font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- HEADER -->
+          <tr>
+            <td style="padding:28px 36px 0;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    <img src="cid:logo" alt="D'Vita" width="40" height="40" style="display:inline-block;border-radius:50%;vertical-align:middle;" />
+                    <span style="font-family:'Inter',sans-serif;font-size:16px;font-weight:700;color:#3D1F0A;letter-spacing:0.03em;vertical-align:middle;margin-left:10px;">D'VITA</span>
+                  </td>
+                  <td style="text-align:right;vertical-align:middle;">
+                    <span style="font-size:12px;color:#A0988C;font-weight:500;">CONSULTA RESPONDIDA</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- CONTENT -->
+          <tr>
+            <td style="padding:28px 36px 4px;">
+              <p style="margin:0 0 4px;color:#1C1917;font-size:15px;line-height:1.5;">Hola <strong style="color:#3D1F0A;">{{nombre}}</strong>,</p>
+              <p style="margin:0 0 28px;color:#78716C;font-size:14px;line-height:1.5;">Hemos respondido tu consulta. Puedes ver el detalle aqu&iacute;:</p>
+
+              <!-- CONVERSATION STYLE -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:4px;">
+                <tr>
+                  <td style="padding:16px 20px;background-color:#F8F7F5;border-radius:8px 8px 0 0;">
+                    <span style="color:#A0988C;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;">Tu consulta</span>
+                    <p style="margin:6px 0 0;color:#44403C;font-size:13px;line-height:1.5;">{{mensajeOriginal}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <tr>
+                  <td style="padding:16px 20px;background-color:#FFFFFF;border:1px solid #E7E5E2;border-radius:0 0 8px 8px;border-top:none;">
+                    <span style="color:#C9A96E;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;">Nuestra respuesta</span>
+                    <p style="margin:6px 0 0;color:#1C1917;font-size:13px;line-height:1.6;">{{respuesta}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- RESPONDED BY -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <tr>
+                  <td style="padding:14px 0;border-top:1px solid #F0EFED;border-bottom:1px solid #F0EFED;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="vertical-align:middle;">
+                          <span style="font-size:12px;color:#A0988C;">Atendido por</span>
+                        </td>
+                        <td style="text-align:right;vertical-align:middle;">
+                          <span style="font-size:13px;font-weight:600;color:#3D1F0A;">{{empleado}}</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CONTACT INFO -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+                <tr>
+                  <td style="padding:0;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="vertical-align:top;padding-right:12px;">
+                          <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="padding-bottom:8px;">
+                                <span style="font-size:12px;color:#A0988C;">Ubicaci&oacute;n</span>
+                                <p style="margin:2px 0 0;font-size:13px;color:#44403C;font-weight:500;">Victor Ra&uacute;l Haya de la Torre N&deg; 281</p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <span style="font-size:12px;color:#A0988C;">Tel&eacute;fono</span>
+                                <p style="margin:2px 0 0;font-size:13px;color:#44403C;font-weight:500;">+51 922 626 148</p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                        <td style="vertical-align:top;padding-left:12px;">
+                          <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="padding-bottom:8px;">
+                                <span style="font-size:12px;color:#A0988C;">Email</span>
+                                <p style="margin:2px 0 0;font-size:13px;color:#44403C;font-weight:500;">DVitaHospedaje@gmail.com</p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <span style="font-size:12px;color:#A0988C;">Horario</span>
+                                <p style="margin:2px 0 0;font-size:13px;color:#44403C;font-weight:500;">Lun-Dom, 8:00 am - 10:00 pm</p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- DIVIDER -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:0 0 4px;"><hr style="border:none;border-top:1px solid #F0EFED;margin:0;" /></td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 28px;color:#A0988C;font-size:12px;line-height:1.5;text-align:center;">
+                Si tienes m&aacute;s preguntas, responde este correo o ll&aacute;manos.<br>
+                Estamos para ayudarte.
+              </p>
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td style="background-color:#FAF9F8;padding:20px 36px;text-align:center;">
+              <p style="margin:0;font-size:13px;color:#3D1F0A;font-weight:600;letter-spacing:0.03em;">D'VITA HOSPEDAJE</p>
+              <p style="margin:4px 0 0;color:#A0988C;font-size:11px;">Chiclayo, Per&uacute; &middot; Desde 2018</p>
+              <p style="margin:2px 0 0;color:#B8B0A4;font-size:10px;">&copy; 2026 D'VITA. Todos los derechos reservados.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

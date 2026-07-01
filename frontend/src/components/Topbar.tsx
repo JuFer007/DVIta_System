@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { LogOut, ChevronRight, Bell, X, Mail, Calendar, Send, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { consultasService } from "../services/api";
 
 const PAGE_NAMES: Record<string, string> = {
   dashboard:    "Dashboard",
@@ -34,29 +35,13 @@ interface Notificacion {
   dni?: string;
 }
 
-async function enviarEmail(params: {
-  to_email: string;
-  to_name: string;
-  from_name: string;
-  message: string;
-  subject: string;
-}): Promise<boolean> {
-  try {
-    const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        service_id: "service_dvita",
-        template_id: "template_reply",
-        user_id: "YOUR_EMAILJS_PUBLIC_KEY",
-        template_params: params,
-      }),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
+const CARGO_LABEL: Record<string, string> = {
+  ADMINISTRADOR: "Administrador",
+  GERENTE: "Gerente",
+  RECEPCIONISTA: "Recepcionista",
+  MANTENIMIENTO: "Mantenimiento",
+  LIMPIEZA: "Limpieza",
+};
 
 interface Props {
   page: string;
@@ -74,18 +59,32 @@ export default function Topbar({ page, onLogout }: Props) {
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const cargarNotifs = () => {
+  const cargarNotifs = async () => {
+    const local: Notificacion[] = JSON.parse(localStorage.getItem("dvita_notificaciones") || "[]");
     try {
-      const data = JSON.parse(localStorage.getItem("dvita_notificaciones") || "[]");
-      setNotifs(data);
+      const consultas = await consultasService.getAll();
+      const consultasNotifs: Notificacion[] = consultas
+        .filter((c: any) => !c.respondido)
+        .map((c: any) => ({
+          id: 10000 + c.idConsulta,
+          tipo: "consulta" as const,
+          fecha: c.fecha,
+          leido: false,
+          nombre: c.nombre,
+          email: c.email,
+          mensaje: c.mensaje,
+        }));
+      const merged = [...local, ...consultasNotifs];
+      merged.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+      setNotifs(merged);
     } catch {
-      setNotifs([]);
+      setNotifs(local);
     }
   };
 
   useEffect(() => {
     cargarNotifs();
-    const interval = setInterval(cargarNotifs, 10000);
+    const interval = setInterval(cargarNotifs, 15000);
     return () => clearInterval(interval);
   }, []);
 
@@ -106,7 +105,8 @@ export default function Topbar({ page, onLogout }: Props) {
   const marcarLeido = (id: number) => {
     const updated = notifs.map((n) => n.id === id ? { ...n, leido: true } : n);
     setNotifs(updated);
-    localStorage.setItem("dvita_notificaciones", JSON.stringify(updated));
+    const local = updated.filter((n) => n.id < 10000);
+    localStorage.setItem("dvita_notificaciones", JSON.stringify(local));
   };
 
   const handleSelect = (n: Notificacion) => {
@@ -118,20 +118,37 @@ export default function Topbar({ page, onLogout }: Props) {
 
   const handleEnviarRespuesta = async () => {
     if (!selected || !reply.trim()) return;
+    if (selected.tipo === "consulta") {
+      setSending(true);
+      try {
+        const consultaId = selected.id - 10000;
+        await consultasService.responder(consultaId, reply);
+        setSending(false);
+        setSent(true);
+        cargarNotifs();
+      } catch {
+        setSending(false);
+      }
+      return;
+    }
     if (!selected.email) {
       setSent(true);
       return;
     }
     setSending(true);
-    const ok = await enviarEmail({
-      to_email: selected.email,
-      to_name: selected.nombre,
-      from_name: "Hospedaje D'Vita",
-      subject: selected.tipo === "reserva"
-        ? `Confirmación de tu reserva — Hospedaje D'Vita`
-        : `Re: Tu consulta — Hospedaje D'Vita`,
-      message: reply,
-    });
+    try {
+      await fetch("/api/email/enviar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          para: selected.email,
+          asunto: selected.tipo === "reserva"
+            ? "Confirmación de tu reserva — Hospedaje D'Vita"
+            : "Respuesta a tu consulta — Hospedaje D'Vita",
+          mensaje: reply,
+        }),
+      });
+    } catch {}
     setSending(false);
     setSent(true);
   };
@@ -143,6 +160,8 @@ export default function Topbar({ page, onLogout }: Props) {
       });
     } catch { return iso; }
   };
+
+  const cargoLabel = CARGO_LABEL[user?.cargo || ""] || user?.cargo || "Usuario";
 
   return (
     <header className="flex items-center justify-between px-6 h-14 bg-white border-b border-gray-100 sticky top-0 z-10 gap-4">
@@ -169,7 +188,7 @@ export default function Topbar({ page, onLogout }: Props) {
           </button>
 
           {panelOpen && (
-            <div className="absolute right-0 top-11 w-[380px] bg-white border border-neutral-200 rounded-xl shadow-2xl overflow-hidden z-50"
+            <div className={`absolute right-0 top-11 bg-white border border-neutral-200 rounded-xl shadow-2xl overflow-hidden z-50 transition-all duration-200 ${selected ? "w-[640px]" : "w-[300px]"}`}
               style={{ boxShadow: "0 20px 60px rgba(29,13,4,0.18), 0 0 0 1px rgba(201,169,110,0.10)" }}
             >
               <div className="flex items-center justify-between px-4 py-3 bg-brand-900 border-b border-brand-800">
@@ -311,7 +330,7 @@ export default function Topbar({ page, onLogout }: Props) {
           </div>
           <div className="flex flex-col leading-tight">
             <span className="text-sm font-semibold text-gray-800">{user?.nombre}</span>
-            <span className="text-xs text-gray-400">Administrador</span>
+            <span className="text-xs text-gray-400">{cargoLabel}</span>
           </div>
         </div>
         <button onClick={() => setLogoutConfirmOpen(true)} title="Cerrar sesión"

@@ -16,8 +16,8 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     headers["Authorization"] = `Bearer ${authToken}`;
   }
   const res = await fetch(`${BASE_URL}/${endpoint}`, {
-    headers,
     ...options,
+    headers,
   });
   if (!res.ok) {
     let msg = `Error del servidor (${res.status})`;
@@ -137,7 +137,6 @@ export async function downloadPdf(url: string, _filename?: string) {
   try {
     const res = await fetch(url);
     const ct = res.headers.get("content-type") || "";
-    console.log("PDF response:", res.status, ct, res.url);
     if (!res.ok) {
       let msg = `Error al generar PDF (${res.status})`;
       try { const body = await res.text(); if (body) msg = body; } catch {}
@@ -146,12 +145,10 @@ export async function downloadPdf(url: string, _filename?: string) {
     }
     if (!ct.includes("application/pdf")) {
       const body = await res.text();
-      console.error("Respuesta no es PDF:", body.slice(0, 300));
       window.dispatchEvent(new CustomEvent("pdf-loading-error", { detail: "El servidor no devolvió un PDF. Revisa la consola para más detalles." }));
       throw new Error("Respuesta no es PDF: " + ct);
     }
     const blob = await res.blob();
-    console.log("PDF blob:", blob.size, "bytes");
     const blobUrl = URL.createObjectURL(blob);
     const newTab = window.open(blobUrl, "_blank");
     if (!newTab || newTab.closed) {
@@ -163,8 +160,7 @@ export async function downloadPdf(url: string, _filename?: string) {
       document.body.removeChild(a);
     }
     window.dispatchEvent(new CustomEvent("pdf-loading-end"));
-  } catch (e) {
-    console.error("PDF error:", e);
+  } catch {
     window.dispatchEvent(new CustomEvent("pdf-loading-end"));
   }
 }
@@ -189,3 +185,10 @@ export const reniecService = {
 export async function verificarAccesoHorario(idEmpleado: number): Promise<{ acceso: boolean; mensaje: string }> {
   return request(`horarios/verificar-acceso/${idEmpleado}`);
 }
+
+export const consultasService = {
+  getAll:  ()                    => request<any[]>("consultas"),
+  create:  (data: any)           => request("consultas", { method: "POST", body: JSON.stringify(data) }),
+  responder: (id: number, respuesta: string) =>
+    request(`consultas/${id}/responder`, { method: "PUT", body: JSON.stringify({ respuesta }) }),
+};

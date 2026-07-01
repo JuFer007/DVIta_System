@@ -7,17 +7,18 @@ const CARGO_DEFAULTS: Record<string, Record<string, Acceso>> = {
     DASHBOARD: "write", CLIENTES: "write", EMPLEADOS: "write",
     HABITACIONES: "write", TIPOS_HABITACION: "write", RESERVAS: "write",
     PAGOS: "write", USUARIOS: "write", INCIDENCIAS: "write",
-    AREAS: "write", HORARIOS: "write", REPORTES: "write",
+    AREAS: "write", HORARIOS: "write", REPORTES: "write", CONSULTAS: "write",
   },
   GERENTE: {
     DASHBOARD: "write", CLIENTES: "write", EMPLEADOS: "write",
     HABITACIONES: "write", TIPOS_HABITACION: "write", RESERVAS: "write",
     PAGOS: "write", INCIDENCIAS: "write", AREAS: "write",
-    HORARIOS: "write", REPORTES: "write",
+    HORARIOS: "write", REPORTES: "write", CONSULTAS: "write",
   },
   RECEPCIONISTA: {
     DASHBOARD: "write", CLIENTES: "write",
     HABITACIONES: "write", RESERVAS: "write", PAGOS: "write",
+    CONSULTAS: "write",
   },
   MANTENIMIENTO: {
     DASHBOARD: "write",

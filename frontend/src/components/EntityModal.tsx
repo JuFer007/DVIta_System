@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { X, Save, Loader2, AlertCircle, ChevronDown } from "lucide-react";
 
 export type FieldType =
@@ -220,11 +221,11 @@ export default function EntityModal({
 
   const hasHalfCols = fields.some((f) => f.cols === 2);
 
-  return (
+  return createPortal(
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
       style={{
         backgroundColor: "rgba(20,8,2,0.65)",
         backdropFilter: "blur(4px)",
@@ -333,6 +334,7 @@ export default function EntityModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

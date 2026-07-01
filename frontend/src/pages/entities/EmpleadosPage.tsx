@@ -85,7 +85,7 @@ export default function EmpleadosPage() {
       if (t) h["Authorization"] = `Bearer ${t}`;
       const res = await fetch(`/api/empleados/${togglingEmpleado.id}/toggle-activo`, { method: "PATCH", headers: h });
       if (res.ok) {
-        toast.showToast("success", "Estado actualizado", `${togglingEmpleado.nombre} ${togglingEmpleado.apellidoP}`);
+        toast.showToast("success", "Estado actualizado", `${togglingEmpleado.nombre?.toUpperCase()} ${togglingEmpleado.apellidoP?.toUpperCase()}`);
         crud.refetch();
       } else {
         toast.showToast("fail", "Error", "No se pudo cambiar el estado");
@@ -108,12 +108,12 @@ export default function EmpleadosPage() {
                 <span className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center shrink-0">
                   {(row.nombre || "?").charAt(0)}
                 </span>
-                <span className="font-medium text-gray-800">{row.nombre}</span>
+                <span className="font-medium text-gray-800">{row.nombre?.toUpperCase() || "—"}</span>
               </div>
             ),
           },
-          { key: "apellidoP", label: "Ap. Paterno" },
-          { key: "apellidoM", label: "Ap. Materno" },
+          { key: "apellidoP", label: "Ap. Paterno", render: (v: string) => v?.toUpperCase() || "—" },
+          { key: "apellidoM", label: "Ap. Materno", render: (v: string) => v?.toUpperCase() || "—" },
           { key: "dni",       label: "DNI" },
           {
             key: "telefono", label: "Teléfono",
@@ -164,7 +164,7 @@ export default function EmpleadosPage() {
       <ConfirmModal
         open={!!togglingEmpleado}
         title={`${togglingEmpleado?.activo ? "desactivar" : "activar"} empleado`}
-        description={`¿${togglingEmpleado?.activo ? "Desactivar" : "Activar"} a ${togglingEmpleado?.nombre} ${togglingEmpleado?.apellidoP}?`}
+        description={`¿${togglingEmpleado?.activo ? "Desactivar" : "Activar"} a ${togglingEmpleado?.nombre?.toUpperCase()} ${togglingEmpleado?.apellidoP?.toUpperCase()}?`}
         loading={crud.saving}
         onClose={() => setTogglingEmpleado(null)}
         onConfirm={handleToggleActivo}

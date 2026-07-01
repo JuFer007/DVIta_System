@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Config;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,20 +44,23 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/clientes/**").hasAnyRole("ADMINISTRADOR", "GERENTE", "RECEPCIONISTA")
-                    .requestMatchers("/api/empleados/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
-                    .requestMatchers("/api/habitaciones/**").hasAnyRole("ADMINISTRADOR", "GERENTE", "RECEPCIONISTA", "MANTENIMIENTO", "LIMPIEZA")
-                    .requestMatchers("/api/tipos-habitacion/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
-                    .requestMatchers("/api/reservas/**").hasAnyRole("ADMINISTRADOR", "GERENTE", "RECEPCIONISTA")
-                    .requestMatchers("/api/pagos/**").hasAnyRole("ADMINISTRADOR", "GERENTE", "RECEPCIONISTA")
-                    .requestMatchers("/api/usuarios/**").hasRole("ADMINISTRADOR")
-                    .requestMatchers("/api/permisos/**").hasRole("ADMINISTRADOR")
-                    .requestMatchers("/api/incidencias/**").hasAnyRole("ADMINISTRADOR", "GERENTE", "MANTENIMIENTO", "LIMPIEZA", "CHATBOT")
-                    .requestMatchers("/api/areas/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
-                    .requestMatchers("/api/horarios/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
-                    .requestMatchers("/api/dashboard/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
-                    .requestMatchers("/api/recepcionistas/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
-                    .requestMatchers("/api/administradores/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
+                    .requestMatchers(HttpMethod.POST, "/api/consultas/**").permitAll()
+                    .requestMatchers("/api/consultas/**").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/tipos-habitacion/**").permitAll()
+                    .requestMatchers("/api/clientes/**").authenticated()
+                    .requestMatchers("/api/empleados/**").authenticated()
+                    .requestMatchers("/api/habitaciones/**").authenticated()
+                    .requestMatchers("/api/tipos-habitacion/**").authenticated()
+                    .requestMatchers("/api/reservas/**").authenticated()
+                    .requestMatchers("/api/pagos/**").authenticated()
+                    .requestMatchers("/api/usuarios/**").authenticated()
+                    .requestMatchers("/api/permisos/**").authenticated()
+                    .requestMatchers("/api/incidencias/**").authenticated()
+                    .requestMatchers("/api/areas/**").authenticated()
+                    .requestMatchers("/api/horarios/**").authenticated()
+                    .requestMatchers("/api/dashboard/**").authenticated()
+                    .requestMatchers("/api/recepcionistas/**").authenticated()
+                    .requestMatchers("/api/administradores/**").authenticated()
                     .requestMatchers("/api/email/**").authenticated()
                     .requestMatchers("/api/reniec/**").authenticated()
                     .requestMatchers("/api/chat/**").authenticated()

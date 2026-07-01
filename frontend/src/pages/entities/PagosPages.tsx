@@ -55,7 +55,7 @@ export default function PagosPage() {
   const fields: ModalField[] = [
     {
       key: "idReserva", label: "Reserva", required: true, type: "select",
-      options: reservasCrud.data.map((r) => ({ value: r.id, label: `#${r.id} — ${r.cliente} (Hab. ${r.habitacion})` })),
+      options: reservasCrud.data.map((r) => ({ value: r.id, label: `#${r.id} — ${r.cliente?.toUpperCase()} (Hab. ${r.habitacion})` })),
       hint: "Selecciona la reserva a la que pertenece el pago", cols: 2,
     },
     { key: "monto",     label: "Monto (S/.)",    required: true, type: "number", placeholder: "240.00", min: 0.01, hint: "Debe ser mayor a 0" },
@@ -121,7 +121,7 @@ export default function PagosPage() {
       <DataTable
         title="Pagos" data={sortedData} loading={crud.loading} error={crud.error}
         columns={[
-          { key: "reserva",  label: "Reserva" },
+          { key: "reserva",  label: "Reserva", render: (v: string) => v?.toUpperCase() || "—" },
           { key: "montoFmt", label: "Monto" },
           { key: "fecha",    label: "Fecha" },
           { key: "metodo",   label: "Método" },
@@ -190,7 +190,7 @@ export default function PagosPage() {
                 </div>
                 <div>
                   <p className="text-[15px] font-bold text-gray-800">Completar Pago</p>
-                  <p className="text-[12px] text-gray-400">#{cobrarRow.id} — {cobrarRow.reserva}</p>
+                   <p className="text-[12px] text-gray-400">#{cobrarRow.id} — {cobrarRow.reserva?.toUpperCase()}</p>
                 </div>
               </div>
               <button onClick={() => setCobrarRow(null)} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">

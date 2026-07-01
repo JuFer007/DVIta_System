@@ -202,7 +202,11 @@ INSERT IGNORE INTO modulo_permiso (id_modulo_permiso, id_usuario, modulo, puede_
 (56, 13, 'HABITACIONES',1),(57, 13, 'INCIDENCIAS',1),
 (58, 14, 'HABITACIONES',1),(59, 14, 'INCIDENCIAS',1),
 -- Usuario 15: RECEPCIONISTA (CLIENTES, HABITACIONES, RESERVAS, PAGOS)
-(60, 15, 'CLIENTES',1),(61, 15, 'HABITACIONES',1),(62, 15, 'RESERVAS',1),(63, 15, 'PAGOS',1);
+(60, 15, 'CLIENTES',1),(61, 15, 'HABITACIONES',1),(62, 15, 'RESERVAS',1),(63, 15, 'PAGOS',1),
+-- CONSULTAS para ADMINISTRADOR (1-4) y RECEPCIONISTA (5,6,8,9,15)
+(64, 1, 'CONSULTAS',1),(65, 2, 'CONSULTAS',1),(66, 3, 'CONSULTAS',1),(67, 4, 'CONSULTAS',1),
+(68, 5, 'CONSULTAS',1),(69, 6, 'CONSULTAS',1),(70, 8, 'CONSULTAS',1),(71, 9, 'CONSULTAS',1),
+(72, 15, 'CONSULTAS',1);
 
 -- ============================================================
 -- 8) RESERVA (20)
@@ -298,3 +302,18 @@ INSERT IGNORE INTO incidencia_resolucion (id_resolucion, id_incidencia, version,
 (10, 17, 1, '2025-10-17', 'Resuelto: Compensación al huésped', NULL, 'Migrado del sistema anterior'),
 (11, 19, 1, '2025-11-13', 'Resuelto: Válvula ajustada', NULL, 'Migrado del sistema anterior'),
 (12, 20, 1, '2025-11-23', 'Resuelto: Bombillo reemplazado', NULL, 'Migrado del sistema anterior');
+
+-- ============================================================
+-- 12) CONSULTA (10)
+-- ============================================================
+INSERT IGNORE INTO consulta (id_consulta, nombre, email, mensaje, fecha, respondido, respuesta, fecha_respuesta, id_empleado_responde) VALUES
+(1,  'CARLOS MARTINEZ', 'carlos.martinez@outlook.com',  'Buenos días, me gustaría saber si tienen disponibilidad para el 15 de enero en una habitación doble.', '2025-01-05 10:30:00', 1, 'Gracias por contactarnos, Carlos. Tenemos disponibilidad en habitación doble para esa fecha. Puede llamarnos al 999000001 para coordinar su reserva.', '2025-01-05 14:00:00', 1),
+(2,  'MARIA LOPEZ', 'maria.lopez@outlook.com',         'Hola, quisiera cotizar una estadía de 3 noches para 4 personas en suite. ¿Tienen promociones?', '2025-02-10 08:15:00', 1, 'Hola María, nuestra suite King tiene capacidad para 2 personas. Para 4 personas le recomendamos 2 habitaciones dobles o 1 suite + 1 individual. Contáctenos para un presupuesto personalizado.', '2025-02-10 11:45:00', 2),
+(3,  'PEDRO QUISPE', 'pedro.quispe@outlook.com',       '¿Aceptan mascotas? Tengo un perro pequeño y me gustaría hospedarme con él.', '2025-03-20 16:00:00', 1, 'Pedro, gracias por su consulta. No aceptamos mascotas en nuestras instalaciones por política del hotel.', '2025-03-21 09:00:00', 3),
+(4,  'SOFIA REYES', 'sofia.reyes@outlook.com',         'Necesito una factura para mi empresa, ¿qué datos necesito proporcionar?', '2025-04-05 09:30:00', 0, NULL, NULL, NULL),
+(5,  'ANDRES DELGADO', 'andres.delgado@outlook.com',    '¿El desayuno está incluido en todas las habitaciones?', '2025-05-12 11:00:00', 1, 'Sí Andrés, el desayuno buffet está incluido en todas nuestras habitaciones, servimos de 7:00 a 10:00 am en el primer piso.', '2025-05-12 15:30:00', 5),
+(6,  'CARMEN HUAMAN', 'carmen.huaman@outlook.com',      'Quisiera hacer una reserva para el 14 de febrero, ¿tienen algún paquete romántico?', '2025-06-01 14:45:00', 0, NULL, NULL, NULL),
+(7,  'JOSE RAMIREZ', 'jose.ramirez@outlook.com',        '¿Tienen estacionamiento? Viajo en auto.', '2025-07-08 07:30:00', 1, 'José, contamos con estacionamiento vigilado las 24 horas para nuestros huéspedes, sin costo adicional.', '2025-07-08 10:15:00', 1),
+(8,  'ROSA CASTILLO', 'rosa.castillo@outlook.com',      'Buenas tardes, ¿cuál es el horario de check-in y check-out?', '2025-08-15 15:00:00', 1, 'Rosa, el check-in es desde las 14:00 hrs y el check-out hasta las 12:00 hrs. Si necesita un horario especial, avísenos con anticipación.', '2025-08-15 17:00:00', 6),
+(9,  'LUCIA TORRES', 'lucia.torres@outlook.com',        'Quiero cancelar mi reserva, ¿me devuelven el dinero?', '2025-09-20 10:00:00', 0, NULL, NULL, NULL),
+(10, 'FERNANDO CACERES', 'fernando.caceres@outlook.com','¿Tienen servicio a la habitación las 24 horas?', '2025-10-01 20:30:00', 0, NULL, NULL, NULL);

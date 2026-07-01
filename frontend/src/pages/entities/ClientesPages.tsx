@@ -87,12 +87,12 @@ export default function ClientesPage() {
                 <span className="w-7 h-7 rounded-full bg-brand-100 text-brand-700 text-xs font-bold flex items-center justify-center shrink-0">
                   {(row.nombre || "?").charAt(0)}
                 </span>
-                <span className="font-medium text-gray-800">{row.nombre}</span>
+                <span className="font-medium text-gray-800">{row.nombre?.toUpperCase() || "—"}</span>
               </div>
             ),
           },
-          { key: "apellidoP", label: "Ap. Paterno" },
-          { key: "apellidoM", label: "Ap. Materno" },
+          { key: "apellidoP", label: "Ap. Paterno", render: (v: string) => v?.toUpperCase() || "—" },
+          { key: "apellidoM", label: "Ap. Materno", render: (v: string) => v?.toUpperCase() || "—" },
           { key: "dni",       label: "DNI" },
           {
             key: "telefono", label: "Teléfono",

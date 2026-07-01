@@ -196,7 +196,7 @@ function HorarioModal({ open, editing, empleados, loading, error, onClose, onSav
                   <option value="">— Selecciona —</option>
                   {empleados
                     .filter((e) => !empSearch || `${e.nombre} ${e.dni}`.toLowerCase().includes(empSearch.toLowerCase()))
-                    .map((e) => <option key={e.id} value={e.id}>{e.nombre} — {e.dni}</option>)}
+                    .map((e) => <option key={e.id} value={e.id}>{e.nombre?.toUpperCase()} — {e.dni}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
               </div>
@@ -456,7 +456,7 @@ export default function HorariosPage() {
                           {g.empleado.charAt(0)}
                         </div>
                         <div className="flex flex-col">
-                          <span className="font-medium text-neutral-800 whitespace-nowrap text-[13px]">{g.empleado}</span>
+                          <span className="font-medium text-neutral-800 whitespace-nowrap text-[13px]">{g.empleado?.toUpperCase()}</span>
                           <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wide">{g.cargo}</span>
                         </div>
                       </div>

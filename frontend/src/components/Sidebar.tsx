@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Users, BriefcaseBusiness, BedDouble, Bed,
   CalendarCheck, CreditCard, ChevronLeft, ChevronRight,
-  User, BarChart2, AlertTriangle, Building2
+  User, BarChart2, AlertTriangle, Building2, MessageSquare
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
@@ -17,6 +17,7 @@ const NAV = [
   { id: "incidencias",     label: "Incidencias",      icon: AlertTriangle,     permiso: "INCIDENCIAS" },
   { id: "areas",           label: "Áreas",            icon: Building2,         permiso: "EMPLEADOS" },
   { id: "horarios",        label: "Horarios",         icon: CalendarCheck,     permiso: "EMPLEADOS" },
+  { id: "consultas",       label: "Consultas",        icon: MessageSquare,     permiso: "CONSULTAS" },
   { id: "reportes",        label: "Reportes",         icon: BarChart2,         permiso: "EMPLEADOS" },
 ];
 

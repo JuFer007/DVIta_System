@@ -433,7 +433,7 @@ export default function IncidenciasPage() {
                       <p className="text-[13px] text-neutral-700 mb-1">{r.solucion || "Sin descripción"}</p>
                       {r.empleadoResuelve && (
                         <p className="text-[11px] text-neutral-400">
-                          Resuelto por: {r.empleadoResuelve.nombre || r.empleadoResuelve.idEmpleado}
+                          Resuelto por: {(r.empleadoResuelve.nombre || r.empleadoResuelve.idEmpleado)?.toUpperCase()}
                         </p>
                       )}
                       {r.notasAuditoria && (

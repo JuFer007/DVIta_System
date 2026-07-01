@@ -47,6 +47,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception e) {
+                System.err.println("[JwtAuthFilter] Error: " + e.getClass().getName() + " - " + e.getMessage());
                 SecurityContextHolder.clearContext();
             }
         }

@@ -16,6 +16,7 @@ import ReservasPage       from "./pages/entities/ReservaPage";
 import PagosPage          from "./pages/entities/PagosPages";
 import UsuariosPage       from "./pages/entities/UsuariosPages";
 import IncidenciasPage    from "./pages/entities/IncidenciasPage";
+import ConsultasPage      from "./pages/entities/ConsultasPage";
 import AreasPage          from "./pages/entities/AreasPage";
 import HorariosPage       from "./pages/entities/HorariosPage";
 import { ToastProvider } from "./components/Toast";
@@ -34,6 +35,7 @@ const NAV_PERMISOS: Record<string, string | null> = {
   pagos:        "PAGOS",
   usuarios:     "USUARIOS",
   incidencias:  "INCIDENCIAS",
+  consultas:    "CONSULTAS",
   areas:        "EMPLEADOS",
   horarios:     "EMPLEADOS",
   reportes:     "EMPLEADOS",
@@ -88,6 +90,7 @@ function AppContent() {
         case "pagos":        return <PagosPage />;
         case "usuarios":     return <UsuariosPage />;
         case "incidencias":  return <IncidenciasPage />;
+        case "consultas":    return <ConsultasPage />;
         case "areas":        return <AreasPage />;
         case "horarios":     return <HorariosPage />;
         case "reportes":     return <ReportesPage />;

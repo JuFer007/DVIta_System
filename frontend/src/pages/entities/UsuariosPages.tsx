@@ -34,7 +34,7 @@ export default function UsuariosPage() {
   const fields: ModalField[] = [
     {
       key: "idEmpleado", label: "Empleado", required: true, type: "select",
-      options: empCrud.data.map((e) => ({ value: e.id, label: `${e.nombre} ${e.apellidoP}` })),
+      options: empCrud.data.map((e) => ({ value: e.id, label: `${e.nombre?.toUpperCase()} ${e.apellidoP?.toUpperCase()}` })),
       cols: 2,
     },
     { key: "nombreUsuario", label: "Nombre de usuario", required: true, placeholder: "pedro.huaman", hint: "4-50 caracteres" },
@@ -73,7 +73,7 @@ export default function UsuariosPage() {
                   <User className="w-4 h-4 text-brand-600" />
                 </div>
                 <div className="text-left">
-                  <div className="text-sm font-medium text-gray-800">{row.empleadoNombre}</div>
+                  <div className="text-sm font-medium text-gray-800">{row.empleadoNombre?.toUpperCase()}</div>
                   <div className="text-[11px] text-gray-400 font-mono">@{row.usuario}</div>
                 </div>
               </div>

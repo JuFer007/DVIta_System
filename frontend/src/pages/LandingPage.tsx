@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Phone, Mail, MapPin, Wifi, Coffee, Car, Shield, Send, CheckCircle2, Loader2 } from "lucide-react";
+import { Phone, Mail, MapPin, Wifi, Coffee, Car, Shield, Send, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import ReservaModal from "./ReservaModal";
 import ChatBot from "../components/ChatBot";
+import { consultasService } from "../services/api";
 
 const ROOMS = [
   {
@@ -104,15 +105,37 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
   const [consultaMensaje, setConsultaMensaje] = useState("");
   const [consultaEnviada, setConsultaEnviada] = useState(false);
   const [consultaEnviando, setConsultaEnviando] = useState(false);
+  const [consultaError, setConsultaError] = useState("");
+  const [consultaErrores, setConsultaErrores] = useState<{ nombre?: string; email?: string; mensaje?: string }>({});
+
+  const limpiarError = (campo: "nombre" | "email" | "mensaje") => {
+    setConsultaErrores((prev) => ({ ...prev, [campo]: undefined }));
+  };
 
   const handleEnviarConsulta = async () => {
+    const errores: typeof consultaErrores = {};
+    if (!consultaNombre.trim()) errores.nombre = "Ingresa tu nombre";
+    if (!consultaEmail.trim()) {
+      errores.email = "Ingresa tu correo electrónico";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(consultaEmail.trim())) {
+      errores.email = "Ingresa un correo válido";
+    }
+    if (!consultaMensaje.trim()) errores.mensaje = "Escribe tu consulta";
+    setConsultaErrores(errores);
+    if (Object.keys(errores).length > 0) return;
+
     setConsultaEnviando(true);
+    setConsultaError("");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Consulta enviada:", { consultaNombre, consultaEmail, consultaMensaje });
+      const capitalizarPrimera = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+      await consultasService.create({
+        nombre: consultaNombre.trim().toUpperCase(),
+        email: consultaEmail.trim(),
+        mensaje: capitalizarPrimera(consultaMensaje.trim()),
+      });
       setConsultaEnviada(true);
-    } catch (error) {
-      console.error("Error al enviar consulta", error);
+    } catch (error: any) {
+      setConsultaError(error?.message || "Error al enviar consulta");
     } finally {
       setConsultaEnviando(false);
     }
@@ -453,7 +476,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
                   </p>
                 </div>
                 <button
-                  onClick={() => setConsultaEnviada(false)}
+                  onClick={() => { setConsultaEnviada(false); setConsultaNombre(""); setConsultaEmail(""); setConsultaMensaje(""); }}
                   className="text-[12px] text-brand-600 font-semibold underline"
                 >
                   Enviar otra consulta
@@ -461,30 +484,45 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
               </div>
             ) : (
               <div className="flex flex-col gap-4">
-                <input 
-                  type="text" 
-                  placeholder="Tu nombre" 
-                  value={consultaNombre}
-                  onChange={(e) => setConsultaNombre(e.target.value)}
-                  className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px]"
-                />
-                <input 
-                  type="email" 
-                  placeholder="tu@email.com" 
-                  value={consultaEmail}
-                  onChange={(e) => setConsultaEmail(e.target.value)}
-                  className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px]"
-                />
-                <textarea 
-                  rows={4} 
-                  placeholder="¿En qué podemos ayudarte?" 
-                  value={consultaMensaje}
-                  onChange={(e) => setConsultaMensaje(e.target.value)}
-                  className="w-full border border-brand-100 rounded-sm px-3.5 py-3 text-[13px] resize-none"
-                />
+                <div>
+                  <input 
+                    type="text" 
+                    placeholder="Tu nombre" 
+                    value={consultaNombre}
+                    onChange={(e) => { setConsultaNombre(e.target.value); limpiarError("nombre"); }}
+                    className={`w-full border rounded-sm px-3.5 py-3 text-[13px] outline-none ${consultaErrores.nombre ? "border-red-400 bg-red-50" : "border-brand-100"}`}
+                  />
+                  {consultaErrores.nombre && <p className="text-[11px] text-red-500 mt-1">{consultaErrores.nombre}</p>}
+                </div>
+                <div>
+                  <input 
+                    type="email" 
+                    placeholder="tu@email.com" 
+                    value={consultaEmail}
+                    onChange={(e) => { setConsultaEmail(e.target.value); limpiarError("email"); }}
+                    className={`w-full border rounded-sm px-3.5 py-3 text-[13px] outline-none ${consultaErrores.email ? "border-red-400 bg-red-50" : "border-brand-100"}`}
+                  />
+                  {consultaErrores.email && <p className="text-[11px] text-red-500 mt-1">{consultaErrores.email}</p>}
+                </div>
+                <div>
+                  <textarea 
+                    rows={4} 
+                    placeholder="¿En qué podemos ayudarte?" 
+                    value={consultaMensaje}
+                    onChange={(e) => { setConsultaMensaje(e.target.value); limpiarError("mensaje"); }}
+                    className={`w-full border rounded-sm px-3.5 py-3 text-[13px] resize-none outline-none ${consultaErrores.mensaje ? "border-red-400 bg-red-50" : "border-brand-100"}`}
+                  />
+                  {consultaErrores.mensaje && <p className="text-[11px] text-red-500 mt-1">{consultaErrores.mensaje}</p>}
+                </div>
+                {consultaError && (
+                  <div className="flex items-center gap-2 text-[12px] text-red-600 bg-red-50 border border-red-200 rounded-sm px-3 py-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {consultaError}
+                  </div>
+                )}
                 <button
                   onClick={handleEnviarConsulta}
-                  disabled={consultaEnviando || !consultaNombre || !consultaEmail || !consultaMensaje}
+                  disabled={consultaEnviando}
                   className="w-full bg-brand-600 text-white font-bold py-4 rounded-sm text-[12px] uppercase disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {consultaEnviando ? <Loader2 className="animate-spin w-4 h-4" /> : <Send className="w-4 h-4" />}

@@ -284,9 +284,9 @@ export default function ReservasPage() {
           </button>
         }
         columns={[
-          { key: "cliente", label: "Cliente" },
+          { key: "cliente", label: "Cliente", render: (v: string) => v?.toUpperCase() || "—" },
           { key: "habitacion", label: "Hab." },
-          { key: "empleado", label: "Empleado" },
+          { key: "empleado", label: "Empleado", render: (v: string) => v?.toUpperCase() || "—" },
           { key: "ingreso", label: "Ingreso" },
           { key: "salida", label: "Salida" },
           { key: "estado", label: "Estado", render: (v) => <StatusBadge status={v} /> },
@@ -493,7 +493,7 @@ function ReservaFormModal({
                     <div className="flex items-center gap-2 px-3.5 py-2.5 bg-green-50 border border-green-200 rounded-lg">
                       <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
                       <span className="text-[13px] text-green-800 font-medium">
-                        {clienteEncontrado.nombre} {clienteEncontrado.apellidoP} — DNI: {clienteEncontrado.dni}
+                        {clienteEncontrado.nombre?.toUpperCase()} {clienteEncontrado.apellidoP?.toUpperCase()} — DNI: {clienteEncontrado.dni}
                       </span>
                     </div>
                   )}
@@ -503,7 +503,7 @@ function ReservaFormModal({
                       <div className="flex items-center gap-2 px-3.5 py-2.5 bg-amber-50 border border-amber-200 rounded-lg">
                         <CheckCircle2 className="w-4 h-4 text-amber-600 flex-shrink-0" />
                         <span className="text-[13px] text-amber-800 font-medium">
-                          {clienteEncontrado.nombre} {clienteEncontrado.apellidoP} (RENIEC)
+                          {clienteEncontrado.nombre?.toUpperCase()} {clienteEncontrado.apellidoP?.toUpperCase()} (RENIEC)
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2.5">
@@ -686,7 +686,7 @@ function ClienteSelect({ selectedClienteId, setSelectedClienteId }: { selectedCl
         <option value="">— Selecciona —</option>
         {clientesCrud.data.map((c: any) => (
           <option key={c.id} value={c.id}>
-            {c.nombre} {c.apellidoP} — DNI: {c.dni}
+            {c.nombre?.toUpperCase()} {c.apellidoP?.toUpperCase()} — DNI: {c.dni}
           </option>
         ))}
       </select>

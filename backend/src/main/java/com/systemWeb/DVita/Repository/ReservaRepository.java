@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Repository;
 import com.systemWeb.DVita.Model.Reserva;
+import com.systemWeb.DVita.Model.enums.EstadoReserva;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,4 +33,14 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
     List<Reserva> findByFechaIngresoAndEstadoReservaNot(LocalDate fechaIngreso, String estadoReserva);
     List<Reserva> findByFechaReservaBetween(LocalDate desde, LocalDate hasta);
+
+    long countByEstadoReservaIn(List<EstadoReserva> estados);
+    long countByFechaReserva(LocalDate fecha);
+    long countByEstadoReservaAndFechaSalida(EstadoReserva estado, LocalDate fecha);
+    long countByEstadoReservaAndFechaIngreso(EstadoReserva estado, LocalDate fecha);
+
+    @Query("SELECT r.estadoReserva, COUNT(r) FROM Reserva r GROUP BY r.estadoReserva")
+    List<Object[]> countGroupByEstadoReserva();
+
+    List<Reserva> findTop8ByOrderByFechaReservaDesc();
 }

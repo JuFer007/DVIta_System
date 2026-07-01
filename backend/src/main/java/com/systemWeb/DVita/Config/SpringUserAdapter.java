@@ -30,6 +30,8 @@ public class SpringUserAdapter implements UserDetails {
         CargoEmpleado cargo = usuario.getEmpleado() != null ? usuario.getEmpleado().getCargo() : null;
         if (cargo != null) {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + cargo.name()));
+        } else {
+            authorities.add(new SimpleGrantedAuthority("ROLE_RECEPCIONISTA"));
         }
         return authorities;
     }

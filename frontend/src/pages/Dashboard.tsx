@@ -264,7 +264,7 @@ export default function Dashboard() {
                     <tr><td colSpan={5} className="px-5 py-8 text-center text-neutral-400 text-[13px]">Sin reservas recientes</td></tr>
                   ) : reservas.map((r) => (
                     <tr key={r.id} className="border-b border-neutral-50 hover:bg-brand-50/50 transition-colors cursor-pointer">
-                      <td className="px-5 py-3 font-medium text-neutral-800">{r.cliente}</td>
+                      <td className="px-5 py-3 font-medium text-neutral-800">{r.cliente?.toUpperCase()}</td>
                       <td className="px-5 py-3 text-neutral-500 text-[12px]">
                         Hab. {r.habitacion}
                         {r.tipoHabitacion && <span className="ml-1 text-neutral-300">— {r.tipoHabitacion}</span>}
@@ -299,7 +299,7 @@ export default function Dashboard() {
                   {activityIcon(r.estado)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[12px] text-neutral-700 font-medium leading-snug truncate">{r.cliente} — Hab. {r.habitacion}</p>
+                  <p className="text-[12px] text-neutral-700 font-medium leading-snug truncate">{r.cliente?.toUpperCase()} — Hab. {r.habitacion}</p>
                   <p className="text-[11px] text-neutral-400 mt-0.5">{r.fechaIngreso} → {r.fechaSalida}</p>
                 </div>
               </div>

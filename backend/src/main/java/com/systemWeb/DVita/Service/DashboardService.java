@@ -1,15 +1,12 @@
 package com.systemWeb.DVita.Service;
-import com.systemWeb.DVita.Model.Pago;
 import com.systemWeb.DVita.Model.enums.EstadoHabitacion;
 import com.systemWeb.DVita.Model.enums.EstadoReserva;
-import com.systemWeb.DVita.Model.enums.MetodoPago;
 import com.systemWeb.DVita.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,20 +22,20 @@ public class DashboardService {
         LocalDate hoy = LocalDate.now();
         LocalDate inicioMes = hoy.withDayOfMonth(1);
 
-        long reservasActivas = reservaRepository.findAll().stream().filter(r -> EstadoReserva.PENDIENTE == r.getEstadoReserva() || EstadoReserva.CONFIRMADA == r.getEstadoReserva()).count();
-        long reservasHoy = reservaRepository.findAll().stream().filter(r -> hoy.equals(r.getFechaReserva())).count();
-        long habDisponibles = habitacionRepository.findAll().stream().filter(h -> EstadoHabitacion.DISPONIBLE == h.getEstado()).count();
+        long reservasActivas = reservaRepository.countByEstadoReservaIn(List.of(EstadoReserva.PENDIENTE, EstadoReserva.CONFIRMADA));
+        long reservasHoy = reservaRepository.countByFechaReserva(hoy);
+        long habDisponibles = habitacionRepository.countByEstado(EstadoHabitacion.DISPONIBLE);
         long habTotal = habitacionRepository.count();
         long clientesTotal = clienteRepository.count();
 
-        BigDecimal ingresosMes = pagoRepository.findAll().stream().filter(p -> p.getFechaPago() != null && !p.getFechaPago().isBefore(inicioMes) && !p.getFechaPago().isAfter(hoy)).map(p -> p.getMonto() != null ? p.getMonto() : BigDecimal.ZERO).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal ingresosMes = Optional.ofNullable(pagoRepository.sumMontoByFechaPagoBetween(inicioMes, hoy)).orElse(BigDecimal.ZERO);
         LocalDate inicioMesAnterior = inicioMes.minusMonths(1);
         LocalDate finMesAnterior = inicioMes.minusDays(1);
-        BigDecimal ingresosAnterior = pagoRepository.findAll().stream().filter(p -> p.getFechaPago() != null && !p.getFechaPago().isBefore(inicioMesAnterior) && !p.getFechaPago().isAfter(finMesAnterior)).map(p -> p.getMonto() != null ? p.getMonto() : BigDecimal.ZERO).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal ingresosAnterior = Optional.ofNullable(pagoRepository.sumMontoByFechaPagoBetween(inicioMesAnterior, finMesAnterior)).orElse(BigDecimal.ZERO);
 
         double pctIngresos = ingresosAnterior.compareTo(BigDecimal.ZERO) == 0 ? 0 : ingresosMes.subtract(ingresosAnterior).multiply(BigDecimal.valueOf(100)).divide(ingresosAnterior, 1, java.math.RoundingMode.HALF_UP).doubleValue();
-        long checkOutsHoy = reservaRepository.findAll().stream().filter(r -> EstadoReserva.CONFIRMADA == r.getEstadoReserva() && hoy.equals(r.getFechaSalida())).count();
-        long checkInsHoy = reservaRepository.findAll().stream().filter(r -> EstadoReserva.PENDIENTE == r.getEstadoReserva() && hoy.equals(r.getFechaIngreso())).count();
+        long checkOutsHoy = reservaRepository.countByEstadoReservaAndFechaSalida(EstadoReserva.CONFIRMADA, hoy);
+        long checkInsHoy = reservaRepository.countByEstadoReservaAndFechaIngreso(EstadoReserva.PENDIENTE, hoy);
 
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("reservasActivas", reservasActivas);
@@ -56,8 +53,8 @@ public class DashboardService {
     }
 
     public List<Map<String, Object>> getReservasRecientes() {
-        return reservaRepository.findAll().stream().sorted(Comparator.comparing(r -> r.getFechaReserva() == null ? LocalDate.MIN : r.getFechaReserva(), Comparator.reverseOrder())).limit(8)
-        .map(r -> {
+        return reservaRepository.findTop8ByOrderByFechaReservaDesc()
+        .stream().map(r -> {
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("id", r.getIdReserva());
             m.put("cliente", r.getCliente() != null
@@ -97,8 +94,8 @@ public class DashboardService {
         for (int i = 5; i >= 0; i--) {
             LocalDate inicio = hoy.minusMonths(i).withDayOfMonth(1);
             LocalDate fin = inicio.withDayOfMonth(inicio.lengthOfMonth());
-            BigDecimal total = pagoRepository.findAll().stream().filter(p -> p.getFechaPago() != null && !p.getFechaPago().isBefore(inicio) && !p.getFechaPago().isAfter(fin)).map(p -> p.getMonto() != null ? p.getMonto() : BigDecimal.ZERO).reduce(BigDecimal.ZERO, BigDecimal::add);
-            long cantPagos = pagoRepository.findAll().stream().filter(p -> p.getFechaPago() != null && !p.getFechaPago().isBefore(inicio) && !p.getFechaPago().isAfter(fin)).count();
+            BigDecimal total = Optional.ofNullable(pagoRepository.sumMontoByFechaPagoBetween(inicio, fin)).orElse(BigDecimal.ZERO);
+            long cantPagos = pagoRepository.countByFechaPagoBetween(inicio, fin);
 
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("mes", inicio.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, new Locale("es")));
@@ -111,35 +108,49 @@ public class DashboardService {
     }
 
     public Map<String, Long> getReservasPorEstado() {
-        Map<EstadoReserva, Long> resumen = reservaRepository.findAll().stream().collect(Collectors.groupingBy(r -> r.getEstadoReserva() != null ? r.getEstadoReserva() : EstadoReserva.PENDIENTE, Collectors.counting()));
-
-        for (EstadoReserva estado : EstadoReserva.values()) {
-            resumen.putIfAbsent(estado, 0L);
+        Map<String, Long> resumen = new HashMap<>();
+        List<Object[]> rows = reservaRepository.countGroupByEstadoReserva();
+        for (Object[] row : rows) {
+            EstadoReserva estado = (EstadoReserva) row[0];
+            Long count = (Long) row[1];
+            resumen.put(estado != null ? estado.name() : "PENDIENTE", count);
         }
-        return resumen.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), Map.Entry::getValue));
+        for (EstadoReserva estado : EstadoReserva.values()) {
+            resumen.putIfAbsent(estado.name(), 0L);
+        }
+        return resumen;
     }
 
     public List<Map<String, Object>> getMetodosPago() {
-        Map<MetodoPago, List<BigDecimal>> agrupado = pagoRepository.findAll().stream().filter(p -> p.getMetodoPago() != null).collect(Collectors.groupingBy(Pago::getMetodoPago,Collectors.mapping(p -> p.getMonto() != null ? p.getMonto() : BigDecimal.ZERO, Collectors.toList())));
-
-        return agrupado.entrySet().stream().map(e -> {
-            BigDecimal total = e.getValue().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<Object[]> rows = pagoRepository.sumGroupByMetodoPago();
+        return rows.stream().map(row -> {
             Map<String, Object> m = new LinkedHashMap<>();
-            m.put("metodo", e.getKey().name());
-            m.put("total", total);
-            m.put("cantidad", e.getValue().size());
-            return m;}).sorted(Comparator.comparing(m -> ((BigDecimal) m.get("total")), Comparator.reverseOrder())).toList();
+            m.put("metodo", ((Enum) row[0]).name());
+            m.put("total", (BigDecimal) row[1]);
+            m.put("cantidad", (Long) row[2]);
+            return m;
+        }).sorted(Comparator.comparing(m -> ((BigDecimal) m.get("total")), Comparator.reverseOrder())).toList();
     }
 
     public List<Map<String, Object>> getOcupacionPorTipo() {
-        Map<String, Map<EstadoHabitacion, Long>> agrupado = habitacionRepository.findAll().stream().filter(h -> h.getTipoHabitacion() != null).collect(Collectors.groupingBy(h -> h.getTipoHabitacion().getDescripcion(), Collectors.groupingBy(h -> h.getEstado() != null ? h.getEstado() : EstadoHabitacion.DISPONIBLE, Collectors.counting())));
+        List<Object[]> rows = habitacionRepository.countGroupByTipoAndEstado();
+        Map<String, Map<EstadoHabitacion, Long>> agrupado = new HashMap<>();
 
-        return agrupado.entrySet().stream().map(e -> {Map<String, Object> m = new LinkedHashMap<>();
+        for (Object[] row : rows) {
+            String tipo = (String) row[0];
+            EstadoHabitacion estado = (EstadoHabitacion) row[1];
+            Long count = (Long) row[2];
+            agrupado.computeIfAbsent(tipo, k -> new HashMap<>()).put(estado, count);
+        }
+
+        return agrupado.entrySet().stream().map(e -> {
+            Map<String, Object> m = new LinkedHashMap<>();
             m.put("tipo", e.getKey());
             m.put("disponibles", e.getValue().getOrDefault(EstadoHabitacion.DISPONIBLE, 0L));
             m.put("ocupadas", e.getValue().getOrDefault(EstadoHabitacion.OCUPADA, 0L));
             m.put("mantenimiento", e.getValue().getOrDefault(EstadoHabitacion.MANTENIMIENTO, 0L));
             m.put("total", e.getValue().values().stream().mapToLong(Long::longValue).sum());
-            return m;}).toList();
+            return m;
+        }).toList();
     }
 }
