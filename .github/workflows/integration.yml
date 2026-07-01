@@ -44,7 +44,7 @@ jobs:
         run: docker compose -p dvita_system build pdf-server backend chatbot frontend
 
       - name: Scan images with Trivy
-        uses: aquasecurity/trivy-action@v0.29.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: 'dvita_system-backend:latest'
           format: 'sarif'
