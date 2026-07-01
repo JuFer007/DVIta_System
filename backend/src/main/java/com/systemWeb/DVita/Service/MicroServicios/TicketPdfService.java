@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Service.MicroServicios;
 import com.systemWeb.DVita.Model.Pago;
+import com.systemWeb.DVita.Model.enums.MetodoPago;
 import com.systemWeb.DVita.Repository.PagoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+
 public class TicketPdfService {
     private final PdfService pdfService;
     private final PagoRepository pagoRepository;
@@ -23,15 +25,17 @@ public class TicketPdfService {
         var tipoHabitacion = habitacion != null ? habitacion.getTipoHabitacion() : null;
 
         long noches = reserva != null ? reserva.getNoches() : 1;
-        String metodoLabel = switch (pago.getMetodoPago() != null ? pago.getMetodoPago() : "") {
-            case "EFECTIVO" -> "Efectivo";
-            case "TARJETA_CREDITO" -> "Tarjeta Crédito";
-            case "TARJETA_DEBITO" -> "Tarjeta Débito";
-            case "TRANSFERENCIA" -> "Transferencia";
-            case "YAPE" -> "Yape";
-            case "PLIN" -> "Plin";
-            default -> pago.getMetodoPago();
-        };
+        String metodoLabel = "";
+        if (pago.getMetodoPago() != null) {
+            metodoLabel = switch (pago.getMetodoPago()) {
+                case EFECTIVO -> "Efectivo";
+                case TARJETA_CREDITO -> "Tarjeta Crédito";
+                case TARJETA_DEBITO -> "Tarjeta Débito";
+                case TRANSFERENCIA -> "Transferencia";
+                case YAPE -> "Yape";
+                case PLIN -> "Plin";
+            };
+        }
 
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("idPago", String.valueOf(pago.getIdPago()));

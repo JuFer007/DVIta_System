@@ -3,6 +3,8 @@ import com.systemWeb.DVita.Model.Area;
 import com.systemWeb.DVita.Model.Empleado;
 import com.systemWeb.DVita.Model.Incidencia;
 import com.systemWeb.DVita.Model.IncidenciaResolucion;
+import com.systemWeb.DVita.Model.enums.EstadoIncidencia;
+import com.systemWeb.DVita.Model.enums.Prioridad;
 import com.systemWeb.DVita.Repository.AreaRepository;
 import com.systemWeb.DVita.Repository.EmpleadoRepository;
 import com.systemWeb.DVita.Repository.IncidenciaRepository;
@@ -41,7 +43,7 @@ public class IncidenciaService {
 
     public List<Incidencia> listarRecurrentes(Long idHabitacion, String tipo) {
         return incidenciaRepository.findByHabitacion_IdHabitacionAndTipoAndEstadoIn(
-                idHabitacion, tipo, List.of("RESUELTO", "CERRADO"));
+                idHabitacion, tipo, List.of(EstadoIncidencia.RESUELTO.name(), EstadoIncidencia.CERRADO.name()));
     }
 
     public Incidencia guardar(Incidencia incidencia) {
@@ -86,10 +88,10 @@ public class IncidenciaService {
     }
 
     @Transactional
-    public Incidencia cambiarEstado(Long id, String nuevoEstado, String solucion, String notasAuditoria, Long idEmpleadoResuelve) {
+    public Incidencia cambiarEstado(Long id, EstadoIncidencia nuevoEstado, String solucion, String notasAuditoria, Long idEmpleadoResuelve) {
         return incidenciaRepository.findById(id).map(incidencia -> {
             incidencia.setEstado(nuevoEstado);
-            if ("RESUELTO".equals(nuevoEstado)) {
+            if (EstadoIncidencia.RESUELTO == nuevoEstado) {
                 incidencia.setFechaResolucion(LocalDate.now());
 
                 IncidenciaResolucion resolucion = IncidenciaResolucion.builder()
@@ -106,7 +108,7 @@ public class IncidenciaService {
 
                 incidencia.setVecesResuelta(incidencia.getVecesResuelta() + 1);
             }
-            if ("CERRADO".equals(nuevoEstado)) {
+            if (EstadoIncidencia.CERRADO == nuevoEstado) {
                 if (incidencia.getFechaResolucion() == null) {
                     incidencia.setFechaResolucion(LocalDate.now());
                 }
@@ -121,8 +123,8 @@ public class IncidenciaService {
             List<Incidencia> previas = incidenciaRepository
                     .findByHabitacion_IdHabitacionAndTipoAndEstadoIn(
                             incidencia.getHabitacion().getIdHabitacion(),
-                            incidencia.getTipo(),
-                            List.of("RESUELTO", "CERRADO"));
+                            incidencia.getTipo().name(),
+                            List.of(EstadoIncidencia.RESUELTO.name(), EstadoIncidencia.CERRADO.name()));
             if (!previas.isEmpty()) {
                 incidencia.setEsRecurrente(true);
                 Incidencia primera = previas.get(0);
@@ -161,11 +163,11 @@ public class IncidenciaService {
             }
         }
         incidencia.setPrioridad(switch (nivel) {
-            case 1 -> "BAJA";
-            case 2 -> "MEDIA";
-            case 3 -> "ALTA";
-            case 4 -> "URGENTE";
-            default -> "MEDIA";
+            case 1 -> Prioridad.BAJA;
+            case 2 -> Prioridad.MEDIA;
+            case 3 -> Prioridad.ALTA;
+            case 4 -> Prioridad.URGENTE;
+            default -> Prioridad.MEDIA;
         });
     }
 

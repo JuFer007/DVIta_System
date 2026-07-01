@@ -1,4 +1,6 @@
 package com.systemWeb.DVita.Model;
+import com.systemWeb.DVita.Model.enums.EstadoPago;
+import com.systemWeb.DVita.Model.enums.MetodoPago;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -35,12 +37,13 @@ public class Pago {
     @Column(name = "fecha_pago", nullable = false)
     private LocalDate fechaPago;
 
-    @Pattern(regexp = "EFECTIVO|TARJETA_CREDITO|TARJETA_DEBITO|TRANSFERENCIA|YAPE|PLIN", message = "El método de pago no es válido")
+    @NotNull(message = "El método de pago es obligatorio")
+    @Enumerated(EnumType.STRING)
     @Column(name = "metodo_pago", nullable = false, length = 30)
-    private String metodoPago;
+    private MetodoPago metodoPago;
 
-    @NotBlank(message = "El estado del pago es obligatorio")
-    @Pattern(regexp = "PENDIENTE|COMPLETADO", message = "El estado debe ser PENDIENTE o COMPLETADO")
+    @NotNull(message = "El estado del pago es obligatorio")
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
-    private String estado;
+    private EstadoPago estado;
 }

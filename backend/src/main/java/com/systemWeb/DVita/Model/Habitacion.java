@@ -1,4 +1,5 @@
 package com.systemWeb.DVita.Model;
+import com.systemWeb.DVita.Model.enums.EstadoHabitacion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -30,10 +31,10 @@ public class Habitacion {
     @Column(name = "numero_habitacion", nullable = false, unique = true)
     private Integer numeroHabitacion;
 
-    @NotBlank(message = "El estado es obligatorio")
-    @Pattern(regexp = "DISPONIBLE|OCUPADA|MANTENIMIENTO|EN_LIMPIEZA", message = "El estado debe ser: DISPONIBLE, OCUPADA, MANTENIMIENTO o EN_LIMPIEZA")
+    @NotNull(message = "El estado es obligatorio")
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
-    private String estado;
+    private EstadoHabitacion estado;
 
     @Transient
     public BigDecimal getPrecio() {

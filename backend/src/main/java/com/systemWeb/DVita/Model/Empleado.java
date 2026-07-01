@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.systemWeb.DVita.Model.enums.CargoEmpleado;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -47,6 +48,11 @@ public class Empleado {
     @Column(name = "telefono", nullable = false, length = 15)
     private String telefono;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cargo", nullable = false, length = 30)
+    private CargoEmpleado cargo;
+
     @Column(name = "activo", nullable = false)
+    @Builder.Default
     private Boolean activo = true;
 }

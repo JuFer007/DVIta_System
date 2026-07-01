@@ -43,5 +43,6 @@ public class Usuario {
     private List<Permisos> permisos;
 
     @Column(name = "activo", nullable = false)
+    @Builder.Default
     private Boolean activo = true;
 }

@@ -1,28 +1,37 @@
 import { useState, useEffect } from "react";
-import { Clock, Plus, Pencil, Search, CalendarDays, User, ChevronDown, AlertCircle, X, Save, Loader2 } from "lucide-react";
+import { Clock, Plus, Search, ChevronDown, AlertCircle, X, Save, Loader2, Trash2 } from "lucide-react";
 import { useCrud } from "../../hooks/useCrud";
 import { useModalState } from "../../hooks/useModalState";
-import { empleadosService, recepcionistasService } from "../../services/api";
+import { empleadosService, getAuthToken } from "../../services/api";
 import { useToast } from "../../components/Toast";
 
-const horariosService = {
-  getAll:  () => fetch("/api/horarios").then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-  create:  (data: any) => fetch("/api/horarios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
-  update:  (id: number, data: any) => fetch(`/api/horarios/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+const authHeaders = (): Record<string, string> => {
+  const h: Record<string, string> = { "Content-Type": "application/json" };
+  const t = getAuthToken();
+  if (t) h["Authorization"] = `Bearer ${t}`;
+  return h;
 };
 
-const mapRecepcionista = (r: any) => ({
-  id: r.idRecepcionista,
-  nombre: `${r.empleado?.nombre || ""} ${r.empleado?.apellidoP || ""}`.trim() || "—",
-  turno: r.turnoTrabajo,
-  _raw: r,
+const horariosService = {
+  getAll:  () => fetch("/api/horarios", { headers: authHeaders() }).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
+  create:  (data: any) => fetch("/api/horarios", { method: "POST", headers: authHeaders(), body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+  update:  (id: number, data: any) => fetch(`/api/horarios/${id}`, { method: "PUT", headers: authHeaders(), body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+  delete:  (id: number) => fetch(`/api/horarios/${id}`, { method: "DELETE", headers: authHeaders() }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); }),
+};
+
+const mapEmpleado = (e: any) => ({
+  id: e.idEmpleado,
+  nombre: `${e.nombre || ""} ${e.apellidoP || ""}`.trim() || "—",
+  dni: e.dni || "",
+  _raw: e,
 });
 
 const mapHorario = (h: any) => ({
   id: h.idHorario,
-  recepcionistaId: h.recepcionista?.idRecepcionista || "",
-  recepcionista: `${h.recepcionista?.empleado?.nombre || ""} ${h.recepcionista?.empleado?.apellidoP || ""}`.trim() || "—",
-  fecha: h.fecha,
+  empleadoId: h.empleado?.idEmpleado || "",
+  empleado: `${h.empleado?.nombre || ""} ${h.empleado?.apellidoP || ""}`.trim() || "—",
+  cargo: h.empleado?.cargo || "",
+  diaSemana: h.diaSemana,
   horaInicio: h.horaInicio,
   horaFin: h.horaFin,
   tipoTurno: h.tipoTurno,
@@ -31,15 +40,15 @@ const mapHorario = (h: any) => ({
   _raw: h,
 });
 
-const DEMO_HORARIOS: any[] = [
-  { id: 1, recepcionistaId: 1, recepcionista: "Rosa Condori", fecha: "2026-04-21", horaInicio: "06:00", horaFin: "14:00", tipoTurno: "MAÑANA",   estado: "PROGRAMADO",   observaciones: "" },
-  { id: 2, recepcionistaId: 1, recepcionista: "Rosa Condori", fecha: "2026-04-22", horaInicio: "14:00", horaFin: "22:00", tipoTurno: "TARDE",    estado: "PROGRAMADO",   observaciones: "" },
-  { id: 3, recepcionistaId: 2, recepcionista: "Pedro Huamán", fecha: "2026-04-21", horaInicio: "22:00", horaFin: "06:00", tipoTurno: "NOCHE",    estado: "EN_CURSO",     observaciones: "Turno nocturno semana 17" },
-  { id: 4, recepcionistaId: 2, recepcionista: "Pedro Huamán", fecha: "2026-04-20", horaInicio: "09:00", horaFin: "17:00", tipoTurno: "PERSONALIZADO", estado: "COMPLETADO", observaciones: "Reemplazo por licencia" },
+const DIAS_SEMANA = [
+  "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO",
 ];
-const DEMO_RECEP: any[] = [
-  { id: 1, nombre: "Rosa Condori",  turno: "MAÑANA", _raw: {} },
-  { id: 2, nombre: "Pedro Huamán",  turno: "TARDE",  _raw: {} },
+
+const DEMO_HORARIOS: any[] = [
+  { id: 1, empleadoId: 5, empleado: "Ana Gonzales", diaSemana: "LUNES",   horaInicio: "06:00", horaFin: "14:00", tipoTurno: "MAÑANA",   estado: "PROGRAMADO",   observaciones: "" },
+  { id: 2, empleadoId: 5, empleado: "Ana Gonzales", diaSemana: "MARTES",  horaInicio: "06:00", horaFin: "14:00", tipoTurno: "MAÑANA",   estado: "PROGRAMADO",   observaciones: "" },
+  { id: 3, empleadoId: 6, empleado: "Diego Vargas", diaSemana: "LUNES",   horaInicio: "22:00", horaFin: "06:00", tipoTurno: "NOCHE",    estado: "PROGRAMADO",   observaciones: "" },
+  { id: 4, empleadoId: 6, empleado: "Diego Vargas", diaSemana: "MARTES",  horaInicio: "14:00", horaFin: "22:00", tipoTurno: "TARDE",     estado: "PROGRAMADO",   observaciones: "" },
 ];
 
 const TURNO_OPTIONS = [
@@ -49,13 +58,6 @@ const TURNO_OPTIONS = [
   { value: "PERSONALIZADO", label: "Personalizado" },
 ];
 
-const ESTADO_OPTIONS = [
-  { value: "PROGRAMADO", label: "Programado" },
-  { value: "EN_CURSO",   label: "En curso" },
-  { value: "COMPLETADO", label: "Completado" },
-  { value: "AUSENTE",    label: "Ausente" },
-];
-
 const TURNO_COLORS: Record<string, string> = {
   MAÑANA:        "bg-yellow-100 text-yellow-700",
   TARDE:         "bg-orange-100 text-orange-700",
@@ -63,57 +65,46 @@ const TURNO_COLORS: Record<string, string> = {
   PERSONALIZADO: "bg-purple-100 text-purple-700",
 };
 
-const ESTADO_COLORS: Record<string, string> = {
-  PROGRAMADO: "bg-blue-100  text-blue-700",
-  EN_CURSO:   "bg-green-100 text-green-700",
-  COMPLETADO: "bg-gray-100  text-gray-600",
-  AUSENTE:    "bg-red-100   text-red-700",
-};
-
-const TURNO_ICONS: Record<string, string> = {
-  MAÑANA: "🌅", TARDE: "🌤️", NOCHE: "🌙", PERSONALIZADO: "⚙️",
-};
-
 interface HorarioModalProps {
   open: boolean;
   editing: any | null;
-  recepcionistas: any[];
+  empleados: any[];
   loading: boolean;
   error: string | null;
   onClose: () => void;
   onSave: (data: any) => Promise<void>;
+  onDelete: (id: number) => Promise<void>;
 }
 
-function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, onSave }: HorarioModalProps) {
-  const today = new Date().toISOString().split("T")[0];
+function HorarioModal({ open, editing, empleados, loading, error, onClose, onSave, onDelete }: HorarioModalProps) {
   const [form, setForm] = useState<any>({});
   const [saving, setSaving] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [empSearch, setEmpSearch] = useState("");
 
   useEffect(() => {
     if (open) {
       setFieldErrors({});
       if (editing) {
         setForm({
-          idRecepcionista: editing.recepcionistaId,
-          fecha: editing.fecha,
-          tipoTurno: editing.tipoTurno,
+          idEmpleado: editing.empleadoId,
+          diaSemana: editing.diaSemana,
           horaInicio: editing.horaInicio,
           horaFin: editing.horaFin,
-          estado: editing.estado,
+          tipoTurno: editing.tipoTurno || "PERSONALIZADO",
           observaciones: editing.observaciones || "",
         });
       } else {
-        setForm({ idRecepcionista: "", fecha: today, tipoTurno: "MAÑANA", horaInicio: "06:00", horaFin: "14:00", estado: "PROGRAMADO", observaciones: "" });
+        setForm({ idEmpleado: "", diaSemana: "LUNES", horaInicio: "06:00", horaFin: "14:00", tipoTurno: "MAÑANA", observaciones: "" });
       }
     }
   }, [open, editing]);
 
   useEffect(() => {
     const turno = form.tipoTurno;
-    if (turno === "MAÑANA")  { setForm((f: any) => ({ ...f, horaInicio: "06:00", horaFin: "14:00" })); }
-    if (turno === "TARDE")   { setForm((f: any) => ({ ...f, horaInicio: "14:00", horaFin: "22:00" })); }
-    if (turno === "NOCHE")   { setForm((f: any) => ({ ...f, horaInicio: "22:00", horaFin: "06:00" })); }
+    if (turno === "MAÑANA")       { setForm((f: any) => ({ ...f, horaInicio: "06:00", horaFin: "14:00" })); }
+    else if (turno === "TARDE")   { setForm((f: any) => ({ ...f, horaInicio: "14:00", horaFin: "22:00" })); }
+    else if (turno === "NOCHE")   { setForm((f: any) => ({ ...f, horaInicio: "22:00", horaFin: "06:00" })); }
   }, [form.tipoTurno]);
 
   const set = (key: string, val: any) => {
@@ -123,17 +114,10 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!form.idRecepcionista) errs.idRecepcionista = "El recepcionista es obligatorio";
-    if (!form.fecha)           errs.fecha = "La fecha es obligatoria";
-    if (!form.tipoTurno)       errs.tipoTurno = "El turno es obligatorio";
-    if (!form.estado)          errs.estado = "El estado es obligatorio";
-    if (form.tipoTurno === "PERSONALIZADO") {
-      if (!form.horaInicio) errs.horaInicio = "La hora de inicio es obligatoria";
-      if (!form.horaFin)    errs.horaFin = "La hora de fin es obligatoria";
-      if (form.horaInicio && form.horaFin && form.horaInicio >= form.horaFin) {
-        errs.horaFin = "La hora de fin debe ser posterior a la de inicio";
-      }
-    }
+    if (!form.idEmpleado) errs.idEmpleado = "El empleado es obligatorio";
+    if (!form.diaSemana)  errs.diaSemana = "El dia es obligatorio";
+    if (!form.horaInicio) errs.horaInicio = "La hora de inicio es obligatoria";
+    if (!form.horaFin)    errs.horaFin = "La hora de fin es obligatoria";
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -145,6 +129,13 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
     finally { setSaving(false); }
   };
 
+  const handleDelete = async () => {
+    if (!editing) return;
+    setSaving(true);
+    try { await onDelete(editing.id); }
+    finally { setSaving(false); }
+  };
+
   if (!open) return null;
 
   const inputCls = (key: string) =>
@@ -153,8 +144,6 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
         ? "border-red-300 bg-red-50 focus:border-red-400 focus:ring-2 focus:ring-red-100"
         : "border-neutral-200 bg-white focus:border-brand-400 focus:ring-2 focus:ring-brand-50 hover:border-neutral-300"
     }`;
-
-  const isPersonalizado = form.tipoTurno === "PERSONALIZADO";
 
   return (
     <div
@@ -192,32 +181,49 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
 
             <div className="col-span-2">
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
-                Recepcionista <span className="text-brand-500">*</span>
+                Empleado <span className="text-brand-500">*</span>
               </label>
+              <div className="relative mb-2">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400 pointer-events-none" />
+                <input
+                  type="text" placeholder="Buscar por nombre o DNI…"
+                  value={empSearch} onChange={(e) => setEmpSearch(e.target.value)}
+                  className="w-full pl-8 pr-3 py-2 border border-neutral-200 rounded-lg text-[13px] outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-50"
+                />
+              </div>
               <div className="relative">
-                <select value={form.idRecepcionista || ""} onChange={(e) => set("idRecepcionista", e.target.value)} className={inputCls("idRecepcionista") + " appearance-none pr-9 cursor-pointer"}>
+                <select value={form.idEmpleado || ""} onChange={(e) => set("idEmpleado", e.target.value)} className={inputCls("idEmpleado") + " appearance-none pr-9 cursor-pointer"}>
                   <option value="">— Selecciona —</option>
-                  {recepcionistas.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+                  {empleados
+                    .filter((e) => !empSearch || `${e.nombre} ${e.dni}`.toLowerCase().includes(empSearch.toLowerCase()))
+                    .map((e) => <option key={e.id} value={e.id}>{e.nombre} — {e.dni}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
               </div>
-              {fieldErrors.idRecepcionista && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.idRecepcionista}</p>}
+              {fieldErrors.idEmpleado && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.idEmpleado}</p>}
             </div>
 
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
-                Fecha <span className="text-brand-500">*</span>
+                Dia de Semana <span className="text-brand-500">*</span>
               </label>
-              <input type="date" value={form.fecha || ""} onChange={(e) => set("fecha", e.target.value)} className={inputCls("fecha")} />
-              {fieldErrors.fecha && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.fecha}</p>}
+              <div className="relative">
+                <select value={form.diaSemana || ""} onChange={(e) => set("diaSemana", e.target.value)} className={inputCls("diaSemana") + " appearance-none pr-9 cursor-pointer"}>
+                  <option value="">— Selecciona —</option>
+                  {DIAS_SEMANA.map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+              </div>
+              {fieldErrors.diaSemana && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.diaSemana}</p>}
             </div>
 
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
-                Tipo de Turno <span className="text-brand-500">*</span>
+                Turno
               </label>
               <div className="relative">
                 <select value={form.tipoTurno || ""} onChange={(e) => set("tipoTurno", e.target.value)} className={inputCls("tipoTurno") + " appearance-none pr-9 cursor-pointer"}>
+                  <option value="PERSONALIZADO">Manual</option>
                   {TURNO_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
@@ -226,47 +232,24 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
 
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
-                Hora Inicio {isPersonalizado && <span className="text-brand-500">*</span>}
+                Hora Inicio <span className="text-brand-500">*</span>
               </label>
               <input
                 type="time" value={form.horaInicio || ""} onChange={(e) => set("horaInicio", e.target.value)}
-                disabled={!isPersonalizado}
-                className={inputCls("horaInicio") + (!isPersonalizado ? " opacity-50 cursor-not-allowed bg-neutral-50" : "")}
+                className={inputCls("horaInicio")}
               />
               {fieldErrors.horaInicio && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.horaInicio}</p>}
             </div>
 
             <div>
               <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
-                Hora Fin {isPersonalizado && <span className="text-brand-500">*</span>}
+                Hora Fin <span className="text-brand-500">*</span>
               </label>
               <input
                 type="time" value={form.horaFin || ""} onChange={(e) => set("horaFin", e.target.value)}
-                disabled={!isPersonalizado}
-                className={inputCls("horaFin") + (!isPersonalizado ? " opacity-50 cursor-not-allowed bg-neutral-50" : "")}
+                className={inputCls("horaFin")}
               />
               {fieldErrors.horaFin && <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{fieldErrors.horaFin}</p>}
-            </div>
-
-            <div className="col-span-2">
-              <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
-                Estado <span className="text-brand-500">*</span>
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-                {ESTADO_OPTIONS.map((o) => (
-                  <button
-                    key={o.value} type="button"
-                    onClick={() => set("estado", o.value)}
-                    className={`py-2 px-3 rounded-lg text-[11px] font-semibold border transition-all text-center ${
-                      form.estado === o.value
-                        ? "border-brand-500 bg-brand-50 text-brand-700 shadow-sm"
-                        : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:bg-neutral-50"
-                    }`}
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
             <div className="col-span-2">
@@ -282,35 +265,40 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
             </div>
           </div>
 
-          {form.tipoTurno && (
+          {form.diaSemana && form.horaInicio && (
             <div className="mt-4 p-3 bg-brand-50 border border-brand-100 rounded-lg flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center flex-shrink-0">
                 <Clock className="w-4 h-4 text-brand-600" />
               </div>
               <div>
                 <p className="text-[12px] font-semibold text-brand-800">
-                  Turno {form.tipoTurno} — {form.horaInicio || "?"} a {form.horaFin || "?"}
+                  {form.diaSemana} — {form.horaInicio} a {form.horaFin}
                 </p>
-                <p className="text-[11px] text-brand-500">
-                  {form.tipoTurno === "PERSONALIZADO"
-                    ? "Horario definido manualmente"
-                    : "Horario asignado automáticamente por el sistema"}
-                </p>
+                <p className="text-[11px] text-brand-500">Horario semanal recurrente</p>
               </div>
             </div>
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50 flex-shrink-0">
-          <button onClick={onClose} disabled={saving || loading} className="px-5 py-2 border border-neutral-200 text-neutral-600 text-[12px] font-semibold rounded-lg hover:border-neutral-300 hover:bg-white transition-colors disabled:opacity-50">
-            Cancelar
-          </button>
-          <button onClick={handleSave} disabled={saving || loading} className="flex items-center gap-2 px-6 py-2 bg-brand-600 hover:bg-brand-500 text-white text-[12px] font-bold tracking-[0.08em] uppercase rounded-lg transition-colors disabled:opacity-50 shadow-sm">
-            {saving || loading
-              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Guardando…</>
-              : <><Save className="w-3.5 h-3.5" />{editing ? "Actualizar" : "Crear"}</>
-            }
-          </button>
+        <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50 flex-shrink-0">
+          <div>
+            {editing && (
+              <button onClick={handleDelete} disabled={saving || loading} className="flex items-center gap-1.5 px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-[12px] font-semibold rounded-lg transition-colors disabled:opacity-50">
+                <Trash2 className="w-3.5 h-3.5" /> Eliminar
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={onClose} disabled={saving || loading} className="px-5 py-2 border border-neutral-200 text-neutral-600 text-[12px] font-semibold rounded-lg hover:border-neutral-300 hover:bg-white transition-colors disabled:opacity-50">
+              Cancelar
+            </button>
+            <button onClick={handleSave} disabled={saving || loading} className="flex items-center gap-2 px-6 py-2 bg-brand-600 hover:bg-brand-500 text-white text-[12px] font-bold tracking-[0.08em] uppercase rounded-lg transition-colors disabled:opacity-50 shadow-sm">
+              {saving || loading
+                ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Guardando…</>
+                : <><Save className="w-3.5 h-3.5" />{editing ? "Actualizar" : "Crear"}</>
+              }
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -319,41 +307,63 @@ function HorarioModal({ open, editing, recepcionistas, loading, error, onClose, 
 
 export default function HorariosPage() {
   const crud     = useCrud(horariosService, mapHorario, DEMO_HORARIOS);
-  const recepCrud = useCrud(recepcionistasService, mapRecepcionista, DEMO_RECEP);
+  const empCrud = useCrud({ getAll: () => empleadosService.getAll() }, mapEmpleado, []);
   const m = useModalState();
   const toast = useToast();
 
   const [search, setSearch] = useState("");
-  const [filterTurno, setFilterTurno]   = useState("");
-  const [filterEstado, setFilterEstado] = useState("");
 
-  const filtered = crud.data.filter((h) => {
+  const grouped = crud.data.reduce<Record<number, any>>((acc, h) => {
+    if (!acc[h.empleadoId]) {
+      acc[h.empleadoId] = { empleadoId: h.empleadoId, empleado: h.empleado, cargo: h.cargo, horarios: {} };
+    }
+    acc[h.empleadoId].horarios[h.diaSemana] = h;
+    return acc;
+  }, {});
+
+  const filtered = Object.values(grouped).filter((g: any) => {
+    if (!search) return true;
     const q = search.toLowerCase();
-    const matchesSearch = !q || h.recepcionista.toLowerCase().includes(q) || h.fecha.includes(q) || h.tipoTurno.toLowerCase().includes(q);
-    const matchesTurno  = !filterTurno  || h.tipoTurno === filterTurno;
-    const matchesEstado = !filterEstado || h.estado    === filterEstado;
-    return matchesSearch && matchesTurno && matchesEstado;
+    return g.empleado.toLowerCase().includes(q);
   });
 
-  const totalHoy = crud.data.filter(h => h.fecha === new Date().toISOString().split("T")[0]).length;
-  const enCurso  = crud.data.filter(h => h.estado === "EN_CURSO").length;
-  const programados = crud.data.filter(h => h.estado === "PROGRAMADO").length;
+  const conHorario = filtered.length;
+  const totalHoras = crud.data.length;
+
+  const handleDelete = async (id: number) => {
+    const ok = await crud.remove(id);
+    if (ok) {
+      toast.showToast("success", "Horario eliminado", "");
+      m.closeModal();
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al eliminar", crud.saveError);
+    }
+  };
+
+  const handleCellDelete = async (h: any) => {
+    const ok = await crud.remove(h.id);
+    if (ok) {
+      toast.showToast("success", "Horario eliminado", "");
+    } else if (crud.saveError) {
+      toast.showToast("fail", "Error al eliminar", crud.saveError);
+    }
+  };
 
   const handleSave = async (form: any) => {
     const payload: any = {
-      recepcionista: { idRecepcionista: Number(form.idRecepcionista) },
-      fecha: form.fecha,
-      tipoTurno: form.tipoTurno,
+      empleado: { idEmpleado: Number(form.idEmpleado) },
+      diaSemana: form.diaSemana,
+      tipoTurno: form.tipoTurno === "MANUAL" || form.tipoTurno === "PERSONALIZADO" ? null : form.tipoTurno,
       horaInicio: form.horaInicio,
       horaFin:    form.horaFin,
-      estado: form.estado,
+      estado: "PROGRAMADO",
       observaciones: form.observaciones || null,
     };
     const ok = m.editing
       ? await crud.update(m.editing.id, payload)
       : await crud.create(payload);
     if (ok) {
-      toast.showToast("success", m.editing ? "Horario actualizado" : "Horario creado", `${form.tipoTurno} — ${form.fecha}`);
+      toast.showToast("success", m.editing ? "Horario actualizado" : "Horario creado", `${form.diaSemana} ${form.horaInicio}-${form.horaFin}`);
       m.closeModal();
     } else if (crud.saveError) {
       toast.showToast("fail", "Error al guardar", crud.saveError);
@@ -371,7 +381,7 @@ export default function HorariosPage() {
               Horarios
             </h1>
             <p className="text-[13px] text-neutral-400 mt-0.5 font-light">
-              Gestión de turnos y horarios de recepcionistas
+              Gestión de turnos y horarios del personal
             </p>
           </div>
           <button
@@ -385,9 +395,9 @@ export default function HorariosPage() {
 
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: "Turnos hoy",     value: totalHoy,    color: "border-t-brand-500  text-brand-600",  bg: "bg-brand-50" },
-            { label: "En curso ahora", value: enCurso,     color: "border-t-green-500  text-green-600",  bg: "bg-green-50" },
-            { label: "Programados",    value: programados, color: "border-t-blue-500   text-blue-600",   bg: "bg-blue-50" },
+            { label: "Empleados",           value: conHorario, color: "border-t-brand-500  text-brand-600", bg: "bg-brand-50" },
+            { label: "Turnos registrados",  value: totalHoras, color: "border-t-blue-500   text-blue-600",  bg: "bg-blue-50" },
+            { label: "Cobertura semanal",   value: `${conHorario * 7}`, color: "border-t-green-500  text-green-600", bg: "bg-green-50" },
           ].map((s) => (
             <div key={s.label} className={`bg-white border border-neutral-200 border-t-2 ${s.color.split(" ")[0]} rounded-sm p-4 shadow-sm`}>
               <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-neutral-400 mb-1">{s.label}</p>
@@ -413,28 +423,7 @@ export default function HorariosPage() {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              <div className="relative">
-                <select
-                  value={filterTurno}
-                  onChange={(e) => setFilterTurno(e.target.value)}
-                  className="pl-3 pr-8 py-1.5 text-[13px] border border-neutral-200 rounded-lg focus:outline-none focus:border-brand-400 bg-white appearance-none cursor-pointer"
-                >
-                  <option value="">Todos los turnos</option>
-                  {TURNO_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.value}</option>)}
-                </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400 pointer-events-none" />
-              </div>
-              <div className="relative">
-                <select
-                  value={filterEstado}
-                  onChange={(e) => setFilterEstado(e.target.value)}
-                  className="pl-3 pr-8 py-1.5 text-[13px] border border-neutral-200 rounded-lg focus:outline-none focus:border-brand-400 bg-white appearance-none cursor-pointer"
-                >
-                  <option value="">Todos los estados</option>
-                  {ESTADO_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400 pointer-events-none" />
-              </div>
+
             </div>
           </div>
 
@@ -448,8 +437,9 @@ export default function HorariosPage() {
             <table className="w-full text-[13px]">
               <thead>
                 <tr className="bg-neutral-50 border-b border-neutral-100">
-                  {["ID", "Recepcionista", "Fecha", "Turno", "Horario", "Estado", "Observaciones", "Acciones"].map(h => (
-                    <th key={h} className="px-4 py-2.5 text-left text-[10px] font-bold text-neutral-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
+                  <th className="px-4 py-2.5 text-left text-[10px] font-bold text-neutral-400 uppercase tracking-wide whitespace-nowrap sticky left-0 bg-neutral-50 z-10">Empleado</th>
+                  {DIAS_SEMANA.map(d => (
+                    <th key={d} className="px-2 py-2.5 text-center text-[10px] font-bold text-neutral-400 uppercase tracking-wide whitespace-nowrap">{d}</th>
                   ))}
                 </tr>
               </thead>
@@ -458,47 +448,50 @@ export default function HorariosPage() {
                   <tr><td colSpan={8} className="px-4 py-10 text-center text-neutral-400">Cargando…</td></tr>
                 ) : filtered.length === 0 ? (
                   <tr><td colSpan={8} className="px-4 py-10 text-center text-neutral-400">Sin registros</td></tr>
-                ) : filtered.map((row) => (
-                  <tr key={row.id} className="border-b border-neutral-50 hover:bg-brand-50/50 transition-colors">
-                    <td className="px-4 py-3 text-neutral-400 text-[12px] font-mono">{row.id}</td>
-                    <td className="px-4 py-3">
+                ) : filtered.map((g: any) => (
+                  <tr key={g.empleadoId} className="border-b border-neutral-50 hover:bg-brand-50/50 transition-colors">
+                    <td className="px-4 py-3 sticky left-0 bg-white z-10">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 text-[11px] font-bold flex-shrink-0">
-                          {row.recepcionista.charAt(0)}
+                          {g.empleado.charAt(0)}
                         </div>
-                        <span className="font-medium text-neutral-800 whitespace-nowrap">{row.recepcionista}</span>
+                        <div className="flex flex-col">
+                          <span className="font-medium text-neutral-800 whitespace-nowrap text-[13px]">{g.empleado}</span>
+                          <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wide">{g.cargo}</span>
+                        </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-neutral-600 whitespace-nowrap">
-                      <div className="flex items-center gap-1.5">
-                        <CalendarDays className="w-3.5 h-3.5 text-neutral-300" />
-                        {row.fecha}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold ${TURNO_COLORS[row.tipoTurno] || "bg-gray-100 text-gray-600"}`}>
-                        {row.tipoTurno}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 font-mono text-[12px] text-neutral-600 whitespace-nowrap">
-                      {row.horaInicio} – {row.horaFin}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold ${ESTADO_COLORS[row.estado] || "bg-gray-100 text-gray-600"}`}>
-                        {row.estado.replace("_", " ")}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-neutral-400 text-[12px] max-w-[160px] truncate">
-                      {row.observaciones || "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => m.openEdit(row)}
-                          className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-brand-700 bg-brand-100 hover:bg-brand-200 rounded-lg transition-colors">
-                          <Pencil className="w-3.5 h-3.5" /> EDITAR
-                        </button>
-                      </div>
-                    </td>
+                    {DIAS_SEMANA.map((dia) => {
+                      const h: any = g.horarios[dia];
+                      return (
+                        <td key={dia} className="px-1 py-3 text-center">
+                          {h ? (
+                            <div className="relative group/cell">
+                              <button
+                                onClick={() => m.openEdit(h)}
+                                className="w-full flex flex-col items-center gap-0.5 px-1.5 py-1.5 rounded-lg hover:bg-brand-50 transition-colors cursor-pointer"
+                              >
+                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${TURNO_COLORS[h.tipoTurno] || "bg-gray-100 text-gray-600"}`}>
+                                  {h.tipoTurno}
+                                </span>
+                                <span className="font-mono text-[11px] text-neutral-500 whitespace-nowrap">
+                                  {h.horaInicio}–{h.horaFin}
+                                </span>
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleCellDelete(h); }}
+                                className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center rounded-full bg-white border border-red-200 text-red-500 opacity-0 group-hover/cell:opacity-100 hover:bg-red-50 transition-all shadow-sm"
+                                title="Eliminar horario"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-neutral-300 text-[11px]">--</span>
+                          )}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
@@ -506,7 +499,7 @@ export default function HorariosPage() {
           </div>
 
           <div className="px-5 py-2.5 bg-neutral-50 border-t border-neutral-100">
-            <span className="text-[11px] text-neutral-400">{filtered.length} registro(s)</span>
+            <span className="text-[11px] text-neutral-400">{filtered.length} empleado(s) con horario</span>
           </div>
         </div>
       </div>
@@ -514,11 +507,12 @@ export default function HorariosPage() {
       <HorarioModal
         open={m.modalOpen}
         editing={m.editing}
-        recepcionistas={recepCrud.data}
-        loading={crud.saving}
+        empleados={empCrud.data}
+        loading={crud.saving || empCrud.loading}
         error={crud.saveError}
         onClose={m.closeModal}
         onSave={handleSave}
+        onDelete={handleDelete}
       />
 
     </>

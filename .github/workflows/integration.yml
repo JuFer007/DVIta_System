@@ -11,6 +11,9 @@ env:
 jobs:
   docker-build-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v4
 
@@ -27,11 +30,57 @@ jobs:
       - name: Build images
         run: docker compose -p dvita_system build pdf-server backend chatbot frontend
 
-      - name: Tag and push to Docker Hub
+      - name: Scan images with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: 'dvita_system-backend:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Save previous version and push all tags
         run: |
           for svc in pdf-server backend chatbot frontend; do
             img="dvita_system-$svc"
-            hub="$DOCKER_USERNAME/d-vita-$svc:latest"
-            docker tag "$img" "$hub"
-            docker push "$hub"
+            hub="$DOCKER_USERNAME/d-vita-$svc"
+
+            # Save current latest as previous (for rollback)
+            docker pull "$hub:latest" 2>/dev/null && \
+              docker tag "$hub:latest" "$hub:previous" && \
+              docker push "$hub:previous" || true
+
+            # Tag new version as latest and with commit SHA
+            docker tag "$img" "$hub:latest"
+            docker tag "$img" "$hub:${{ github.sha }}"
+            docker push "$hub:latest"
+            docker push "$hub:${{ github.sha }}"
           done
+
+      - name: Notify failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: 'failure',
+              context: '${{ github.workflow }}',
+              description: 'Falló la integración + push a Docker Hub'
+            });
+
+      - name: Notify Slack on failure
+        if: failure() && secrets.SLACK_WEBHOOK
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "*${{ github.workflow }}* falló en `${{ github.ref }}`\nRepo: ${{ github.repository }}\nURL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

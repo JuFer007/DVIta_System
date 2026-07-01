@@ -6,7 +6,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 
 const NAV = [
-  { id: "dashboard",       label: "Dashboard",        icon: LayoutDashboard,   permiso: null },
+  { id: "dashboard",       label: "Dashboard",        icon: LayoutDashboard,   permiso: "EMPLEADOS" },
   { id: "clientes",        label: "Clientes",         icon: Users,             permiso: "CLIENTES" },
   { id: "empleados",       label: "Empleados",        icon: BriefcaseBusiness, permiso: "EMPLEADOS" },
   { id: "habitaciones",    label: "Habitaciones",     icon: BedDouble,         permiso: "HABITACIONES" },
@@ -15,9 +15,9 @@ const NAV = [
   { id: "pagos",           label: "Pagos",            icon: CreditCard,        permiso: "PAGOS" },
   { id: "usuarios",        label: "Usuarios",         icon: User,              permiso: "USUARIOS" },
   { id: "incidencias",     label: "Incidencias",      icon: AlertTriangle,     permiso: "INCIDENCIAS" },
-  { id: "areas",           label: "Áreas",            icon: Building2,         permiso: "INCIDENCIAS" },
-  { id: "horarios",        label: "Horarios",         icon: CalendarCheck,     permiso: "INCIDENCIAS" },
-  { id: "reportes",        label: "Reportes",         icon: BarChart2,         permiso: null },
+  { id: "areas",           label: "Áreas",            icon: Building2,         permiso: "EMPLEADOS" },
+  { id: "horarios",        label: "Horarios",         icon: CalendarCheck,     permiso: "EMPLEADOS" },
+  { id: "reportes",        label: "Reportes",         icon: BarChart2,         permiso: "EMPLEADOS" },
 ];
 
 interface Props {

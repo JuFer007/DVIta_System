@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Pago;
+import com.systemWeb.DVita.Model.enums.MetodoPago;
 import com.systemWeb.DVita.Service.PagoService;
 import com.systemWeb.DVita.Service.MicroServicios.PagoPdfService;
 import com.systemWeb.DVita.Service.MicroServicios.TicketPdfService;
@@ -70,7 +71,7 @@ public class PagoController {
         if (metodoPago == null || metodoPago.isBlank()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(pagoService.completar(id, metodoPago));
+        return ResponseEntity.ok(pagoService.completar(id, MetodoPago.valueOf(metodoPago.toUpperCase().trim())));
     }
 
     @PostMapping

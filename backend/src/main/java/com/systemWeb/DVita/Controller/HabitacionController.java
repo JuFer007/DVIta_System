@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Habitacion;
+import com.systemWeb.DVita.Model.enums.EstadoHabitacion;
 import com.systemWeb.DVita.Service.HabitacionService;
 import com.systemWeb.DVita.Service.MicroServicios.HabitacionPdfService;
 import jakarta.validation.Valid;
@@ -70,6 +71,6 @@ public class HabitacionController {
         if (nuevoEstado == null || nuevoEstado.isBlank()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(habitacionService.cambiarEstado(id, nuevoEstado.toUpperCase().trim()));
+        return ResponseEntity.ok(habitacionService.cambiarEstado(id, EstadoHabitacion.valueOf(nuevoEstado.toUpperCase().trim())));
     }
 }

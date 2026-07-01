@@ -7,28 +7,181 @@ on:
     branches: [main]
     types: [completed]
 
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment:
+      name: production
+      url: https://d-vita-backend.onrender.com
+    permissions:
+      contents: read
     steps:
-      - name: Deploy Backend
+      - name: Deploy Backend + Health Check + Rollback
+        id: backend
         run: |
-          curl -sSf -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_BACKEND_ID }}/deploys" \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            || echo "Backend deploy triggered"
+          echo "=== Deploying Backend ==="
 
-      - name: Deploy Chatbot
-        run: |
-          curl -sSf -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_CHATBOT_ID }}/deploys" \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            || echo "Chatbot deploy triggered"
+          # Trigger new deploy on Render
+          DEPLOY_RESP=$(curl -s -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_BACKEND_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}")
+          DEPLOY_ID=$(echo "$DEPLOY_RESP" | jq -r '.id // empty')
+          echo "Deploy ID: $DEPLOY_ID"
 
-      - name: Deploy PDF Server
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "FAILED to trigger deploy"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Poll Render until deploy finishes (up to 5 min)
+          for i in $(seq 1 20); do
+            sleep 15
+            STATUS=$(curl -s \
+              "https://api.render.com/v1/services/${{ secrets.RENDER_BACKEND_ID }}/deploys/$DEPLOY_ID" \
+              -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" | jq -r '.status')
+            echo "Status: $STATUS"
+            if [ "$STATUS" = "live" ]; then
+              echo "status=success" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            if [ "$STATUS" = "failed" ]; then
+              echo "status=failed" >> $GITHUB_OUTPUT
+              exit 1
+            fi
+          done
+          echo "status=timeout" >> $GITHUB_OUTPUT
+          exit 1
+
+      - name: Rollback Backend on failure
+        if: failure() && steps.backend.outputs.status != 'success'
         run: |
-          curl -sSf -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_PDF_SERVER_ID }}/deploys" \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            || echo "PDF Server deploy triggered"
+          echo "=== Rollback Backend ==="
+          docker pull "$DOCKER_USERNAME/d-vita-backend:previous" 2>/dev/null || \
+            { echo "No previous image found"; exit 1; }
+          docker tag "$DOCKER_USERNAME/d-vita-backend:previous" "$DOCKER_USERNAME/d-vita-backend:latest"
+          docker push "$DOCKER_USERNAME/d-vita-backend:latest"
+
+          curl -s -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_BACKEND_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
+          echo "Backend rollback ejecutado"
+
+      - name: Deploy Chatbot + Health Check + Rollback
+        id: chatbot
+        run: |
+          echo "=== Deploying Chatbot ==="
+          DEPLOY_RESP=$(curl -s -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_CHATBOT_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}")
+          DEPLOY_ID=$(echo "$DEPLOY_RESP" | jq -r '.id // empty')
+          echo "Deploy ID: $DEPLOY_ID"
+
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          for i in $(seq 1 20); do
+            sleep 15
+            STATUS=$(curl -s \
+              "https://api.render.com/v1/services/${{ secrets.RENDER_CHATBOT_ID }}/deploys/$DEPLOY_ID" \
+              -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" | jq -r '.status')
+            echo "Status: $STATUS"
+            if [ "$STATUS" = "live" ]; then
+              echo "status=success" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            if [ "$STATUS" = "failed" ]; then
+              echo "status=failed" >> $GITHUB_OUTPUT
+              exit 1
+            fi
+          done
+          echo "status=timeout" >> $GITHUB_OUTPUT
+          exit 1
+
+      - name: Rollback Chatbot on failure
+        if: failure() && steps.chatbot.outputs.status != 'success'
+        run: |
+          echo "=== Rollback Chatbot ==="
+          docker pull "$DOCKER_USERNAME/d-vita-chatbot:previous" 2>/dev/null || exit 1
+          docker tag "$DOCKER_USERNAME/d-vita-chatbot:previous" "$DOCKER_USERNAME/d-vita-chatbot:latest"
+          docker push "$DOCKER_USERNAME/d-vita-chatbot:latest"
+
+          curl -s -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_CHATBOT_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
+          echo "Chatbot rollback ejecutado"
+
+      - name: Deploy PDF Server + Health Check + Rollback
+        id: pdfserver
+        run: |
+          echo "=== Deploying PDF Server ==="
+          DEPLOY_RESP=$(curl -s -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_PDF_SERVER_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}")
+          DEPLOY_ID=$(echo "$DEPLOY_RESP" | jq -r '.id // empty')
+          echo "Deploy ID: $DEPLOY_ID"
+
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          for i in $(seq 1 20); do
+            sleep 15
+            STATUS=$(curl -s \
+              "https://api.render.com/v1/services/${{ secrets.RENDER_PDF_SERVER_ID }}/deploys/$DEPLOY_ID" \
+              -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" | jq -r '.status')
+            echo "Status: $STATUS"
+            if [ "$STATUS" = "live" ]; then
+              echo "status=success" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            if [ "$STATUS" = "failed" ]; then
+              echo "status=failed" >> $GITHUB_OUTPUT
+              exit 1
+            fi
+          done
+          echo "status=timeout" >> $GITHUB_OUTPUT
+          exit 1
+
+      - name: Rollback PDF Server on failure
+        if: failure() && steps.pdfserver.outputs.status != 'success'
+        run: |
+          echo "=== Rollback PDF Server ==="
+          docker pull "$DOCKER_USERNAME/d-vita-pdf-server:previous" 2>/dev/null || exit 1
+          docker tag "$DOCKER_USERNAME/d-vita-pdf-server:previous" "$DOCKER_USERNAME/d-vita-pdf-server:latest"
+          docker push "$DOCKER_USERNAME/d-vita-pdf-server:latest"
+
+          curl -s -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_PDF_SERVER_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
+          echo "PDF Server rollback ejecutado"
+
+      - name: Notify failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: 'failure',
+              context: '${{ github.workflow }}',
+              description: 'Falló el deploy a producción'
+            });
+
+      - name: Notify Slack on failure
+        if: failure() && secrets.SLACK_WEBHOOK
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "*${{ github.workflow }}* falló en producción\nRepo: ${{ github.repository }}\nURL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

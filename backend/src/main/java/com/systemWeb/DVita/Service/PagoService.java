@@ -1,5 +1,7 @@
 package com.systemWeb.DVita.Service;
 import com.systemWeb.DVita.Model.Pago;
+import com.systemWeb.DVita.Model.enums.EstadoPago;
+import com.systemWeb.DVita.Model.enums.MetodoPago;
 import com.systemWeb.DVita.Repository.PagoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,22 +23,21 @@ public class PagoService {
     }
 
     public Pago guardar(Pago pago) {
-        pago.setMetodoPago(upper(pago.getMetodoPago()));
         if (pago.getEstado() == null) {
-            pago.setEstado("PENDIENTE");
+            pago.setEstado(EstadoPago.PENDIENTE);
         }
         return pagoRepository.save(pago);
     }
 
     public Pago actualizar(Long id, Pago pagoActualizado) {
         return pagoRepository.findById(id).map(pago -> {
-            if ("COMPLETADO".equals(pago.getEstado())) {
+            if (EstadoPago.COMPLETADO == pago.getEstado()) {
                 throw new RuntimeException("No se puede editar un pago ya completado");
             }
             pago.setReserva(pagoActualizado.getReserva());
             pago.setMonto(pagoActualizado.getMonto());
             pago.setFechaPago(pagoActualizado.getFechaPago());
-            pago.setMetodoPago(upper(pagoActualizado.getMetodoPago()));
+            pago.setMetodoPago(pagoActualizado.getMetodoPago());
             if (pagoActualizado.getEstado() != null) {
                 pago.setEstado(pagoActualizado.getEstado());
             }
@@ -44,13 +45,13 @@ public class PagoService {
         }).orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
     }
 
-    public Pago completar(Long id, String metodoPago) {
+    public Pago completar(Long id, MetodoPago metodoPago) {
         return pagoRepository.findById(id).map(pago -> {
-            if ("COMPLETADO".equals(pago.getEstado())) {
+            if (EstadoPago.COMPLETADO == pago.getEstado()) {
                 throw new RuntimeException("El pago ya está completado");
             }
-            pago.setEstado("COMPLETADO");
-            pago.setMetodoPago(upper(metodoPago));
+            pago.setEstado(EstadoPago.COMPLETADO);
+            pago.setMetodoPago(metodoPago);
             return pagoRepository.save(pago);
         }).orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
     }

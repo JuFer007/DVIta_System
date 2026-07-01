@@ -1,4 +1,7 @@
 package com.systemWeb.DVita.Model;
+import com.systemWeb.DVita.Model.enums.EstadoIncidencia;
+import com.systemWeb.DVita.Model.enums.Prioridad;
+import com.systemWeb.DVita.Model.enums.TipoIncidencia;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -41,30 +44,27 @@ public class Incidencia {
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
-    @NotBlank(message = "El tipo es obligatorio")
-    @Pattern(regexp = "DAÑO_HABITACION|QUEJA_HUESPED|PROBLEMA_SERVICIO|FALLA_EQUIPO|OTRO",
-            message = "El tipo debe ser: DAÑO_HABITACION, QUEJA_HUESPED, PROBLEMA_SERVICIO, FALLA_EQUIPO u OTRO")
+    @NotNull(message = "El tipo es obligatorio")
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false, length = 30)
-    private String tipo;
+    private TipoIncidencia tipo;
 
     @NotBlank(message = "La descripción es obligatoria")
     @Size(max = 500, message = "La descripción no puede superar 500 caracteres")
     @Column(name = "descripcion", nullable = false, length = 500)
     private String descripcion;
 
-    @NotBlank(message = "La prioridad es obligatoria")
-    @Pattern(regexp = "BAJA|MEDIA|ALTA|URGENTE",
-            message = "La prioridad debe ser: BAJA, MEDIA, ALTA o URGENTE")
+    @NotNull(message = "La prioridad es obligatoria")
+    @Enumerated(EnumType.STRING)
     @Column(name = "prioridad", nullable = false, length = 10)
     @Builder.Default
-    private String prioridad = "MEDIA";
+    private Prioridad prioridad = Prioridad.MEDIA;
 
-    @NotBlank(message = "El estado es obligatorio")
-    @Pattern(regexp = "ABIERTO|EN_PROCESO|RESUELTO|CERRADO",
-            message = "El estado debe ser: ABIERTO, EN_PROCESO, RESUELTO o CERRADO")
+    @NotNull(message = "El estado es obligatorio")
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
     @Builder.Default
-    private String estado = "ABIERTO";
+    private EstadoIncidencia estado = EstadoIncidencia.ABIERTO;
 
     @Column(name = "fecha_resolucion")
     private LocalDate fechaResolucion;

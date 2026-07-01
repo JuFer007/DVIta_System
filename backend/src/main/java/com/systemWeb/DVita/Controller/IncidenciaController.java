@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Incidencia;
+import com.systemWeb.DVita.Model.enums.EstadoIncidencia;
 import com.systemWeb.DVita.Service.IncidenciaService;
 import com.systemWeb.DVita.Service.MicroServicios.IncidenciaPdfService;
 import jakarta.validation.Valid;
@@ -85,7 +86,7 @@ public class IncidenciaController {
                 idEmpleadoResuelve = ((Number) empId).longValue();
             }
         }
-        return ResponseEntity.ok(incidenciaService.cambiarEstado(id, estado.toUpperCase().trim(),
+        return ResponseEntity.ok(incidenciaService.cambiarEstado(id, EstadoIncidencia.valueOf(estado.toUpperCase().trim()),
                 solucion, notasAuditoria, idEmpleadoResuelve));
     }
 }

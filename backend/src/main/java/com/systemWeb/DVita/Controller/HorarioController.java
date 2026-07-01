@@ -1,13 +1,12 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Horario;
+import com.systemWeb.DVita.Model.enums.EstadoHorario;
 import com.systemWeb.DVita.Service.HorarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -32,24 +31,14 @@ public class HorarioController {
     }
 
 
-    @GetMapping("/recepcionista/{idRecepcionista}")
-    public ResponseEntity<List<Horario>> listarPorRecepcionista(@PathVariable Long idRecepcionista, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
-        if (desde != null && hasta != null) {
-            return ResponseEntity.ok(
-                    horarioService.listarPorRecepcionistaYRango(idRecepcionista, desde, hasta)
-            );
-        }
-        return ResponseEntity.ok(horarioService.listarPorRecepcionista(idRecepcionista));
+    @GetMapping("/empleado/{idEmpleado}")
+    public ResponseEntity<List<Horario>> listarPorEmpleado(@PathVariable Long idEmpleado) {
+        return ResponseEntity.ok(horarioService.listarPorEmpleado(idEmpleado));
     }
 
-    @GetMapping("/fecha/{fecha}")
-    public ResponseEntity<List<Horario>> listarPorFecha(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
-        return ResponseEntity.ok(horarioService.listarPorFecha(fecha));
-    }
-
-    @GetMapping("/en-curso")
-    public ResponseEntity<List<Horario>> listarEnCurso() {
-        return ResponseEntity.ok(horarioService.listarEnCurso());
+    @GetMapping("/verificar-acceso/{idEmpleado}")
+    public ResponseEntity<Map<String, Object>> verificarAcceso(@PathVariable Long idEmpleado) {
+        return ResponseEntity.ok(horarioService.verificarAcceso(idEmpleado));
     }
 
     @PostMapping
@@ -62,13 +51,19 @@ public class HorarioController {
         return ResponseEntity.ok(horarioService.actualizar(id, horario));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        horarioService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Horario> cambiarEstado(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String estado = body.get("estado");
         if (estado == null || estado.isBlank()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(horarioService.cambiarEstado(id, estado));
+        return ResponseEntity.ok(horarioService.cambiarEstado(id, EstadoHorario.valueOf(estado.toUpperCase().trim())));
     }
 
 

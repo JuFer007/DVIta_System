@@ -1,4 +1,5 @@
 package com.systemWeb.DVita.Model;
+import com.systemWeb.DVita.Model.enums.Prioridad;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -20,11 +21,10 @@ public class Area {
     @Column(name = "nombre", nullable = false, unique = true, length = 50)
     private String nombre;
 
-    @NotBlank(message = "La prioridad base es obligatoria")
-    @Pattern(regexp = "BAJA|MEDIA|ALTA|URGENTE",
-            message = "La prioridad base debe ser: BAJA, MEDIA, ALTA o URGENTE")
+    @NotNull(message = "La prioridad base es obligatoria")
+    @Enumerated(EnumType.STRING)
     @Column(name = "prioridad_base", nullable = false, length = 10)
-    private String prioridadBase;
+    private Prioridad prioridadBase;
 
     @NotNull(message = "El nivel de prioridad es obligatorio")
     @Min(1) @Max(4)

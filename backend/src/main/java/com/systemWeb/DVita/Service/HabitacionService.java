@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Service;
 import com.systemWeb.DVita.Model.Habitacion;
+import com.systemWeb.DVita.Model.enums.EstadoHabitacion;
 import com.systemWeb.DVita.Repository.HabitacionRepository;
 import com.systemWeb.DVita.Repository.ReservaRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,6 @@ public class HabitacionService {
     }
 
     public Habitacion guardar(Habitacion habitacion) {
-        habitacion.setEstado(upper(habitacion.getEstado()));
         return habitacionRepository.save(habitacion);
     }
 
@@ -35,7 +35,7 @@ public class HabitacionService {
         return habitacionRepository.findById(id).map(habitacion -> {
             habitacion.setTipoHabitacion(habitacionActualizada.getTipoHabitacion());
             habitacion.setNumeroHabitacion(habitacionActualizada.getNumeroHabitacion());
-            habitacion.setEstado(upper(habitacionActualizada.getEstado()));
+            habitacion.setEstado(habitacionActualizada.getEstado());
             return habitacionRepository.save(habitacion);
         }).orElseThrow(() -> new RuntimeException("Habitacion no encontrada con id: " + id));
     }
@@ -47,17 +47,17 @@ public class HabitacionService {
 
 
     @Transactional
-    public Habitacion cambiarEstado(Long id, String nuevoEstado) {
+    public Habitacion cambiarEstado(Long id, EstadoHabitacion nuevoEstado) {
         return habitacionRepository.findById(id).map(habitacion -> {
-            String actual = habitacion.getEstado();
+            EstadoHabitacion actual = habitacion.getEstado();
 
-            if ("EN_LIMPIEZA".equals(nuevoEstado) && !"DISPONIBLE".equals(actual)) {
+            if (EstadoHabitacion.EN_LIMPIEZA == nuevoEstado && EstadoHabitacion.DISPONIBLE != actual) {
                 throw new IllegalStateException("Solo se puede asignar limpieza a una habitación disponible");
             }
-            if ("DISPONIBLE".equals(nuevoEstado) && !"MANTENIMIENTO".equals(actual) && !"EN_LIMPIEZA".equals(actual)) {
+            if (EstadoHabitacion.DISPONIBLE == nuevoEstado && EstadoHabitacion.MANTENIMIENTO != actual && EstadoHabitacion.EN_LIMPIEZA != actual) {
                 throw new IllegalStateException("Solo se puede habilitar una habitación en mantenimiento o en limpieza");
             }
-            if ("MANTENIMIENTO".equals(nuevoEstado) && !"DISPONIBLE".equals(actual)) {
+            if (EstadoHabitacion.MANTENIMIENTO == nuevoEstado && EstadoHabitacion.DISPONIBLE != actual) {
                 throw new IllegalStateException("Solo se puede poner en mantenimiento una habitación disponible");
             }
 
@@ -81,7 +81,7 @@ public class HabitacionService {
         LocalDate limite = hoy.plusDays(1);
         List<Habitacion> habitaciones = habitacionRepository.findMantenimientoConReservaProxima(hoy, limite);
         for (Habitacion h : habitaciones) {
-            h.setEstado("DISPONIBLE");
+            h.setEstado(EstadoHabitacion.DISPONIBLE);
             habitacionRepository.save(h);
         }
     }

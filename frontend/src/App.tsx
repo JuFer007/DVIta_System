@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { verificarAccesoHorario } from "./services/api";
+import { useToast } from "./components/Toast";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -22,8 +24,23 @@ import PdfLoadingOverlay from "./components/PdfLoading";
 
 type View = "landing" | "login";
 
+const NAV_PERMISOS: Record<string, string | null> = {
+  dashboard:    "EMPLEADOS",
+  clientes:     "CLIENTES",
+  empleados:    "EMPLEADOS",
+  habitaciones: "HABITACIONES",
+  tipos:        "TIPOS_HABITACION",
+  reservas:     "RESERVAS",
+  pagos:        "PAGOS",
+  usuarios:     "USUARIOS",
+  incidencias:  "INCIDENCIAS",
+  areas:        "EMPLEADOS",
+  horarios:     "EMPLEADOS",
+  reportes:     "EMPLEADOS",
+};
+
 function AppContent() {
-  const { user, logout } = useAuth();
+  const { user, logout, tienePermiso } = useAuth();
   const [view, setView]       = useState<View>("landing");
   const [page, setPage]       = useState("dashboard");
   const [collapsed, setCollapsed] = useState(false);
@@ -33,9 +50,35 @@ function AppContent() {
     setView("landing");
   };
 
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!user?.idEmpleado) return;
+    const check = async () => {
+      try {
+        const res = await verificarAccesoHorario(user.idEmpleado!);
+        if (!res.acceso) {
+          toast.showToast("warning", "Fin de turno", "Tu horario ha finalizado. Seras redirigido.");
+          setTimeout(() => handleLogout(), 2000);
+        }
+      } catch { /* ignore */ }
+    };
+    const interval = setInterval(check, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [user?.idEmpleado]);
+
   if (user) {
+    const permisoRequerido = NAV_PERMISOS[page];
+    let currentPage = !permisoRequerido || tienePermiso(permisoRequerido) ? page : null;
+    if (!currentPage) {
+      currentPage = Object.keys(NAV_PERMISOS).find(p => {
+        const perm = NAV_PERMISOS[p];
+        return !perm || tienePermiso(perm);
+      }) || "dashboard";
+    }
+
     const renderPage = () => {
-      switch (page) {
+      switch (currentPage) {
         case "dashboard":    return <Dashboard />;
         case "clientes":     return <ClientesPage />;
         case "empleados":    return <EmpleadosPage />;
@@ -55,13 +98,13 @@ function AppContent() {
     return (
       <div className="flex min-h-screen bg-gray-50">
         <Sidebar
-          active={page}
+          active={currentPage}
           onNavigate={setPage}
           collapsed={collapsed}
           onToggle={() => setCollapsed((c) => !c)}
         />
         <div className="flex flex-col flex-1 min-w-0">
-          <Topbar page={page} onLogout={handleLogout} />
+          <Topbar page={currentPage} onLogout={handleLogout} />
           <main className="flex-1 p-6 overflow-y-auto">
             {renderPage()}
           </main>

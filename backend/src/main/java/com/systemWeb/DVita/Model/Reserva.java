@@ -1,4 +1,5 @@
 package com.systemWeb.DVita.Model;
+import com.systemWeb.DVita.Model.enums.EstadoReserva;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -48,13 +49,10 @@ public class Reserva {
     @Column(name = "fecha_salida", nullable = false)
     private LocalDate fechaSalida;
 
-    @NotBlank(message = "El estado de la reserva es obligatorio")
-    @Pattern(
-            regexp = "PENDIENTE|CONFIRMADA|CANCELADA|COMPLETADA",
-            message = "El estado debe ser: PENDIENTE, CONFIRMADA, CANCELADA o COMPLETADA"
-    )
+    @NotNull(message = "El estado de la reserva es obligatorio")
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado_reserva", nullable = false, length = 20)
-    private String estadoReserva;
+    private EstadoReserva estadoReserva;
 
     @AssertTrue(message = "La fecha de salida debe ser posterior a la fecha de ingreso")
     @Transient

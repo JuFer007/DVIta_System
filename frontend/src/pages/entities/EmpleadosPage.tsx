@@ -80,7 +80,10 @@ export default function EmpleadosPage() {
   const handleToggleActivo = async () => {
     if (!togglingEmpleado) return;
     try {
-      const res = await fetch(`/api/empleados/${togglingEmpleado.id}/toggle-activo`, { method: "PATCH" });
+      const t = (await import("../../services/api")).getAuthToken();
+      const h: Record<string, string> = { "Content-Type": "application/json" };
+      if (t) h["Authorization"] = `Bearer ${t}`;
+      const res = await fetch(`/api/empleados/${togglingEmpleado.id}/toggle-activo`, { method: "PATCH", headers: h });
       if (res.ok) {
         toast.showToast("success", "Estado actualizado", `${togglingEmpleado.nombre} ${togglingEmpleado.apellidoP}`);
         crud.refetch();

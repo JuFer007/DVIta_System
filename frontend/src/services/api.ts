@@ -1,8 +1,22 @@
 export const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
+let authToken: string | null = null;
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+}
+
+export function getAuthToken(): string | null {
+  return authToken;
+}
+
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (authToken) {
+    headers["Authorization"] = `Bearer ${authToken}`;
+  }
   const res = await fetch(`${BASE_URL}/${endpoint}`, {
-    headers: { "Content-Type": "application/json" },
+    headers,
     ...options,
   });
   if (!res.ok) {
@@ -24,6 +38,11 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
 }
 
 export const authService = {
+  login: (nombreUsuario: string, contrasena: string) =>
+    request<{ token: string; user: { idUsuario: number; nombreUsuario: string; nombre: string; idEmpleado: number | null; cargo: string; permisos: Record<string, boolean> } }>("auth/login", {
+      method: "POST",
+      body: JSON.stringify({ nombreUsuario, contrasena }),
+    }),
   getUsuarios: () => request<any[]>("usuarios"),
   getEmpleado: (id: number) => request<any>(`empleados/${id}`),
 };
@@ -166,3 +185,7 @@ export const permisosService = {
 export const reniecService = {
   consultar: (dni: string) => request<any>(`reniec/dni/${dni}`),
 };
+
+export async function verificarAccesoHorario(idEmpleado: number): Promise<{ acceso: boolean; mensaje: string }> {
+  return request(`horarios/verificar-acceso/${idEmpleado}`);
+}

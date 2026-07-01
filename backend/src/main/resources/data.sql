@@ -10,42 +10,116 @@ INSERT IGNORE INTO tipo_habitacion (id_tipo_habitacion, descripcion, precio) VAL
 -- ============================================================
 -- 2) EMPLEADO (15)
 -- ============================================================
-INSERT IGNORE INTO empleado (id_empleado, nombre, apellido_p, apellido_m, dni, telefono, activo) VALUES
-(1, 'MARCELO', 'ALARCON', 'MANAY', '71433244', '999000001', 1),
-(2, 'JAIR', 'OTERO', 'BRENIS', '71374451', '999000002', 1),
-(3, 'OSCAR', 'SANTAMARIA', 'MORALES', '73381544', '999000003', 1),
-(4, 'JUNIOR', 'ZUMAETA', 'GOLAC', '71374454', '999000004', 1),
-(5, 'ANA', 'GONZALES', 'FLORES', '15975348', '999000005', 1),
-(6, 'DIEGO', 'VARGAS', 'RUIZ', '25814736', '999000006', 1),
-(7, 'DVI', 'BOT', 'CHATBOTVIRTUAL', '00000000', '999000007', 1),
-(8, 'MARIA', 'RODRIGUEZ', 'LOPEZ', '12345678', '999000008', 1),
-(9, 'JUAN', 'MARTINEZ', 'SILVA', '23456789', '999000009', 1),
-(10, 'CARMEN', 'FERNANDEZ', 'TORRES', '34567890', '999000010', 1),
-(11, 'PEDRO', 'RAMIREZ', 'PAREDES', '45678901', '999000011', 1),
-(12, 'ELENA', 'SANCHEZ', 'CASTRO', '56789012', '999000012', 1),
-(13, 'LUIS', 'GARCIA', 'MENDOZA', '67890123', '999000013', 1),
-(14, 'SOFIA', 'HERRERA', 'DELGADO', '78901234', '999000014', 1),
-(15, 'ANDRES', 'VEGA', 'CAMPOS', '89012345', '999000015', 1);
+INSERT IGNORE INTO empleado (id_empleado, nombre, apellido_p, apellido_m, dni, telefono, cargo, activo) VALUES
+(1, 'MARCELO', 'ALARCON', 'MANAY', '71433244', '999000001', 'ADMINISTRADOR', 1),
+(2, 'JAIR', 'OTERO', 'BRENIS', '71374451', '999000002', 'ADMINISTRADOR', 1),
+(3, 'OSCAR', 'SANTAMARIA', 'MORALES', '73381544', '999000003', 'ADMINISTRADOR', 1),
+(4, 'JUNIOR', 'ZUMAETA', 'GOLAC', '71374454', '999000004', 'ADMINISTRADOR', 1),
+(5, 'ANA', 'GONZALES', 'FLORES', '15975348', '999000005', 'RECEPCIONISTA', 1),
+(6, 'DIEGO', 'VARGAS', 'RUIZ', '25814736', '999000006', 'RECEPCIONISTA', 1),
+(7, 'DVI', 'BOT', 'CHATBOTVIRTUAL', '00000000', '999000007', 'CHATBOT', 1),
+(8, 'MARIA', 'RODRIGUEZ', 'LOPEZ', '12345678', '999000008', 'RECEPCIONISTA', 1),
+(9, 'JUAN', 'MARTINEZ', 'SILVA', '23456789', '999000009', 'RECEPCIONISTA', 1),
+(10, 'CARMEN', 'FERNANDEZ', 'TORRES', '34567890', '999000010', 'MANTENIMIENTO', 1),
+(11, 'PEDRO', 'RAMIREZ', 'PAREDES', '45678901', '999000011', 'MANTENIMIENTO', 1),
+(12, 'ELENA', 'SANCHEZ', 'CASTRO', '56789012', '999000012', 'LIMPIEZA', 1),
+(13, 'LUIS', 'GARCIA', 'MENDOZA', '67890123', '999000013', 'LIMPIEZA', 1),
+(14, 'SOFIA', 'HERRERA', 'DELGADO', '78901234', '999000014', 'LIMPIEZA', 1),
+(15, 'ANDRES', 'VEGA', 'CAMPOS', '89012345', '999000015', 'RECEPCIONISTA', 1);
 
 -- ============================================================
--- 3) USUARIO (15, pass: 123456)
+-- 3.2) HORARIO (turnos para todos los empleados)
+-- ============================================================
+INSERT IGNORE INTO horario (id_horario, id_empleado, dia_semana, hora_inicio, hora_fin, tipo_turno, estado) VALUES
+(1,  1, 'LUNES',    '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(2,  1, 'MARTES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(3,  1, 'MIERCOLES','06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(4,  1, 'JUEVES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(5,  1, 'VIERNES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(6,  2, 'LUNES',    '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(7,  2, 'MARTES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(8,  2, 'MIERCOLES','06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(9,  2, 'JUEVES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(10, 2, 'VIERNES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(11, 3, 'LUNES',    '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(12, 3, 'MARTES',   '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(13, 3, 'MIERCOLES','14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(14, 3, 'JUEVES',   '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(15, 3, 'VIERNES',  '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(16, 4, 'LUNES',    '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(17, 4, 'MARTES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(18, 4, 'MIERCOLES','06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(19, 4, 'JUEVES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(20, 4, 'VIERNES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(21, 5, 'LUNES',    '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(22, 5, 'MARTES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(23, 5, 'MIERCOLES','06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(24, 5, 'JUEVES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(25, 5, 'VIERNES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(26, 6, 'LUNES',    '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(27, 6, 'MARTES',   '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(28, 6, 'MIERCOLES','14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(29, 6, 'JUEVES',   '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(30, 6, 'VIERNES',  '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(31, 7, 'SABADO',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(32, 7, 'DOMINGO',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(33, 8, 'LUNES',    '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(34, 8, 'MARTES',   '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(35, 8, 'MIERCOLES','14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(36, 8, 'JUEVES',   '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(37, 8, 'VIERNES',  '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(38, 9, 'LUNES',    '22:00:00', '06:00:00', 'NOCHE',   'PROGRAMADO'),
+(39, 9, 'MARTES',   '22:00:00', '06:00:00', 'NOCHE',   'PROGRAMADO'),
+(40, 9, 'MIERCOLES','22:00:00', '06:00:00', 'NOCHE',   'PROGRAMADO'),
+(41, 9, 'JUEVES',   '22:00:00', '06:00:00', 'NOCHE',   'PROGRAMADO'),
+(42, 9, 'VIERNES',  '22:00:00', '06:00:00', 'NOCHE',   'PROGRAMADO'),
+(43, 10, 'LUNES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(44, 10, 'MARTES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(45, 10, 'MIERCOLES','06:00:00', '14:00:00','MAÑANA',  'PROGRAMADO'),
+(46, 10, 'JUEVES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(47, 10, 'VIERNES', '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(48, 11, 'LUNES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(49, 11, 'MARTES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(50, 11, 'MIERCOLES','06:00:00', '14:00:00','MAÑANA',  'PROGRAMADO'),
+(51, 11, 'JUEVES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(52, 11, 'VIERNES', '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(53, 12, 'LUNES',   '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(54, 12, 'MARTES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(55, 12, 'MIERCOLES','06:00:00', '14:00:00','MAÑANA',  'PROGRAMADO'),
+(56, 12, 'JUEVES',  '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(57, 12, 'VIERNES', '06:00:00', '14:00:00', 'MAÑANA',  'PROGRAMADO'),
+(58, 13, 'LUNES',   '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(59, 13, 'MARTES',  '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(60, 13, 'MIERCOLES','14:00:00', '22:00:00','TARDE',   'PROGRAMADO'),
+(61, 13, 'JUEVES',  '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(62, 13, 'VIERNES', '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(63, 14, 'LUNES',   '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(64, 14, 'MARTES',  '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(65, 14, 'MIERCOLES','14:00:00', '22:00:00','TARDE',   'PROGRAMADO'),
+(66, 14, 'JUEVES',  '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(67, 14, 'VIERNES', '14:00:00', '22:00:00', 'TARDE',   'PROGRAMADO'),
+(68, 15, 'SABADO',  '22:00:00', '06:00:00', 'NOCHE',   'PROGRAMADO'),
+(69, 15, 'DOMINGO', '22:00:00', '06:00:00', 'NOCHE',   'PROGRAMADO');
+
+-- ============================================================
+-- 4) USUARIO (15, pass: 1..6 en bcrypt)
 -- ============================================================
 INSERT IGNORE INTO usuario (id_usuario, id_empleado, nombre_usuario, contrasena, activo) VALUES
-(1, 1, 'malarcon', '123456', 1),
-(2, 2, 'jotero', '123456', 1),
-(3, 3, 'osantamaria', '123456', 1),
-(4, 4, 'jzumaeta', '123456', 1),
-(5, 5, 'agonzales', '123456', 1),
-(6, 6, 'dvargas', '123456', 1),
-(7, 7, 'dbot', '123456', 1),
-(8, 8, 'mrodriguez', '123456', 1),
-(9, 9, 'jmartinez', '123456', 1),
-(10, 10, 'cfernandez', '123456', 1),
-(11, 11, 'pramirez', '123456', 1),
-(12, 12, 'esanchez', '123456', 1),
-(13, 13, 'lgarcia', '123456', 1),
-(14, 14, 'sherrera', '123456', 1),
-(15, 15, 'avega', '123456', 1);
+(1, 1, 'malarcon', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(2, 2, 'jotero', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(3, 3, 'osantamaria', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(4, 4, 'jzumaeta', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(5, 5, 'agonzales', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(6, 6, 'dvargas', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(7, 7, 'dbot', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(8, 8, 'mrodriguez', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(9, 9, 'jmartinez', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(10, 10, 'cfernandez', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(11, 11, 'pramirez', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(12, 12, 'esanchez', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(13, 13, 'lgarcia', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(14, 14, 'sherrera', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1),
+(15, 15, 'avega', '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 1);
 
 -- ============================================================
 -- 4) CLIENTE (15)
@@ -95,9 +169,15 @@ INSERT IGNORE INTO area (id_area, nombre, prioridad_base, nivel_prioridad, descr
 (7, 'OTRO', 'MEDIA', 2, 'Otras áreas no especificadas', 1);
 
 -- ============================================================
--- 7) MODULO PERMISO (15 usuarios × 8 módulos = 120)
+-- 7) MODULO PERMISO (por cargo)
+-- ADMINISTRADOR (1-4): todos los modulos
+-- RECEPCIONISTA (5,6,8,9,15): CLIENTES, HABITACIONES, RESERVAS, PAGOS
+-- CHATBOT     (7):     solo INCIDENCIAS
+-- MANTENIMIENTO (10,11): HABITACIONES, INCIDENCIAS
+-- LIMPIEZA   (12-14):  HABITACIONES, INCIDENCIAS
 -- ============================================================
 INSERT IGNORE INTO modulo_permiso (id_modulo_permiso, id_usuario, modulo, puede_acceder) VALUES
+-- Usuarios 1-4: ADMINISTRADOR (todos los modulos)
 (1, 1, 'CLIENTES',1),(2, 1, 'EMPLEADOS',1),(3, 1, 'HABITACIONES',1),(4, 1, 'TIPOS_HABITACION',1),
 (5, 1, 'RESERVAS',1),(6, 1, 'PAGOS',1),(7, 1, 'USUARIOS',1),(8, 1, 'INCIDENCIAS',1),
 (9, 2, 'CLIENTES',1),(10, 2, 'EMPLEADOS',1),(11, 2, 'HABITACIONES',1),(12, 2, 'TIPOS_HABITACION',1),
@@ -106,28 +186,23 @@ INSERT IGNORE INTO modulo_permiso (id_modulo_permiso, id_usuario, modulo, puede_
 (21, 3, 'RESERVAS',1),(22, 3, 'PAGOS',1),(23, 3, 'USUARIOS',1),(24, 3, 'INCIDENCIAS',1),
 (25, 4, 'CLIENTES',1),(26, 4, 'EMPLEADOS',1),(27, 4, 'HABITACIONES',1),(28, 4, 'TIPOS_HABITACION',1),
 (29, 4, 'RESERVAS',1),(30, 4, 'PAGOS',1),(31, 4, 'USUARIOS',1),(32, 4, 'INCIDENCIAS',1),
-(33, 5, 'CLIENTES',1),(34, 5, 'EMPLEADOS',1),(35, 5, 'HABITACIONES',1),(36, 5, 'TIPOS_HABITACION',1),
-(37, 5, 'RESERVAS',1),(38, 5, 'PAGOS',1),(39, 5, 'USUARIOS',1),(40, 5, 'INCIDENCIAS',1),
-(41, 6, 'CLIENTES',1),(42, 6, 'EMPLEADOS',1),(43, 6, 'HABITACIONES',1),(44, 6, 'TIPOS_HABITACION',1),
-(45, 6, 'RESERVAS',1),(46, 6, 'PAGOS',1),(47, 6, 'USUARIOS',1),(48, 6, 'INCIDENCIAS',1),
-(49, 7, 'CLIENTES',1),(50, 7, 'EMPLEADOS',1),(51, 7, 'HABITACIONES',1),(52, 7, 'TIPOS_HABITACION',1),
-(53, 7, 'RESERVAS',1),(54, 7, 'PAGOS',1),(55, 7, 'USUARIOS',1),(56, 7, 'INCIDENCIAS',1),
-(57, 8, 'CLIENTES',1),(58, 8, 'EMPLEADOS',1),(59, 8, 'HABITACIONES',1),(60, 8, 'TIPOS_HABITACION',1),
-(61, 8, 'RESERVAS',1),(62, 8, 'PAGOS',1),(63, 8, 'USUARIOS',1),(64, 8, 'INCIDENCIAS',1),
-(65, 9, 'CLIENTES',1),(66, 9, 'EMPLEADOS',1),(67, 9, 'HABITACIONES',1),(68, 9, 'TIPOS_HABITACION',1),
-(69, 9, 'RESERVAS',1),(70, 9, 'PAGOS',1),(71, 9, 'USUARIOS',1),(72, 9, 'INCIDENCIAS',1),
-(73, 10, 'CLIENTES',1),(74, 10, 'EMPLEADOS',1),(75, 10, 'HABITACIONES',1),(76, 10, 'TIPOS_HABITACION',1),
-(77, 10, 'RESERVAS',1),(78, 10, 'PAGOS',1),(79, 10, 'USUARIOS',1),(80, 10, 'INCIDENCIAS',1),
-(81, 11, 'CLIENTES',1),(82, 11, 'EMPLEADOS',1),(83, 11, 'HABITACIONES',1),(84, 11, 'TIPOS_HABITACION',1),
-(85, 11, 'RESERVAS',1),(86, 11, 'PAGOS',1),(87, 11, 'USUARIOS',1),(88, 11, 'INCIDENCIAS',1),
-(89, 12, 'CLIENTES',1),(90, 12, 'EMPLEADOS',1),(91, 12, 'HABITACIONES',1),(92, 12, 'TIPOS_HABITACION',1),
-(93, 12, 'RESERVAS',1),(94, 12, 'PAGOS',1),(95, 12, 'USUARIOS',1),(96, 12, 'INCIDENCIAS',1),
-(97, 13, 'CLIENTES',1),(98, 13, 'EMPLEADOS',1),(99, 13, 'HABITACIONES',1),(100, 13, 'TIPOS_HABITACION',1),
-(101, 13, 'RESERVAS',1),(102, 13, 'PAGOS',1),(103, 13, 'USUARIOS',1),(104, 13, 'INCIDENCIAS',1),
-(105, 14, 'CLIENTES',1),(106, 14, 'EMPLEADOS',1),(107, 14, 'HABITACIONES',1),(108, 14, 'TIPOS_HABITACION',1),
-(109, 14, 'RESERVAS',1),(110, 14, 'PAGOS',1),(111, 14, 'USUARIOS',1),(112, 14, 'INCIDENCIAS',1),
-(113, 15, 'CLIENTES',1),(114, 15, 'EMPLEADOS',1),(115, 15, 'HABITACIONES',1),(116, 15, 'TIPOS_HABITACION',1),
-(117, 15, 'RESERVAS',1),(118, 15, 'PAGOS',1),(119, 15, 'USUARIOS',1),(120, 15, 'INCIDENCIAS',1);
+-- Usuarios 5,6,8,9,15: RECEPCIONISTA (CLIENTES, HABITACIONES, RESERVAS, PAGOS)
+(33, 5, 'CLIENTES',1),(34, 5, 'HABITACIONES',1),(35, 5, 'RESERVAS',1),(36, 5, 'PAGOS',1),
+(37, 6, 'CLIENTES',1),(38, 6, 'HABITACIONES',1),(39, 6, 'RESERVAS',1),(40, 6, 'PAGOS',1),
+-- Usuario 7: CHATBOT (solo INCIDENCIAS)
+(41, 7, 'INCIDENCIAS',1),
+-- Usuarios 8,9,15: RECEPCIONISTA (CLIENTES, HABITACIONES, RESERVAS, PAGOS)
+(42, 8, 'CLIENTES',1),(43, 8, 'HABITACIONES',1),(44, 8, 'RESERVAS',1),(45, 8, 'PAGOS',1),
+(46, 9, 'CLIENTES',1),(47, 9, 'HABITACIONES',1),(48, 9, 'RESERVAS',1),(49, 9, 'PAGOS',1),
+-- Usuarios 10,11: MANTENIMIENTO (HABITACIONES, INCIDENCIAS)
+(50, 10, 'HABITACIONES',1),(51, 10, 'INCIDENCIAS',1),
+(52, 11, 'HABITACIONES',1),(53, 11, 'INCIDENCIAS',1),
+-- Usuarios 12,13,14: LIMPIEZA (HABITACIONES, INCIDENCIAS)
+(54, 12, 'HABITACIONES',1),(55, 12, 'INCIDENCIAS',1),
+(56, 13, 'HABITACIONES',1),(57, 13, 'INCIDENCIAS',1),
+(58, 14, 'HABITACIONES',1),(59, 14, 'INCIDENCIAS',1),
+-- Usuario 15: RECEPCIONISTA (CLIENTES, HABITACIONES, RESERVAS, PAGOS)
+(60, 15, 'CLIENTES',1),(61, 15, 'HABITACIONES',1),(62, 15, 'RESERVAS',1),(63, 15, 'PAGOS',1);
 
 -- ============================================================
 -- 8) RESERVA (20)

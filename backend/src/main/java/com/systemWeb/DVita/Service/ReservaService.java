@@ -5,6 +5,8 @@ import com.systemWeb.DVita.Model.Empleado;
 import com.systemWeb.DVita.Model.Habitacion;
 import com.systemWeb.DVita.Model.Pago;
 import com.systemWeb.DVita.Model.Reserva;
+import com.systemWeb.DVita.Model.enums.EstadoHabitacion;
+import com.systemWeb.DVita.Model.enums.EstadoReserva;
 import com.systemWeb.DVita.Repository.ClienteRepository;
 import com.systemWeb.DVita.Repository.EmpleadoRepository;
 import com.systemWeb.DVita.Repository.HabitacionRepository;
@@ -72,7 +74,7 @@ public class ReservaService {
                 .fechaReserva(request.getFechaReserva())
                 .fechaIngreso(request.getFechaIngreso())
                 .fechaSalida(request.getFechaSalida())
-                .estadoReserva(request.getEstadoReserva())
+                .estadoReserva(request.getEstadoReserva() != null ? EstadoReserva.valueOf(request.getEstadoReserva()) : null)
                 .build();
 
         Reserva saved = reservaRepository.save(reserva);
@@ -160,7 +162,6 @@ public class ReservaService {
                 .reserva(reserva)
                 .monto(monto)
                 .fechaPago(LocalDate.now())
-                .metodoPago("PENDIENTE")
                 .build();
 
         pagoRepository.save(pago);
@@ -171,19 +172,19 @@ public class ReservaService {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
 
-        if ("CANCELADA".equals(reserva.getEstadoReserva()) ||
-                "COMPLETADA".equals(reserva.getEstadoReserva())) {
+        if (EstadoReserva.CANCELADA == reserva.getEstadoReserva() ||
+                EstadoReserva.COMPLETADA == reserva.getEstadoReserva()) {
             throw new IllegalStateException(
                     "No se puede cancelar una reserva con estado: " + reserva.getEstadoReserva()
             );
         }
 
-        reserva.setEstadoReserva("CANCELADA");
+        reserva.setEstadoReserva(EstadoReserva.CANCELADA);
         reservaRepository.save(reserva);
 
         Habitacion habitacion = reserva.getHabitacion();
-        if (habitacion != null && "OCUPADA".equals(habitacion.getEstado())) {
-            habitacion.setEstado("EN_LIMPIEZA");
+        if (habitacion != null && EstadoHabitacion.OCUPADA == habitacion.getEstado()) {
+            habitacion.setEstado(EstadoHabitacion.EN_LIMPIEZA);
             habitacionRepository.save(habitacion);
         }
 
@@ -196,19 +197,19 @@ public class ReservaService {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
 
-        if ("CANCELADA".equals(reserva.getEstadoReserva()) ||
-                "COMPLETADA".equals(reserva.getEstadoReserva())) {
+        if (EstadoReserva.CANCELADA == reserva.getEstadoReserva() ||
+                EstadoReserva.COMPLETADA == reserva.getEstadoReserva()) {
             throw new IllegalStateException(
                     "No se puede hacer check-in en una reserva con estado: " + reserva.getEstadoReserva()
             );
         }
 
-        reserva.setEstadoReserva("CONFIRMADA");
+        reserva.setEstadoReserva(EstadoReserva.CONFIRMADA);
         reservaRepository.save(reserva);
 
         Habitacion habitacion = reserva.getHabitacion();
         if (habitacion != null) {
-            habitacion.setEstado("OCUPADA");
+            habitacion.setEstado(EstadoHabitacion.OCUPADA);
             habitacionRepository.save(habitacion);
         }
         return reserva;
@@ -219,18 +220,18 @@ public class ReservaService {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada con id: " + id));
 
-        if (!"CONFIRMADA".equals(reserva.getEstadoReserva())) {
+        if (EstadoReserva.CONFIRMADA != reserva.getEstadoReserva()) {
             throw new IllegalStateException(
                     "Solo se puede hacer check-out en reservas CONFIRMADAS. Estado actual: " + reserva.getEstadoReserva()
             );
         }
 
-        reserva.setEstadoReserva("COMPLETADA");
+        reserva.setEstadoReserva(EstadoReserva.COMPLETADA);
         reservaRepository.save(reserva);
 
         Habitacion habitacion = reserva.getHabitacion();
         if (habitacion != null) {
-            habitacion.setEstado("EN_LIMPIEZA");
+            habitacion.setEstado(EstadoHabitacion.EN_LIMPIEZA);
             habitacionRepository.save(habitacion);
         }
         return reserva;
@@ -241,15 +242,15 @@ public class ReservaService {
     public void autoCompletarReservasVencidas() {
         LocalDate hoy = LocalDate.now();
         List<Reserva> vencidas = reservaRepository.findAll().stream()
-                .filter(r -> ("CONFIRMADA".equals(r.getEstadoReserva()) || "OCUPADA".equals(r.getEstadoReserva()))
+                .filter(r -> (EstadoReserva.CONFIRMADA == r.getEstadoReserva())
                         && r.getFechaSalida() != null && r.getFechaSalida().isBefore(hoy))
                 .collect(Collectors.toList());
         for (Reserva r : vencidas) {
-            r.setEstadoReserva("COMPLETADA");
+            r.setEstadoReserva(EstadoReserva.COMPLETADA);
             reservaRepository.save(r);
             Habitacion h = r.getHabitacion();
-            if (h != null && "OCUPADA".equals(h.getEstado())) {
-                h.setEstado("EN_LIMPIEZA");
+            if (h != null && EstadoHabitacion.OCUPADA == h.getEstado()) {
+                h.setEstado(EstadoHabitacion.EN_LIMPIEZA);
                 habitacionRepository.save(h);
             }
         }
@@ -258,7 +259,7 @@ public class ReservaService {
     @Scheduled(cron = "0 0 8 * * ?")
     public void enviarRecordatoriosCheckIn() {
         LocalDate manana = LocalDate.now().plusDays(1);
-        List<Reserva> reservas = reservaRepository.findByFechaIngresoAndEstadoReservaNot(manana, "CANCELADA");
+        List<Reserva> reservas = reservaRepository.findByFechaIngresoAndEstadoReservaNot(manana, EstadoReserva.CANCELADA.name());
         for (Reserva r : reservas) {
             emailService.enviarRecordatorioCheckIn(r);
         }

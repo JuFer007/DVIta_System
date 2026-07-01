@@ -7,6 +7,7 @@ import { useCrud } from "../../hooks/useCrud";
 import { habitacionesService, tiposService, downloadPdf } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 import { useToast } from "../../components/Toast";
+import { useAuth } from "../../context/AuthContext";
 
 const mapHabitacion = (h: any) => ({
   id: h.idHabitacion,
@@ -42,6 +43,8 @@ export default function HabitacionesPage() {
   const tiposCrud = useCrud(tiposService, mapTipo, DEMO_TIPOS);
   const toast     = useToast();
   const m = useModalState();
+  const { puedeEditar } = useAuth();
+  const puedeEscribir = puedeEditar("HABITACIONES");
 
   const [cambiando, setCambiando] = useState<number | null>(null);
 
@@ -143,9 +146,9 @@ export default function HabitacionesPage() {
             },
           },
           { key: "precioFmt", label: "Precio" },
-          {
+          ...(puedeEscribir ? [{
             key: "_acciones", label: "ACCIONES",
-            render: (_, row: any) => {
+            render: (_: any, row: any) => {
               if (cambiando === row.id) return <Loader2 className="w-4 h-4 animate-spin text-neutral-400" />;
               return (
                 <div className="flex gap-1">
@@ -180,9 +183,42 @@ export default function HabitacionesPage() {
                 </div>
               );
             },
-          },
+          }] : [{
+            key: "_acciones", label: "ACCIONES",
+            render: (_: any, row: any) => {
+              if (cambiando === row.id) return <Loader2 className="w-4 h-4 animate-spin text-neutral-400" />;
+              return (
+                <div className="flex gap-1">
+                  {row.estado === "DISPONIBLE" && (
+                    <button onClick={() => handleCambiarEstado(row, "EN_LIMPIEZA")}
+                      className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors">
+                      <Sparkles className="w-3.5 h-3.5" /> LIMPIEZA
+                    </button>
+                  )}
+                  {row.estado === "EN_LIMPIEZA" && (
+                    <button onClick={() => handleCambiarEstado(row, "DISPONIBLE")}
+                      className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-green-700 bg-green-100 hover:bg-green-200 rounded-lg transition-colors">
+                      <CheckCircle className="w-3.5 h-3.5" /> LISTO
+                    </button>
+                  )}
+                  {row.estado === "DISPONIBLE" && (
+                    <button onClick={() => handleCambiarEstado(row, "MANTENIMIENTO")}
+                      className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-neutral-700 bg-neutral-200 hover:bg-neutral-300 rounded-lg transition-colors">
+                      <Wrench className="w-3.5 h-3.5" /> MANT.
+                    </button>
+                  )}
+                  {row.estado === "MANTENIMIENTO" && (
+                    <button onClick={() => handleCambiarEstado(row, "DISPONIBLE")}
+                      className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-green-700 bg-green-100 hover:bg-green-200 rounded-lg transition-colors">
+                      <CheckCircle className="w-3.5 h-3.5" /> HABILITAR
+                    </button>
+                  )}
+                </div>
+              );
+            },
+          }]),
         ]}
-        onNew={m.openNew}
+        onNew={puedeEscribir ? m.openNew : undefined}
         headerExtra={
           <button onClick={() => downloadPdf("/api/habitaciones/pdf/reporte", "habitaciones.pdf")}
             className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">

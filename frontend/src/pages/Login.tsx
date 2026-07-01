@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { authService, permisosService } from "../services/api";
+import { authService, setAuthToken, verificarAccesoHorario } from "../services/api";
+import { useToast } from "../components/Toast";
 
 const BG_IMAGES = [
   "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80",
@@ -17,6 +18,7 @@ interface Props {
 
 export default function Login({ onBack }: Props) {
   const { login } = useAuth();
+  const toast = useToast();
   const [form, setForm] = useState({ usuario: "", contrasena: "" });
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
@@ -32,40 +34,31 @@ export default function Login({ onBack }: Props) {
     }
     setLoading(true);
     try {
-      const usuarios = await authService.getUsuarios();
-      const match = usuarios.find(
-        (u: any) =>
-          u.nombreUsuario.toLowerCase() === form.usuario.toLowerCase() && u.contrasena === form.contrasena
-      );
-      if (!match) {
-        setError("Usuario o contraseña incorrectos.");
-        setLoading(false);
-        return;
-      }
-      if (match.activo === false) {
-        setError("Usuario inactivo. Contacta al administrador.");
-        setLoading(false);
-        return;
-      }
-      const idEmpleado = match.empleado?.idEmpleado ?? undefined;
-      let nombre = match.empleado?.nombre ?? "Usuario";
-      if (idEmpleado) {
+      const res = await authService.login(form.usuario, form.contrasena);
+      setAuthToken(res.token);
+      if (res.user.idEmpleado) {
         try {
-          const emp = await authService.getEmpleado(idEmpleado);
-          nombre = `${emp.nombre ?? ""} ${emp.apellidoP ?? ""}`.trim();
-        } catch { /* usar nombre parcial */ }
+          const acceso = await verificarAccesoHorario(res.user.idEmpleado);
+          if (!acceso.acceso) {
+            setAuthToken(null);
+            setError(acceso.mensaje);
+            toast.showToast("warning", "Fuera de horario", acceso.mensaje);
+            setLoading(false);
+            return;
+          }
+        } catch { /* si falla el check, permitir acceso */ }
       }
-      let permisos: Record<string, boolean> = {};
-      try {
-        const p = await permisosService.getByUsuario(match.idUsuario);
-        permisos = (p || []).reduce((acc: any, perm: any) => {
-          acc[perm.modulo] = perm.activo;
-          return acc;
-        }, {} as Record<string, boolean>);
-      } catch { /* sin permisos, se conceden todos */ }
-      login({ idUsuario: match.idUsuario, nombreUsuario: match.nombreUsuario, nombre, idEmpleado, permisos });
-    } catch {
-      login({ idUsuario: 0, nombreUsuario: form.usuario, nombre: "Usuario Demo", idEmpleado: undefined, permisos: {} });
+      login({
+        idUsuario: res.user.idUsuario,
+        nombreUsuario: res.user.nombreUsuario,
+        nombre: res.user.nombre,
+        idEmpleado: res.user.idEmpleado ?? undefined,
+        token: res.token,
+        cargo: res.user.cargo,
+        permisos: res.user.permisos,
+      });
+    } catch (err: any) {
+      setError(err.message || "Usuario o contrasena incorrectos.");
     } finally {
       setLoading(false);
     }
@@ -184,41 +177,41 @@ export default function Login({ onBack }: Props) {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-            <div>
-              <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-brand-600 mb-2">
+            <div className="group">
+              <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-brand-600 mb-2 group-focus-within:text-brand-500 transition-colors">
                 Usuario
               </label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-neutral-700 pointer-events-none" />
                 <input
                   type="text"
-                  placeholder="nombre_usuario"
+                  placeholder="Nombre de usuario"
                   value={form.usuario}
                   onChange={(e) => setForm((f) => ({ ...f, usuario: e.target.value }))}
                   autoComplete="username"
-                  className="w-full pl-10 pr-4 py-3 bg-brand-50/70 border border-brand-100 rounded-xl text-[14px] text-brand-900 placeholder:text-neutral-700 focus:outline-none focus:border-brand-400 focus:bg-white focus:ring-[3px] focus:ring-brand-100 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-brand-50/70 border border-brand-100 rounded-xl text-[14px] text-brand-900 placeholder:text-neutral-400 transition-all duration-300 ease-out focus:outline-none focus:border-brand-400 focus:bg-white focus:ring-[3px] focus:ring-brand-100 focus:shadow-lg focus:shadow-brand-100/50 focus:scale-[1.01]"
                 />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-neutral-700 pointer-events-none" />
               </div>
             </div>
- 
-            <div>
-              <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-brand-600 mb-2">
+
+            <div className="group">
+              <label className="block text-[10px] font-bold tracking-[0.18em] uppercase text-brand-600 mb-2 group-focus-within:text-brand-500 transition-colors">
                 Contraseña
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-neutral-700 pointer-events-none" />
                 <input
                   type={showPass ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder="Ingrese su contraseña"
                   value={form.contrasena}
                   onChange={(e) => setForm((f) => ({ ...f, contrasena: e.target.value }))}
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-11 py-3 bg-brand-50/70 border border-brand-100 rounded-xl text-[14px] text-brand-900 placeholder:text-neutral-700 focus:outline-none focus:border-brand-400 focus:bg-white focus:ring-[3px] focus:ring-brand-100 transition-all"
+                  className="w-full pl-10 pr-11 py-3 bg-brand-50/70 border border-brand-100 rounded-xl text-[14px] text-brand-900 placeholder:text-neutral-400 transition-all duration-300 ease-out focus:outline-none focus:border-brand-400 focus:bg-white focus:ring-[3px] focus:ring-brand-100 focus:shadow-lg focus:shadow-brand-100/50 focus:scale-[1.01]"
                 />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-neutral-700 pointer-events-none" />
                 <button
                   type="button"
                   onClick={() => setShowPass((s) => !s)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-700 hover:text-brand-500 transition-colors"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-brand-500 transition-colors"
                 >
                   {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
