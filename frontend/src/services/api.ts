@@ -142,14 +142,11 @@ export async function downloadPdf(url: string, _filename?: string) {
     const res = await fetch(url, { headers });
     const ct = res.headers.get("content-type") || "";
     if (!res.ok) {
-      let msg = `Error al generar PDF (${res.status})`;
-      try { const body = await res.text(); if (body) msg = body; } catch {}
-      window.dispatchEvent(new CustomEvent("pdf-loading-error", { detail: msg }));
-      throw new Error(msg);
+      window.dispatchEvent(new CustomEvent("pdf-loading-error", { detail: "El servicio de PDF no está disponible en este momento" }));
+      throw new Error("El servicio de PDF no está disponible en este momento");
     }
     if (!ct.includes("application/pdf")) {
-      const body = await res.text();
-      window.dispatchEvent(new CustomEvent("pdf-loading-error", { detail: "El servidor no devolvió un PDF. Revisa la consola para más detalles." }));
+      window.dispatchEvent(new CustomEvent("pdf-loading-error", { detail: "El servicio de PDF no está disponible en este momento" }));
       throw new Error("Respuesta no es PDF: " + ct);
     }
     const blob = await res.blob();

@@ -8,6 +8,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+
 public class ReporteFinancieroPdfService {
     private final PdfService pdfService;
     private final DashboardService dashboardService;

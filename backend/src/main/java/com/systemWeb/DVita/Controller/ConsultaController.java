@@ -3,6 +3,7 @@ import com.systemWeb.DVita.Config.SpringUserAdapter;
 import com.systemWeb.DVita.Model.Consulta;
 import com.systemWeb.DVita.Model.Empleado;
 import com.systemWeb.DVita.Service.ConsultaService;
+import com.systemWeb.DVita.Service.MicroServicios.ConsultaPdfService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +19,16 @@ import java.util.Map;
 
 public class ConsultaController {
     private final ConsultaService consultaService;
+    private final ConsultaPdfService consultaPdfService;
 
     @GetMapping
     public ResponseEntity<List<Consulta>> listarTodas() {
         return ResponseEntity.ok(consultaService.listarTodas());
+    }
+
+    @GetMapping(value = "/pdf/reporte", produces = "application/pdf")
+    public ResponseEntity<byte[]> pdfReporte() {
+        return ResponseEntity.ok(consultaPdfService.generarReporteConsultas());
     }
 
     @PostMapping

@@ -43,7 +43,7 @@ export default function PdfLoadingOverlay() {
             <div className="w-14 h-14 rounded-xl bg-red-100 flex items-center justify-center">
               <AlertCircle className="w-7 h-7 text-red-600" />
             </div>
-            <p className="text-[15px] font-semibold text-gray-800">Error al generar PDF</p>
+            <p className="text-[15px] font-semibold text-gray-800">PDF no disponible</p>
             <p className="text-[12px] text-red-600 text-center break-words">{error}</p>
             <button
               onClick={() => { setLoading(false); setError(null); }}

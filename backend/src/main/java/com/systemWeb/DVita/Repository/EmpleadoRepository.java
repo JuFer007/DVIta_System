@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 
 public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
+    java.util.Optional<Empleado> findByDni(String dni);
 }

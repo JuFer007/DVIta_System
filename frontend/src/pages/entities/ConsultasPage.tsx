@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { MessageSquare, Send, Eye, CheckCircle, Clock, User } from "lucide-react";
+import { MessageSquare, Send, Eye, CheckCircle, Clock, User, FileText } from "lucide-react";
 import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
-import { consultasService } from "../../services/api";
+import { consultasService, downloadPdf } from "../../services/api";
 import { useToast } from "../../components/Toast";
 
 type Filtro = "todas" | "pendientes" | "respondidas";
@@ -167,6 +167,12 @@ export default function ConsultasPage() {
         data={filtradas}
         loading={loading}
         error={error}
+        headerExtra={
+          <button onClick={() => downloadPdf("/api/consultas/pdf/reporte", "consultas.pdf")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
+            <FileText className="w-3.5 h-3.5" /> PDF General
+          </button>
+        }
         columns={[
           { key: "nombre", label: "Nombre", render: (v: string) => v?.toUpperCase() || "—" },
           { key: "email",  label: "Email" },

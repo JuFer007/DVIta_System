@@ -2,125 +2,122 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Reporte de Incidencias — D'Vita</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+@page{margin:18mm 14mm}
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--br:#3D1F0A;--text:#1C1A18;--text-2:#6B6560;--text-3:#9E9890;--border:#E2DED9;--bg-alt:#F7F6F4;--white:#FFFFFF}
-body{font-family:'Inter',system-ui,sans-serif;font-size:11px;line-height:1.55;color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased}
-
-.hdr{background:#995832;border-bottom:1px solid #874e2c;padding:20px 36px;display:flex;align-items:center;justify-content:space-between}
-.hdr-logo{display:flex;align-items:center;gap:12px}
-.hdr-logo img{width:34px;height:34px;border-radius:50%;opacity:.85}
-.hdr-brand{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:600;color:#fff;letter-spacing:.05em}
-.hdr-brand small{display:block;font-family:'Inter',sans-serif;font-size:8.5px;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
-.hdr-right{text-align:right}
-.hdr-title{font-size:13px;font-weight:600;color:#fff;letter-spacing:-.01em}
-.hdr-date{font-size:9px;color:rgba(255,255,255,.55);margin-top:3px;letter-spacing:.04em}
-
-.body{padding:28px 36px 36px}
-
-/* period */
-.period{display:flex;align-items:baseline;gap:8px;padding:11px 14px;border:1px solid var(--border);border-radius:3px;border-left:3px solid var(--br);margin-bottom:22px}
-.period-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:500;flex-shrink:0}
-.period-val{font-size:12px;font-weight:600;color:var(--text)}
-
-/* double stat group */
-.stat-groups{display:flex;gap:12px;margin-bottom:26px}
-.stat-group{flex:1;border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.stat-group-title{padding:8px 14px;border-bottom:1px solid var(--border);background:var(--bg-alt);font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3)}
+body{font-family:'Inter',-apple-system,system-ui,sans-serif;font-size:10px;line-height:1.5;color:#1C1917;background:#fff;-webkit-font-smoothing:antialiased}
+.page{max-width:840px;margin:0 auto;padding:8px 0 0}
+table,tr,td,th{page-break-inside:avoid}
+h2,p,div{page-break-after:avoid}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #F0EFED}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.hdr-logo{width:42px;height:42px;border-radius:50%;background:#3D1F0A;display:flex;align-items:center;justify-content:center;color:#D99B6E;font-size:18px;font-weight:700;flex-shrink:0}
+.hdr-company{font-size:18px;font-weight:700;color:#3D1F0A;letter-spacing:-0.01em;line-height:1.2}
+.hdr-company small{display:block;font-size:9px;font-weight:400;color:#9A948D;letter-spacing:0.08em;text-transform:uppercase;margin-top:1px}
+.hdr-r{text-align:right}
+.hdr-title{font-size:16px;font-weight:600;color:#1C1917;letter-spacing:-0.01em}
+.hdr-meta{font-size:9.5px;color:#9A948D;margin-top:4px;line-height:1.6}
+.hdr-meta span{color:#3D1F0A;font-weight:500}
+.accent{height:3px;background:linear-gradient(90deg,#C9A96E,#3D1F0A);margin-bottom:28px;border-radius:2px}
+.period{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#FAF9F7;border-left:3px solid #C9A96E;border-radius:4px;margin-bottom:24px}
+.period-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;font-weight:500}
+.period-val{font-size:12px;font-weight:600;color:#1C1917}
+.stats-row{display:flex;gap:14px;margin-bottom:24px}
+.stat-box{flex:1;border:1px solid #E8E5E0;border-radius:4px;overflow:hidden}
+.stat-box-title{padding:9px 14px;border-bottom:1px solid #E8E5E0;background:#FAF9F7;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D}
 .stat-items{display:flex}
-.stat-item{flex:1;padding:14px 14px;border-right:1px solid var(--border);text-align:center}
+.stat-item{flex:1;padding:14px 8px;text-align:center;border-right:1px solid #F0EFED}
 .stat-item:last-child{border-right:none}
-.stat-n{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1}
-.stat-l{font-size:8.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-top:4px}
-
-.sec{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.sec h2{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);white-space:nowrap}
-.sec-line{flex:1;height:1px;background:var(--border)}
-
+.stat-n{font-size:20px;font-weight:700;color:#3D1F0A;line-height:1;letter-spacing:-0.01em}
+.stat-l{font-size:8px;text-transform:uppercase;letter-spacing:0.05em;color:#9A948D;margin-top:4px}
+.sec{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.sec h2{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9A948D}
+.sec-line{flex:1;height:1px;background:#F0EFED}
 table{width:100%;border-collapse:collapse;font-size:10px}
-thead th{padding:8px 10px;background:var(--bg-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);text-align:left}
+thead th{padding:9px 10px;background:#FAF9F7;border-top:1px solid #E8E5E0;border-bottom:1px solid #E8E5E0;font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;text-align:left}
 thead th.c{text-align:center}
-tbody td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody td{padding:9px 10px;border-bottom:1px solid #F0EFED;color:#44403A;vertical-align:middle}
 tbody td.c{text-align:center}
-tbody tr:nth-child(even) td{background:var(--bg-alt)}
-.td-id{color:var(--text-3);font-size:9px;font-weight:500;text-align:center;width:32px}
-.td-main{font-weight:500}
-.td-2{color:var(--text-2);font-size:10px}
-.pill{display:inline-block;padding:2px 8px;border-radius:2px;font-size:9px;font-weight:500;background:var(--bg-alt);border:1px solid var(--border);color:var(--text-2)}
-
-.ftr{padding:13px 36px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.ftr-l{font-size:8.5px;color:var(--text-3);line-height:1.6}
-.ftr-l strong{font-size:8.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em}
-.ftr-r{font-size:8.5px;color:var(--text-3);text-align:right}
+tbody tr:nth-child(even) td{background:#FBFAF9}
+.td-id{color:#9A948D;font-size:9px;font-weight:500;text-align:center;width:30px}
+.td-main{font-weight:500;color:#1C1917}
+.td-2{color:#78716B;font-size:9.5px}
+.ftr{margin-top:36px;padding-top:18px;border-top:1px solid #E8E5E0;display:flex;justify-content:space-between;align-items:flex-end}
+.ftr-l{font-size:9px;color:#9A948D;line-height:1.6}
+.ftr-l strong{font-size:10px;font-weight:600;color:#3D1F0A;text-transform:uppercase;letter-spacing:0.04em}
+.ftr-r{font-size:8.5px;color:#B8B2AA;text-align:right}
+.ftr-r span{display:inline-block;width:8px;height:8px;border-radius:50%;background:#C9A96E;margin-right:6px;vertical-align:middle}
 </style>
 </head>
 <body>
+<div class="page">
 
 <div class="hdr">
-  <div class="hdr-logo">
-    <img src="http://localhost:3005/recursos/DVita_Logo.png" alt="" onerror="this.style.display='none'">
-    <div class="hdr-brand">D'VITA<small>Hospedaje: Sistema de Administración y Gestión Hotelera</small></div>
-  </div>
-  <div class="hdr-right">
-    <div class="hdr-title">Reporte de Incidencias</div>
-    <div class="hdr-date">Generado el {{fechaGeneracion}}</div>
-  </div>
+<div class="hdr-l">
+<img class="hdr-logo" src="http://localhost:3005/recursos/DVita_Logo.png" alt="D'Vita" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+<div class="hdr-logo" style="display:none">DV</div>
+<div class="hdr-company">D'VITA<small>Hospedaje &middot; Sistema de Gesti&oacute;n Hotelera</small></div>
+</div>
+<div class="hdr-r">
+<div class="hdr-title">Reporte de Incidencias</div>
+<div class="hdr-meta">Generado el <span>{{fechaGeneracion}}</span></div>
+</div>
 </div>
 
-<div class="body">
+<div class="accent"></div>
 
-  <div class="period">
-    <span class="period-lbl">Período</span>
-    <span class="period-val">{{desde}} — {{hasta}}</span>
-  </div>
-
-  <div class="stat-groups">
-    <div class="stat-group">
-      <div class="stat-group-title">Por estado</div>
-      <div class="stat-items">
-        <div class="stat-item"><div class="stat-n">{{total}}</div><div class="stat-l">Total</div></div>
-        <div class="stat-item"><div class="stat-n">{{abierto}}</div><div class="stat-l">Abierto</div></div>
-        <div class="stat-item"><div class="stat-n">{{enProceso}}</div><div class="stat-l">Proceso</div></div>
-        <div class="stat-item"><div class="stat-n">{{resuelto}}</div><div class="stat-l">Resuelto</div></div>
-        <div class="stat-item"><div class="stat-n">{{cerrado}}</div><div class="stat-l">Cerrado</div></div>
-      </div>
-    </div>
-    <div class="stat-group">
-      <div class="stat-group-title">Por prioridad</div>
-      <div class="stat-items">
-        <div class="stat-item"><div class="stat-n">{{urgente}}</div><div class="stat-l">Urgente</div></div>
-        <div class="stat-item"><div class="stat-n">{{alta}}</div><div class="stat-l">Alta</div></div>
-        <div class="stat-item"><div class="stat-n">{{media}}</div><div class="stat-l">Media</div></div>
-        <div class="stat-item"><div class="stat-n">{{baja}}</div><div class="stat-l">Baja</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="sec"><h2>Listado detallado</h2><div class="sec-line"></div></div>
-
-  <table>
-    <thead>
-      <tr>
-        <th class="c">ID</th>
-        <th>Descripción</th>
-        <th>Tipo</th>
-        <th>Área</th>
-        <th class="c">Prioridad</th>
-        <th class="c">Estado</th>
-        <th class="c">Fecha</th>
-      </tr>
-    </thead>
-    <tbody>{{incidencias}}</tbody>
-  </table>
-
+<div class="period">
+<span class="period-lbl">Per&iacute;odo</span>
+<span class="period-val">{{desde}} &mdash; {{hasta}}</span>
 </div>
+
+<div class="stats-row">
+<div class="stat-box">
+<div class="stat-box-title">Por estado</div>
+<div class="stat-items">
+<div class="stat-item"><div class="stat-n">{{total}}</div><div class="stat-l">Total</div></div>
+<div class="stat-item"><div class="stat-n">{{abierto}}</div><div class="stat-l">Abierto</div></div>
+<div class="stat-item"><div class="stat-n">{{enProceso}}</div><div class="stat-l">Proceso</div></div>
+<div class="stat-item"><div class="stat-n">{{resuelto}}</div><div class="stat-l">Resuelto</div></div>
+<div class="stat-item"><div class="stat-n">{{cerrado}}</div><div class="stat-l">Cerrado</div></div>
+</div>
+</div>
+<div class="stat-box">
+<div class="stat-box-title">Por prioridad</div>
+<div class="stat-items">
+<div class="stat-item"><div class="stat-n">{{urgente}}</div><div class="stat-l">Urgente</div></div>
+<div class="stat-item"><div class="stat-n">{{alta}}</div><div class="stat-l">Alta</div></div>
+<div class="stat-item"><div class="stat-n">{{media}}</div><div class="stat-l">Media</div></div>
+<div class="stat-item"><div class="stat-n">{{baja}}</div><div class="stat-l">Baja</div></div>
+</div>
+</div>
+</div>
+
+<div class="sec"><h2>Listado detallado</h2><div class="sec-line"></div></div>
+
+<table>
+<thead>
+<tr>
+<th class="c">ID</th>
+<th>Descripci&oacute;n</th>
+<th>Tipo</th>
+<th>&Aacute;rea</th>
+<th class="c">Prioridad</th>
+<th class="c">Estado</th>
+<th class="c">Fecha</th>
+</tr>
+</thead>
+<tbody>{{incidencias}}</tbody>
+</table>
 
 <div class="ftr">
-  <div class="ftr-l"><strong>D'Vita Hospedaje &amp; Suites</strong><br>Víctor Raúl Haya de la Torre N° 281 · Chiclayo, Perú · +51 922 626 148</div>
-  <div class="ftr-r">Documento generado automáticamente<br>Sistema de Gestión Hotelera</div>
+<div class="ftr-l"><strong>D'Vita Hospedaje</strong><br>V&iacute;ctor Ra&uacute;l Haya de la Torre N&deg; 281 · Chiclayo, Per&uacute; · +51 922 626 148</div>
+<div class="ftr-r"><span></span>Documento generado autom&aacute;ticamente</div>
 </div>
 
+</div>
+<div style="height:12px;"></div>
 </body>
 </html>

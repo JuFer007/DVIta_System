@@ -1,22 +1,26 @@
 package com.systemWeb.DVita.Service.MicroServicios;
 import com.systemWeb.DVita.Model.Incidencia;
 import com.systemWeb.DVita.Model.IncidenciaResolucion;
+import com.systemWeb.DVita.Model.enums.EstadoIncidencia;
+import com.systemWeb.DVita.Model.enums.Prioridad;
 import com.systemWeb.DVita.Repository.IncidenciaRepository;
 import com.systemWeb.DVita.Repository.IncidenciaResolucionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class IncidenciaPdfService {
     private final PdfService pdfService;
     private final IncidenciaRepository incidenciaRepository;
     private final IncidenciaResolucionRepository incidenciaResolucionRepository;
 
+    @Transactional(readOnly = true)
     public byte[] generarHistorialIncidencia(Long idIncidencia) {
         Incidencia inc = incidenciaRepository.findById(idIncidencia)
                 .orElseThrow(() -> new RuntimeException("Incidencia no encontrada: " + idIncidencia));
@@ -61,18 +65,19 @@ public class IncidenciaPdfService {
         return pdfService.generarPdf("/generar-historial-incidencia", data);
     }
 
+    @Transactional(readOnly = true)
     public byte[] generarReporteIncidencias(LocalDate desde, LocalDate hasta) {
         List<Incidencia> incidencias = incidenciaRepository.findByFechaBetween(desde, hasta);
 
         long total = incidencias.size();
-        long abierto = incidencias.stream().filter(i -> "ABIERTO".equals(i.getEstado())).count();
-        long enProceso = incidencias.stream().filter(i -> "EN_PROCESO".equals(i.getEstado())).count();
-        long resuelto = incidencias.stream().filter(i -> "RESUELTO".equals(i.getEstado())).count();
-        long cerrado = incidencias.stream().filter(i -> "CERRADO".equals(i.getEstado())).count();
-        long urgente = incidencias.stream().filter(i -> "URGENTE".equals(i.getPrioridad())).count();
-        long alta = incidencias.stream().filter(i -> "ALTA".equals(i.getPrioridad())).count();
-        long media = incidencias.stream().filter(i -> "MEDIA".equals(i.getPrioridad())).count();
-        long baja = incidencias.stream().filter(i -> "BAJA".equals(i.getPrioridad())).count();
+        long abierto = incidencias.stream().filter(i -> EstadoIncidencia.ABIERTO == i.getEstado()).count();
+        long enProceso = incidencias.stream().filter(i -> EstadoIncidencia.EN_PROCESO == i.getEstado()).count();
+        long resuelto = incidencias.stream().filter(i -> EstadoIncidencia.RESUELTO == i.getEstado()).count();
+        long cerrado = incidencias.stream().filter(i -> EstadoIncidencia.CERRADO == i.getEstado()).count();
+        long urgente = incidencias.stream().filter(i -> Prioridad.URGENTE == i.getPrioridad()).count();
+        long alta = incidencias.stream().filter(i -> Prioridad.ALTA == i.getPrioridad()).count();
+        long media = incidencias.stream().filter(i -> Prioridad.MEDIA == i.getPrioridad()).count();
+        long baja = incidencias.stream().filter(i -> Prioridad.BAJA == i.getPrioridad()).count();
 
         List<Map<String, Object>> incidenciasList = incidencias.stream().map(i -> {
             Map<String, Object> m = new LinkedHashMap<>();

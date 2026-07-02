@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/empleados")
@@ -20,6 +21,15 @@ public class EmpleadoController {
     @GetMapping
     public ResponseEntity<List<Empleado>> listarTodos() {
         return ResponseEntity.ok(empleadoService.listarTodos());
+    }
+
+    @GetMapping("/chatbot")
+    public ResponseEntity<Map<String, Object>> chatbot() {
+        return empleadoService.buscarChatbot()
+                .<ResponseEntity<Map<String, Object>>>map(e ->
+                        ResponseEntity.ok(Map.of("idEmpleado", e.getIdEmpleado()))
+                )
+                .orElse(ResponseEntity.ok(Map.of("idEmpleado", null)));
     }
 
     @GetMapping("/{id}")

@@ -371,6 +371,80 @@ app.post("/generar-reporte-empleados", async (req, res) => {
   }
 });
 
+// ─── 10. Reporte de horarios ────────────────────────────────
+app.post("/generar-reporte-horarios", async (req, res) => {
+  try {
+    const { stats, filas, fechaGeneracion } = req.body;
+    const DIAS = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"];
+    const htmlFilas = (filas || []).map((f, idx) => {
+      const celdas = DIAS.map(d => {
+        const info = f.dias && f.dias[d];
+        if (!info) return `<td class="l"><span class="shift-none">--</span></td>`;
+        const turnoCls = `shift-${info.tipoTurno}`;
+        return `<td class="l">
+          <span class="shift ${turnoCls}">${info.tipoTurno}<span class="shift-time">${info.horaInicio}–${info.horaFin}</span></span>
+          <span class="estado-badge estado-${info.estado}">${info.estado}</span>
+        </td>`;
+      }).join("");
+      return `<tr class="${idx % 2 === 0 ? 'fila-par' : 'fila-impar'}">
+        <td class="l"><div class="emp">${f.empleado}<small>${f.cargo} · ${f.dni}</small></div></td>
+        ${celdas}
+      </tr>`;
+    }).join("");
+
+    let tpl = loadTemplate("reporte-horarios.html");
+    tpl = replaceAll(tpl, {
+      totalHorarios: String(stats?.totalHorarios ?? 0),
+      empleadosConHorario: String(stats?.empleadosConHorario ?? 0),
+      fechaGeneracion: fechaGeneracion || "",
+      filas: htmlFilas,
+    });
+
+    const pdf = await generatePdf(tpl);
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(Buffer.from(pdf));
+  } catch (err) {
+    console.error("Error al generar reporte horarios:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── 11. Reporte de consultas ───────────────────────────────
+app.post("/generar-reporte-consultas", async (req, res) => {
+  try {
+    const { stats, consultas, fechaGeneracion } = req.body;
+    const filas = (consultas || []).map((c, idx) => `
+      <tr class="${idx % 2 === 0 ? 'fila-par' : 'fila-impar'}">
+        <td class="c td-id">${c.id}</td>
+        <td class="td-main">${c.nombre}</td>
+        <td class="td-2">${c.email}</td>
+        <td><span class="msg td-2">${c.mensaje}</span></td>
+        <td class="c td-2">${c.fecha}</td>
+        <td class="c">${
+          c.respondido
+            ? '<span class="tag tag-ok">Respondida</span>'
+            : '<span class="tag tag-pending">Pendiente</span>'
+        }</td>
+      </tr>`).join("");
+
+    let tpl = loadTemplate("reporte-consultas.html");
+    tpl = replaceAll(tpl, {
+      total: String(stats?.total ?? 0),
+      pendientes: String(stats?.pendientes ?? 0),
+      respondidas: String(stats?.respondidas ?? 0),
+      fechaGeneracion: fechaGeneracion || "",
+      consultas: filas,
+    });
+
+    const pdf = await generatePdf(tpl);
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(Buffer.from(pdf));
+  } catch (err) {
+    console.error("Error al generar reporte consultas:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log(`D'Vita PDF Service running on port ${PORT}`);

@@ -139,7 +139,7 @@ export default function Topbar({ page, onLogout }: Props) {
     try {
       await fetch("/api/email/enviar", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}) },
         body: JSON.stringify({
           para: selected.email,
           asunto: selected.tipo === "reserva"

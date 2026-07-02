@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Clock, Plus, Search, ChevronDown, AlertCircle, X, Save, Loader2, Trash2 } from "lucide-react";
+import { Clock, Plus, Search, ChevronDown, AlertCircle, X, Save, Loader2, Trash2, FileText } from "lucide-react";
 import { useCrud } from "../../hooks/useCrud";
 import { useModalState } from "../../hooks/useModalState";
-import { empleadosService, getAuthToken } from "../../services/api";
+import { empleadosService, getAuthToken, downloadPdf } from "../../services/api";
 import { useToast } from "../../components/Toast";
 
 const authHeaders = (): Record<string, string> => {
@@ -384,13 +384,19 @@ export default function HorariosPage() {
               Gestión de turnos y horarios del personal
             </p>
           </div>
-          <button
-            onClick={m.openNew}
-            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-[13px] font-semibold rounded-lg transition-colors shadow-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Nuevo horario
-          </button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => downloadPdf("/api/horarios/pdf/reporte", "horarios.pdf")}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
+                <FileText className="w-3.5 h-3.5" /> PDF General
+              </button>
+              <button
+                onClick={m.openNew}
+                className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-[13px] font-semibold rounded-lg transition-colors shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Nuevo horario
+              </button>
+            </div>
         </div>
 
         <div className="grid grid-cols-3 gap-3">

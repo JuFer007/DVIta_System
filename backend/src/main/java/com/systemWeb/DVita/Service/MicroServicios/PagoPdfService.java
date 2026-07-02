@@ -3,6 +3,7 @@ import com.systemWeb.DVita.Model.Pago;
 import com.systemWeb.DVita.Repository.PagoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -10,10 +11,12 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+
 public class PagoPdfService {
     private final PdfService pdfService;
     private final PagoRepository pagoRepository;
 
+    @Transactional(readOnly = true)
     public byte[] generarReportePagos() {
         List<Pago> pagos = pagoRepository.findAll();
 

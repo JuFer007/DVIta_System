@@ -2,6 +2,7 @@ package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Horario;
 import com.systemWeb.DVita.Model.enums.EstadoHorario;
 import com.systemWeb.DVita.Service.HorarioService;
+import com.systemWeb.DVita.Service.MicroServicios.HorarioPdfService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.Map;
 public class HorarioController {
 
     private final HorarioService horarioService;
+    private final HorarioPdfService horarioPdfService;
 
     @GetMapping
     public ResponseEntity<List<Horario>> listarTodos() {
@@ -49,6 +51,11 @@ public class HorarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Horario> actualizar(@PathVariable Long id, @Valid @RequestBody Horario horario) {
         return ResponseEntity.ok(horarioService.actualizar(id, horario));
+    }
+
+    @GetMapping(value = "/pdf/reporte", produces = "application/pdf")
+    public ResponseEntity<byte[]> pdfReporte() {
+        return ResponseEntity.ok(horarioPdfService.generarReporteHorarios());
     }
 
     @DeleteMapping("/{id}")

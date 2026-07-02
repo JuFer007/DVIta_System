@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { downloadPdf } from "../services/api";
+import { downloadPdf, getAuthToken } from "../services/api";
 import {
   BarChart2, TrendingUp, DollarSign, BedDouble,
   Calendar, RefreshCw, AlertCircle, ArrowUp, ArrowDown, Minus,
@@ -50,7 +50,10 @@ function useData<T>(url: string, fallback: T): [T, boolean, boolean] {
 
   useEffect(() => {
     setLoad(true);
-    fetch(url)
+    const headers: Record<string, string> = {};
+    const token = getAuthToken();
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    fetch(url, { headers })
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(d  => { setData(d); setIsDemo(false); })
       .catch(() => { setData(fallback); setIsDemo(true); })
@@ -439,10 +442,10 @@ export default function ReportesPage() {
       <div>
         <SectionHeader title="Ocupación por tipo de habitación" subtitle="Estado actual del inventario" />
         {loading
-          ? <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">{Array.from({length:3}).map((_,i)=><Skeleton key={i} className="h-36 rounded-sm"/>)}</div>
+          ? <div className="flex gap-4">{Array.from({length:4}).map((_,i)=><Skeleton key={i} className="h-36 flex-1 rounded-sm"/>)}</div>
           : (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {ocup.map((o) => <OcupacionCard key={o.tipo} data={o} />)}
+            <div className="flex gap-4">
+              {ocup.map((o) => <div key={o.tipo} className="flex-1"><OcupacionCard data={o} /></div>)}
             </div>
           )
         }

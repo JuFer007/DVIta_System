@@ -8,7 +8,7 @@
 @page{margin:18mm 14mm}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,system-ui,sans-serif;font-size:10.5px;line-height:1.5;color:#1C1917;background:#fff;-webkit-font-smoothing:antialiased}
-.page{max-width:800px;margin:0 auto;padding:8px 0 0}
+.page{max-width:840px;margin:0 auto;padding:8px 0 0}
 table,tr,td,th{page-break-inside:avoid}
 h2,p,div{page-break-after:avoid}
 .hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #F0EFED}
@@ -21,32 +21,33 @@ h2,p,div{page-break-after:avoid}
 .hdr-meta{font-size:9.5px;color:#9A948D;margin-top:4px;line-height:1.6}
 .hdr-meta span{color:#3D1F0A;font-weight:500}
 .accent{height:3px;background:linear-gradient(90deg,#C9A96E,#3D1F0A);margin-bottom:28px;border-radius:2px}
-/* occupancy bar */
-.occ{display:flex;align-items:center;gap:20px;padding:16px 20px;background:#FAF9F7;border-left:3px solid #C9A96E;border-radius:4px;margin-bottom:20px}
-.occ-pct{font-size:30px;font-weight:700;color:#3D1F0A;letter-spacing:-0.02em;line-height:1;flex-shrink:0;min-width:64px}
-.occ-pct span{font-size:15px;font-weight:400;color:#9A948D}
-.occ-meta{flex:1}
-.occ-label{font-size:9.5px;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;font-weight:500;margin-bottom:6px}
-.occ-track{height:6px;background:#E8E5E0;border-radius:3px;overflow:hidden}
-.occ-fill{height:100%;background:linear-gradient(90deg,#C9A96E,#3D1F0A);border-radius:3px;width:{{pctOcupacion}}%}
 .stats{display:flex;gap:14px;margin-bottom:28px}
-.stat{flex:1;padding:16px 18px;background:#FAF9F7;border-left:3px solid #C9A96E;border-radius:4px}
-.stat-n{font-size:22px;font-weight:700;color:#3D1F0A;letter-spacing:-0.02em;line-height:1}
-.stat-l{font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;font-weight:500;margin-top:5px}
+.stat{flex:1;padding:16px 20px;background:#FAF9F7;border-left:3px solid #C9A96E;border-radius:4px}
+.stat-n{font-size:24px;font-weight:700;color:#3D1F0A;letter-spacing:-0.02em;line-height:1}
+.stat-l{font-size:9.5px;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;font-weight:500;margin-top:6px}
 .sec{display:flex;align-items:center;gap:14px;margin-bottom:14px}
 .sec h2{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9A948D}
 .sec-line{flex:1;height:1px;background:#F0EFED}
-table{width:100%;border-collapse:collapse;font-size:10.5px}
-thead th{padding:10px 12px;background:#FAF9F7;border-top:1px solid #E8E5E0;border-bottom:1px solid #E8E5E0;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;text-align:left}
-thead th.c{text-align:center}
-thead th.r{text-align:right}
-tbody td{padding:10px 12px;border-bottom:1px solid #F0EFED;color:#44403A;vertical-align:middle}
-tbody td.c{text-align:center}
-tbody td.r{text-align:right}
+table{width:100%;border-collapse:collapse;font-size:9.5px}
+thead th{padding:8px 8px;background:#FAF9F7;border-top:1px solid #E8E5E0;border-bottom:1px solid #E8E5E0;font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;text-align:center;white-space:nowrap}
+thead th.l{text-align:left}
+tbody td{padding:7px 8px;border-bottom:1px solid #F0EFED;color:#44403A;vertical-align:middle;text-align:center}
+tbody td.l{text-align:left}
 tbody tr:nth-child(even) td{background:#FBFAF9}
-.td-n{color:#9A948D;font-size:9px;text-align:center;width:32px}
-.td-main{font-weight:500;color:#1C1917}
-.td-2{color:#78716B}
+.emp{font-weight:500;color:#1C1917;font-size:10px}
+.emp small{display:block;font-weight:400;color:#9A948D;font-size:8.5px}
+.shift{display:inline-block;padding:2px 6px;border-radius:4px;font-size:8px;font-weight:600;white-space:nowrap}
+.shift-MAÑANA{background:#FEF3C7;color:#92400E}
+.shift-TARDE{background:#FFEDD5;color:#9A3412}
+.shift-NOCHE{background:#E0E7FF;color:#3730A3}
+.shift-PERSONALIZADO{background:#F3E8FF;color:#6B21A8}
+.shift-time{display:block;font-size:8px;color:#78716B;font-weight:400;margin-top:1px}
+.shift-none{color:#D8D4CF;font-size:8px}
+.estado-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:7.5px;font-weight:600}
+.estado-PROGRAMADO{background:#E8E5E0;color:#78716B}
+.estado-EN_CURSO{background:#BBF7D0;color:#166534}
+.estado-COMPLETADO{background:#D1D5DB;color:#374151}
+.estado-AUSENTE{background:#FEE2E2;color:#991B1B}
 .ftr{margin-top:36px;padding-top:18px;border-top:1px solid #E8E5E0;display:flex;justify-content:space-between;align-items:flex-end}
 .ftr-l{font-size:9px;color:#9A948D;line-height:1.6}
 .ftr-l strong{font-size:10px;font-weight:600;color:#3D1F0A;text-transform:uppercase;letter-spacing:0.04em}
@@ -64,41 +65,34 @@ tbody tr:nth-child(even) td{background:#FBFAF9}
 <div class="hdr-company">D'VITA<small>Hospedaje &middot; Sistema de Gesti&oacute;n Hotelera</small></div>
 </div>
 <div class="hdr-r">
-<div class="hdr-title">Estado de Habitaciones</div>
+<div class="hdr-title">Horarios del Personal</div>
 <div class="hdr-meta">Generado el <span>{{fechaGeneracion}}</span></div>
 </div>
 </div>
 
 <div class="accent"></div>
 
-<div class="occ">
-<div class="occ-pct">{{pctOcupacion}}<span>%</span></div>
-<div class="occ-meta">
-<div class="occ-label">Tasa de ocupaci&oacute;n</div>
-<div class="occ-track"><div class="occ-fill"></div></div>
-</div>
-</div>
-
 <div class="stats">
-<div class="stat"><div class="stat-n">{{total}}</div><div class="stat-l">Total</div></div>
-<div class="stat"><div class="stat-n">{{disponibles}}</div><div class="stat-l">Disponibles</div></div>
-<div class="stat"><div class="stat-n">{{ocupadas}}</div><div class="stat-l">Ocupadas</div></div>
-<div class="stat"><div class="stat-n">{{mantenimiento}}</div><div class="stat-l">Mantenimiento</div></div>
-<div class="stat"><div class="stat-n">{{limpieza}}</div><div class="stat-l">En limpieza</div></div>
+<div class="stat"><div class="stat-n">{{totalHorarios}}</div><div class="stat-l">Turnos registrados</div></div>
+<div class="stat"><div class="stat-n">{{empleadosConHorario}}</div><div class="stat-l">Empleados con horario</div></div>
 </div>
 
-<div class="sec"><h2>Listado de habitaciones</h2><div class="sec-line"></div></div>
+<div class="sec"><h2>Distribuci&oacute;n semanal de turnos</h2><div class="sec-line"></div></div>
 
 <table>
 <thead>
 <tr>
-<th class="c">N&deg;</th>
-<th>Tipo de habitaci&oacute;n</th>
-<th class="c">Estado</th>
-<th class="r">Precio / noche</th>
+<th class="l" style="min-width:120px">Empleado</th>
+<th>LUN</th>
+<th>MAR</th>
+<th>MI&Eacute;</th>
+<th>JUE</th>
+<th>VIE</th>
+<th>S&Aacute;B</th>
+<th>DOM</th>
 </tr>
 </thead>
-<tbody>{{habitaciones}}</tbody>
+<tbody>{{filas}}</tbody>
 </table>
 
 <div class="ftr">

@@ -1,27 +1,30 @@
 package com.systemWeb.DVita.Service.MicroServicios;
 import com.systemWeb.DVita.Model.Reserva;
+import com.systemWeb.DVita.Model.enums.EstadoReserva;
 import com.systemWeb.DVita.Repository.ReservaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class ReservaPdfService {
     private final PdfService pdfService;
     private final ReservaRepository reservaRepository;
 
+    @Transactional(readOnly = true)
     public byte[] generarReporteReservas(LocalDate desde, LocalDate hasta) {
         List<Reserva> reservas = reservaRepository.findByFechaReservaBetween(desde, hasta);
 
         long total = reservas.size();
-        long pendiente = reservas.stream().filter(r -> "PENDIENTE".equals(r.getEstadoReserva())).count();
-        long confirmada = reservas.stream().filter(r -> "CONFIRMADA".equals(r.getEstadoReserva())).count();
-        long completada = reservas.stream().filter(r -> "COMPLETADA".equals(r.getEstadoReserva())).count();
-        long cancelada = reservas.stream().filter(r -> "CANCELADA".equals(r.getEstadoReserva())).count();
+        long pendiente = reservas.stream().filter(r -> EstadoReserva.PENDIENTE == r.getEstadoReserva()).count();
+        long confirmada = reservas.stream().filter(r -> EstadoReserva.CONFIRMADA == r.getEstadoReserva()).count();
+        long completada = reservas.stream().filter(r -> EstadoReserva.COMPLETADA == r.getEstadoReserva()).count();
+        long cancelada = reservas.stream().filter(r -> EstadoReserva.CANCELADA == r.getEstadoReserva()).count();
 
         List<Map<String, Object>> reservasList = reservas.stream().map(r -> {
             Map<String, Object> m = new LinkedHashMap<>();

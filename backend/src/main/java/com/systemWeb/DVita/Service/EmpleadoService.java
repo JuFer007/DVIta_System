@@ -45,6 +45,10 @@ public class EmpleadoService {
         }).orElseThrow(() -> new RuntimeException("Empleado no encontrado con id: " + id));
     }
 
+    public Optional<Empleado> buscarChatbot() {
+        return empleadoRepository.findByDni("00000000");
+    }
+
     public Empleado toggleActivo(Long id) {
         return empleadoRepository.findById(id).map(empleado -> {
             empleado.setActivo(!empleado.getActivo());

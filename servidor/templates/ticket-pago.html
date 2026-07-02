@@ -1,280 +1,112 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Comprobante de Pago - D'Vita</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    @media print { body { margin: 0; padding: 0; } }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Courier Prime', 'Courier New', monospace;
-      width: 80mm;
-      margin: 0 auto;
-      padding: 8px;
-      background: #fff;
-      font-size: 11px;
-      line-height: 1.35;
-      color: #1a1a1a;
-    }
-    .ticket {
-      background: #fff;
-      padding: 0 5mm 10px;
-    }
-    .cabecera {
-      text-align: center;
-      padding: 14px 0 10px;
-      border-bottom: 1px dashed #3D1F0A;
-      margin-bottom: 8px;
-    }
-    .logo-img {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 0 auto 6px;
-      display: block;
-    }
-    .logo-circle {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: #3D1F0A;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 6px;
-      color: #D99B6E;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -1px;
-    }
-    .negocio {
-      font-size: 13px;
-      font-weight: 700;
-      color: #3D1F0A;
-      letter-spacing: 0.5px;
-      margin: 3px 0;
-    }
-    .info-negocio {
-      font-size: 9px;
-      color: #6B4226;
-      margin: 2px 0;
-    }
-    .separador {
-      border: none;
-      border-top: 1px dashed #3D1F0A;
-      margin: 7px 0;
-    }
-    .separador-doble {
-      border: none;
-      border-top: 2px solid #3D1F0A;
-      margin: 7px 0;
-    }
-    .info-ticket {
-      font-size: 10px;
-      margin: 3px 0;
-      color: #1a1a1a;
-    }
-    .info-ticket strong {
-      display: inline-block;
-      width: 100px;
-      color: #3D1F0A;
-    }
-    .seccion-titulo {
-      font-weight: 700;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #B8622A;
-      margin: 9px 0 4px;
-      border-bottom: 1px solid #D99B6E;
-      padding-bottom: 2px;
-    }
-    .card-info {
-      background: #FDF6EF;
-      border: 1px solid #E8D5C0;
-      border-left: 3px solid #D99B6E;
-      padding: 6px 8px;
-      margin: 5px 0;
-      font-size: 10px;
-      color: #1a1a1a;
-    }
-    .card-info div { margin: 2px 0; }
-    .card-info strong { color: #3D1F0A; }
-    .tabla-servicios { width: 100%; margin: 8px 0; }
-    .tabla-header {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
-      font-size: 9px;
-      letter-spacing: 1px;
-      color: #3D1F0A;
-      border-bottom: 1px solid #3D1F0A;
-      padding-bottom: 3px;
-      margin-bottom: 3px;
-    }
-    .col-concepto { flex: 1; }
-    .col-monto { width: 80px; text-align: right; }
-    .servicio {
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
-      padding: 4px 0;
-      border-bottom: 1px dotted #E8D5C0;
-    }
-    .servicio:last-child { border-bottom: none; }
-    .concepto {
-      flex: 1;
-      padding-right: 8px;
-      color: #1a1a1a;
-    }
-    .monto {
-      width: 80px;
-      text-align: right;
-      white-space: nowrap;
-      color: #3D1F0A;
-      font-weight: 700;
-    }
-    .metodo-badge {
-      display: inline-block;
-      background: #FDF6EF;
-      border: 1px solid #D99B6E;
-      color: #3D1F0A;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 1px 7px;
-      letter-spacing: 0.5px;
-    }
-    .totales {
-      margin-top: 8px;
-      border-top: 1px dashed #3D1F0A;
-      padding-top: 6px;
-    }
-    .fila-total {
-      display: flex;
-      justify-content: space-between;
-      margin: 3px 0;
-      font-size: 11px;
-      color: #1a1a1a;
-    }
-    .fila-total.final {
-      font-weight: 700;
-      font-size: 13px;
-      color: #3D1F0A;
-      margin-top: 5px;
-      padding-top: 5px;
-      border-top: 2px solid #3D1F0A;
-    }
-    .desc-total { flex: 1; }
-    .precio-total {
-      width: 80px;
-      text-align: right;
-      display: flex;
-      justify-content: flex-end;
-      gap: 2px;
-    }
-    .moneda { color: #B8622A; }
-    .pie {
-      text-align: center;
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px dashed #3D1F0A;
-      font-size: 9px;
-      color: #6B4226;
-    }
-    .pie .mensaje {
-      font-weight: 700;
-      font-size: 10px;
-      color: #3D1F0A;
-      margin: 4px 0;
-      letter-spacing: 0.5px;
-    }
-    .pie .contacto { margin: 2px 0; color: #B8622A; }
-    .pie .linea { color: #D99B6E; margin-top: 6px; letter-spacing: 3px; }
-  </style>
+<meta charset="UTF-8">
+<title>Comprobante de Pago - D'Vita</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@media print { body { margin: 0; padding: 0; } }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  width: 80mm; margin: 0 auto; padding: 0;
+  background: #fff; font-size: 10.5px; line-height: 1.4; color: #1C1917;
+}
+.ticket { background: #fff; padding: 0 4mm 10px; }
+.top-bar { height: 2px; background: linear-gradient(90deg,#C9A96E,#3D1F0A); margin: 0 -4mm 0; }
+.cabecera { text-align: center; padding: 14px 0 10px; border-bottom: 1px dashed #D8D4CF; margin-bottom: 8px; }
+.logo-img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; margin: 0 auto 4px; display: block; }
+.logo-circle { width: 44px; height: 44px; border-radius: 50%; background: #3D1F0A; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px; color: #D99B6E; font-size: 18px; font-weight: 700; }
+.negocio { font-size: 13px; font-weight: 700; color: #3D1F0A; letter-spacing: 0.04em; margin: 3px 0; }
+.info-negocio { font-size: 9px; color: #9A948D; margin: 2px 0; }
+.separador { border: none; border-top: 1px dashed #D8D4CF; margin: 7px 0; }
+.separador-doble { border: none; border-top: 2px solid #E8E5E0; margin: 7px 0; }
+.info-ticket { font-size: 10px; margin: 3px 0; color: #44403A; }
+.info-ticket strong { display: inline-block; width: 100px; color: #3D1F0A; }
+.seccion-titulo { font-weight: 700; font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; color: #9A948D; margin: 8px 0 3px; }
+.card-info { background: #FAF9F7; border-left: 3px solid #C9A96E; padding: 6px 8px; margin: 5px 0; font-size: 10px; color: #44403A; }
+.card-info div { margin: 2px 0; }
+.card-info strong { color: #3D1F0A; }
+.tabla-servicios { width: 100%; margin: 8px 0; }
+.tabla-header { display: flex; justify-content: space-between; font-weight: 700; font-size: 9px; letter-spacing: 0.08em; color: #9A948D; border-bottom: 1px solid #E8E5E0; padding-bottom: 3px; margin-bottom: 3px; }
+.col-concepto { flex: 1; }
+.col-monto { width: 80px; text-align: right; }
+.servicio { display: flex; justify-content: space-between; font-size: 10px; padding: 4px 0; border-bottom: 1px dotted #F0EFED; }
+.servicio:last-child { border-bottom: none; }
+.concepto { flex: 1; padding-right: 8px; color: #44403A; }
+.monto { width: 80px; text-align: right; white-space: nowrap; color: #3D1F0A; font-weight: 700; }
+.metodo-badge { display: inline-block; background: #FAF9F7; border: 1px solid #E8E5E0; color: #3D1F0A; font-size: 9px; font-weight: 600; padding: 1px 7px; }
+.totales { margin-top: 8px; border-top: 1px dashed #D8D4CF; padding-top: 6px; }
+.fila-total { display: flex; justify-content: space-between; margin: 3px 0; font-size: 11px; color: #44403A; }
+.fila-total.final { font-weight: 700; font-size: 13px; color: #3D1F0A; margin-top: 5px; padding-top: 5px; border-top: 2px solid #3D1F0A; }
+.desc-total { flex: 1; }
+.precio-total { width: 80px; text-align: right; display: flex; justify-content: flex-end; gap: 2px; }
+.moneda { color: #9A948D; }
+.pie { text-align: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #D8D4CF; font-size: 9px; color: #9A948D; }
+.pie .mensaje { font-weight: 600; font-size: 10px; color: #3D1F0A; margin: 4px 0; }
+.pie .contacto { margin: 2px 0; color: #B8B2AA; }
+.pie .linea { color: #D8D4CF; margin-top: 6px; letter-spacing: 3px; }
+</style>
 </head>
 <body>
+<div class="top-bar"></div>
 <div class="ticket">
 
-  <!-- CABECERA -->
-  <div class="cabecera">
-    <img class="logo-img" src="http://localhost:3005/recursos/DVita_Logo.png" alt="D'Vita" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="logo-circle" style="display:none">DV</div>
-    <div class="negocio">D'VITA</div>
-    <div class="info-negocio">Hospedaje D'Vita · Sistema de Gesti&oacute;n Hotelera</div>
-    <div class="info-negocio">Victor Raul Haya de la Torre N&deg; 281 · Chiclayo</div>
-    <div class="info-negocio">Celular: +51 922 626 148</div>
-  </div>
+<div class="cabecera">
+<img class="logo-img" src="http://localhost:3005/recursos/DVita_Logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+<div class="logo-circle" style="display:none">DV</div>
+<div class="negocio">D'VITA</div>
+<div class="info-negocio">Victor Raul Haya de la Torre N&deg; 281 · Chiclayo</div>
+<div class="info-negocio">+51 922 626 148</div>
+</div>
 
-  <!-- INFO TICKET -->
-  <div class="info-ticket"><strong>N° COMPROBANTE:</strong> #{{idPago}}</div>
-  <div class="info-ticket"><strong>N° RESERVA:</strong> #{{idReserva}}</div>
-  <div class="info-ticket"><strong>FECHA DE PAGO:</strong> {{fechaPago}}</div>
+<div class="info-ticket"><strong>N&deg; COMPROBANTE:</strong> #{{idPago}}</div>
+<div class="info-ticket"><strong>N&deg; RESERVA:</strong> #{{idReserva}}</div>
+<div class="info-ticket"><strong>FECHA DE PAGO:</strong> {{fechaPago}}</div>
 
-  <hr class="separador">
+<hr class="separador">
 
-  <!-- INFO CLIENTE -->
-  <div class="seccion-titulo">Datos del hu&eacute;sped</div>
-  <div class="card-info">
-    <div><strong>Nombre:</strong> {{cliente}}</div>
-    <div><strong>DNI:</strong> {{dni}}</div>
-  </div>
+<div class="seccion-titulo">Datos del hu&eacute;sped</div>
+<div class="card-info">
+<div><strong>Nombre:</strong> {{cliente}}</div>
+<div><strong>DNI:</strong> {{dni}}</div>
+</div>
 
-  <!-- INFO HABITACION -->
-  <div class="seccion-titulo">Detalle de la estad&iacute;a</div>
-  <div class="card-info">
-    <div><strong>Habitaci&oacute;n:</strong> {{tipoHabitacion}} · N°{{habitacion}}</div>
-    <div><strong>Check-in:</strong> {{fechaIngreso}}</div>
-    <div><strong>Check-out:</strong> {{fechaSalida}}</div>
-    <div><strong>Noches:</strong> {{noches}}</div>
-  </div>
+<div class="seccion-titulo">Detalle de la estad&iacute;a</div>
+<div class="card-info">
+<div><strong>Habitaci&oacute;n:</strong> {{tipoHabitacion}} &middot; N&deg;{{habitacion}}</div>
+<div><strong>Check-in:</strong> {{fechaIngreso}}</div>
+<div><strong>Check-out:</strong> {{fechaSalida}}</div>
+<div><strong>Noches:</strong> {{noches}}</div>
+</div>
 
-  <hr class="separador">
+<hr class="separador">
 
-  <!-- SERVICIOS -->
-  <div class="tabla-servicios">
-    <div class="tabla-header">
-      <div class="col-concepto">CONCEPTO</div>
-      <div class="col-monto">MONTO</div>
-    </div>
-    <div id="servicios">
-      {{servicios}}
-    </div>
-  </div>
+<div class="tabla-servicios">
+<div class="tabla-header">
+<div class="col-concepto">CONCEPTO</div>
+<div class="col-monto">MONTO</div>
+</div>
+<div id="servicios">{{servicios}}</div>
+</div>
 
-  <hr class="separador">
+<hr class="separador">
 
-  <!-- MÉTODO DE PAGO -->
-  <div class="info-ticket"><strong>MÉTODO DE PAGO:</strong> <span class="metodo-badge">{{metodoPago}}</span></div>
+<div class="info-ticket"><strong>M&Eacute;TODO DE PAGO:</strong> <span class="metodo-badge">{{metodoPago}}</span></div>
 
-  <!-- TOTALES -->
-  <div class="totales">
-    <div class="fila-total">
-      <div class="desc-total">Subtotal:</div>
-      <div class="precio-total"><span class="moneda">S/.</span>{{subtotal}}</div>
-    </div>
-    <div class="fila-total">
-      <div class="desc-total">Descuento:</div>
-      <div class="precio-total"><span class="moneda">S/.</span>{{descuento}}</div>
-    </div>
-    <div class="fila-total final">
-      <div class="desc-total">TOTAL:</div>
-      <div class="precio-total"><span class="moneda">S/.</span>{{monto}}</div>
-    </div>
-  </div>
+<div class="totales">
+<div class="fila-total"><div class="desc-total">Subtotal:</div><div class="precio-total"><span class="moneda">S/.</span>{{subtotal}}</div></div>
+<div class="fila-total"><div class="desc-total">Descuento:</div><div class="precio-total"><span class="moneda">S/.</span>{{descuento}}</div></div>
+<div class="fila-total final"><div class="desc-total">TOTAL:</div><div class="precio-total"><span class="moneda">S/.</span>{{monto}}</div></div>
+</div>
 
-  <hr class="separador-doble">
+<hr class="separador-doble">
 
-  <!-- PIE DE PÁGINA -->
-  <div class="pie">
-    <div class="mensaje">¡Gracias por tu preferencia!</div>
-    <div class="contacto">Tu descanso, nuestra pasi&oacute;n</div>
-    <div class="contacto">contacto@dvitahospedaje.com</div>
-    <div class="linea">· · · · · · · · · · ·</div>
-  </div>
+<div class="pie">
+<div class="mensaje">Gracias por tu preferencia</div>
+<div class="contacto">contacto@dvitahospedaje.com</div>
+<div class="linea">&middot; &middot; &middot; &middot; &middot; &middot; &middot; &middot; &middot; &middot; &middot;</div>
+</div>
 
 </div>
 </body>

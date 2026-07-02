@@ -1,26 +1,29 @@
 package com.systemWeb.DVita.Service.MicroServicios;
 import com.systemWeb.DVita.Model.Habitacion;
+import com.systemWeb.DVita.Model.enums.EstadoHabitacion;
 import com.systemWeb.DVita.Repository.HabitacionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class HabitacionPdfService {
     private final PdfService pdfService;
     private final HabitacionRepository habitacionRepository;
 
+    @Transactional(readOnly = true)
     public byte[] generarReporteHabitaciones() {
         List<Habitacion> habitaciones = habitacionRepository.findAll();
         long total = habitaciones.size();
-        long disponibles = habitaciones.stream().filter(h -> "DISPONIBLE".equals(h.getEstado())).count();
-        long ocupadas = habitaciones.stream().filter(h -> "OCUPADA".equals(h.getEstado())).count();
-        long mantenimiento = habitaciones.stream().filter(h -> "MANTENIMIENTO".equals(h.getEstado())).count();
-        long limpieza = habitaciones.stream().filter(h -> "EN_LIMPIEZA".equals(h.getEstado())).count();
+        long disponibles = habitaciones.stream().filter(h -> EstadoHabitacion.DISPONIBLE == h.getEstado()).count();
+        long ocupadas = habitaciones.stream().filter(h -> EstadoHabitacion.OCUPADA == h.getEstado()).count();
+        long mantenimiento = habitaciones.stream().filter(h -> EstadoHabitacion.MANTENIMIENTO == h.getEstado()).count();
+        long limpieza = habitaciones.stream().filter(h -> EstadoHabitacion.EN_LIMPIEZA == h.getEstado()).count();
         long pctOcupacion = total > 0 ? (ocupadas * 100 / total) : 0;
 
         List<Map<String, Object>> habitacionesList = habitaciones.stream().map(h -> {

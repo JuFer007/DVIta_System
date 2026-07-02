@@ -2,109 +2,96 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Nómina de Empleados — D'Vita</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+@page{margin:18mm 14mm}
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--br:#3D1F0A;--text:#1C1A18;--text-2:#6B6560;--text-3:#9E9890;--border:#E2DED9;--bg-alt:#F7F6F4;--white:#FFFFFF}
-body{font-family:'Inter',system-ui,sans-serif;font-size:11px;line-height:1.55;color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased}
-
-.hdr{background:#995832;border-bottom:1px solid #874e2c;padding:20px 36px;display:flex;align-items:center;justify-content:space-between}
-.hdr-logo{display:flex;align-items:center;gap:12px}
-.hdr-logo img{width:34px;height:34px;border-radius:50%;opacity:.85}
-.hdr-brand{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:600;color:#fff;letter-spacing:.05em}
-.hdr-brand small{display:block;font-family:'Inter',sans-serif;font-size:8.5px;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
-.hdr-right{text-align:right}
-.hdr-title{font-size:13px;font-weight:600;color:#fff;letter-spacing:-.01em}
-.hdr-date{font-size:9px;color:rgba(255,255,255,.55);margin-top:3px;letter-spacing:.04em}
-
-.body{padding:28px 36px 36px}
-
-/* stats */
-.stats{display:flex;border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:26px}
-.stat{flex:1;padding:16px 20px;border-right:1px solid var(--border)}
-.stat:last-child{border-right:none}
-.stat:first-child{border-left:3px solid var(--br)}
-.stat-n{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1}
-.stat-l{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-top:5px;font-weight:500}
-
-.sec{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.sec h2{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text-3);white-space:nowrap}
-.sec-line{flex:1;height:1px;background:var(--border)}
-
+body{font-family:'Inter',-apple-system,system-ui,sans-serif;font-size:10.5px;line-height:1.5;color:#1C1917;background:#fff;-webkit-font-smoothing:antialiased}
+.page{max-width:800px;margin:0 auto;padding:8px 0 0}
+table,tr,td,th{page-break-inside:avoid}
+h2,p,div{page-break-after:avoid}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #F0EFED}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.hdr-logo{width:42px;height:42px;border-radius:50%;background:#3D1F0A;display:flex;align-items:center;justify-content:center;color:#D99B6E;font-size:18px;font-weight:700;flex-shrink:0}
+.hdr-company{font-size:18px;font-weight:700;color:#3D1F0A;letter-spacing:-0.01em;line-height:1.2}
+.hdr-company small{display:block;font-size:9px;font-weight:400;color:#9A948D;letter-spacing:0.08em;text-transform:uppercase;margin-top:1px}
+.hdr-r{text-align:right}
+.hdr-title{font-size:16px;font-weight:600;color:#1C1917;letter-spacing:-0.01em}
+.hdr-meta{font-size:9.5px;color:#9A948D;margin-top:4px;line-height:1.6}
+.hdr-meta span{color:#3D1F0A;font-weight:500}
+.accent{height:3px;background:linear-gradient(90deg,#C9A96E,#3D1F0A);margin-bottom:28px;border-radius:2px}
+.stats{display:flex;gap:14px;margin-bottom:28px}
+.stat{flex:1;padding:16px 20px;background:#FAF9F7;border-left:3px solid #C9A96E;border-radius:4px}
+.stat-n{font-size:24px;font-weight:700;color:#3D1F0A;letter-spacing:-0.02em;line-height:1}
+.stat-l{font-size:9.5px;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;font-weight:500;margin-top:6px}
+.sec{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.sec h2{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9A948D}
+.sec-line{flex:1;height:1px;background:#F0EFED}
 table{width:100%;border-collapse:collapse;font-size:10.5px}
-thead th{padding:8px 12px;background:var(--bg-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);text-align:left}
+thead th{padding:10px 12px;background:#FAF9F7;border-top:1px solid #E8E5E0;border-bottom:1px solid #E8E5E0;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#9A948D;text-align:left}
 thead th.c{text-align:center}
-tbody td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody td{padding:10px 12px;border-bottom:1px solid #F0EFED;color:#44403A;vertical-align:middle}
 tbody td.c{text-align:center}
-tbody tr:nth-child(even) td{background:var(--bg-alt)}
-.td-n{color:var(--text-3);font-size:9px;text-align:center;width:30px}
-.td-main{font-weight:500}
-.td-2{color:var(--text-2)}
-
-/* status — minimal, no color */
-.status{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:500;color:var(--text-2)}
-.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+tbody tr:nth-child(even) td{background:#FBFAF9}
+.td-n{color:#9A948D;font-size:9px;text-align:center;width:32px}
+.td-main{font-weight:500;color:#1C1917}
+.td-2{color:#78716B}
+.status{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:500}
+.status-dot{width:7px;height:7px;border-radius:50%}
 .status-dot.activo{background:#3D1F0A}
-.status-dot.inactivo{background:var(--border)}
-
-.ftr{padding:13px 36px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.ftr-l{font-size:8.5px;color:var(--text-3);line-height:1.6}
-.ftr-l strong{font-size:8.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em}
-.ftr-r{font-size:8.5px;color:var(--text-3);text-align:right}
+.status-dot.inactivo{background:#D8D4CF}
+.ftr{margin-top:36px;padding-top:18px;border-top:1px solid #E8E5E0;display:flex;justify-content:space-between;align-items:flex-end}
+.ftr-l{font-size:9px;color:#9A948D;line-height:1.6}
+.ftr-l strong{font-size:10px;font-weight:600;color:#3D1F0A;text-transform:uppercase;letter-spacing:0.04em}
+.ftr-r{font-size:8.5px;color:#B8B2AA;text-align:right}
+.ftr-r span{display:inline-block;width:8px;height:8px;border-radius:50%;background:#C9A96E;margin-right:6px;vertical-align:middle}
 </style>
 </head>
 <body>
+<div class="page">
 
 <div class="hdr">
-  <div class="hdr-logo">
-    <img src="http://localhost:3005/recursos/DVita_Logo.png" alt="" onerror="this.style.display='none'">
-    <div class="hdr-brand">D'VITA<small>Hospedaje: Sistema de Administración y Gestión Hotelera</small></div>
-  </div>
-  <div class="hdr-right">
-    <div class="hdr-title">Nómina de Empleados</div>
-    <div class="hdr-date">Generado el {{fechaGeneracion}}</div>
-  </div>
+<div class="hdr-l">
+<img class="hdr-logo" src="http://localhost:3005/recursos/DVita_Logo.png" alt="D'Vita" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+<div class="hdr-logo" style="display:none">DV</div>
+<div class="hdr-company">D'VITA<small>Hospedaje &middot; Sistema de Gesti&oacute;n Hotelera</small></div>
+</div>
+<div class="hdr-r">
+<div class="hdr-title">N&oacute;mina de Empleados</div>
+<div class="hdr-meta">Generado el <span>{{fechaGeneracion}}</span></div>
+</div>
 </div>
 
-<div class="body">
+<div class="accent"></div>
 
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-n">{{total}}</div>
-      <div class="stat-l">Total empleados</div>
-    </div>
-    <div class="stat">
-      <div class="stat-n">{{activos}}</div>
-      <div class="stat-l">Activos</div>
-    </div>
-    <div class="stat">
-      <div class="stat-n">{{inactivos}}</div>
-      <div class="stat-l">Inactivos</div>
-    </div>
-  </div>
-
-  <div class="sec"><h2>Personal</h2><div class="sec-line"></div></div>
-
-  <table>
-    <thead>
-      <tr>
-        <th class="c">#</th>
-        <th>Nombre completo</th>
-        <th>DNI</th>
-        <th>Teléfono</th>
-        <th class="c">Estado</th>
-      </tr>
-    </thead>
-    <tbody>{{empleados}}</tbody>
-  </table>
-
+<div class="stats">
+<div class="stat"><div class="stat-n">{{total}}</div><div class="stat-l">Total empleados</div></div>
+<div class="stat"><div class="stat-n">{{activos}}</div><div class="stat-l">Activos</div></div>
+<div class="stat"><div class="stat-n">{{inactivos}}</div><div class="stat-l">Inactivos</div></div>
 </div>
+
+<div class="sec"><h2>Personal registrado</h2><div class="sec-line"></div></div>
+
+<table>
+<thead>
+<tr>
+<th class="c">#</th>
+<th>Nombre completo</th>
+<th>DNI</th>
+<th>Tel&eacute;fono</th>
+<th class="c">Estado</th>
+</tr>
+</thead>
+<tbody>{{empleados}}</tbody>
+</table>
 
 <div class="ftr">
-  <div class="ftr-l"><strong>D'Vita Hospedaje &amp; Suites</strong><br>Víctor Raúl Haya de la Torre N° 281 · Chiclayo, Perú · +51 922 626 148</div>
-  <div class="ftr-r">Documento generado automáticamente<br>Sistema de Gestión Hotelera</div>
+<div class="ftr-l"><strong>D'Vita Hospedaje</strong><br>V&iacute;ctor Ra&uacute;l Haya de la Torre N&deg; 281 · Chiclayo, Per&uacute; · +51 922 626 148</div>
+<div class="ftr-r"><span></span>Documento generado autom&aacute;ticamente</div>
 </div>
 
+</div>
+<div style="height:12px;"></div>
 </body>
 </html>
