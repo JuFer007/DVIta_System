@@ -135,7 +135,11 @@ export const incidenciasService = {
 export async function downloadPdf(url: string, _filename?: string) {
   window.dispatchEvent(new CustomEvent("pdf-loading-start"));
   try {
-    const res = await fetch(url);
+    const headers: Record<string, string> = {};
+    if (authToken) {
+      headers["Authorization"] = `Bearer ${authToken}`;
+    }
+    const res = await fetch(url, { headers });
     const ct = res.headers.get("content-type") || "";
     if (!res.ok) {
       let msg = `Error al generar PDF (${res.status})`;

@@ -27,58 +27,101 @@ Página principal con presentación del hospedaje, servicios y acceso al sistema
 ### Autenticación
 Inicio de sesión para recepcionistas y administradores.
 
-
-![Login](capturas/login.png) 
+![Login](capturas/login.png)
 
 ### Dashboard
 Panel principal con resumen de ocupación, reservas activas e ingresos.
 
-![Dashboard](capturas/dashboard.png) 
+| | |
+|---|---|
+| ![Dashboard 1](capturas/dasboard%20(1).png) | ![Dashboard 2](capturas/dasboard%20(2).png) |
 
 ### Gestión de Reservas
 Creación, cancelación y consulta de reservas con wizard guiado.
 
 | | |
 |---|---|
-| ![Reservas](capturas/reservas.png) | ![Nueva Reserva](capturas/nuevareserva.png) |
+| ![Reservas](capturas/reservas.png) | ![Nueva Reserva](capturas/reservas%20(2).png) |
 
 ### Gestión de Habitaciones
 Administración de habitaciones, tipos y precios.
 
 | | |
 |---|---|
-| ![Habitaciones 1](capturas/habitaciones1.png) | ![Habitaciones 2](capturas/habitaciones2.png) |
+| ![Habitaciones 1](capturas/habitaciones%20(1).png) | ![Habitaciones 2](capturas/habitaciones%20(2).png) |
+
+### Tipos de Habitación
+Configuración de tipos de habitación, precios y capacidades.
+
+| | |
+|---|---|
+| ![Tipos de Habitación](capturas/tiposdehabitaciones%20(2).png) |
 
 ### Gestión de Clientes
 Registro y búsqueda de clientes con integración RENIEC.
 
-
- ![Clientes](capturas/clientes.png) 
+| | |
+|---|---|
+| ![Clientes 1](capturas/clientes%20(1).png) | ![Clientes 2](capturas/clientes%20(2).png) |
 
 ### Gestión de Empleados
 Administración del personal del hospedaje.
 
-
- ![Empleados](capturas/empleados.png)
+| | |
+|---|---|
+| ![Empleados 1](capturas/empleados%20(1).png) | ![Empleados 2](capturas/empleados%20(2).png) |
 
 ### Usuarios del Sistema
 Gestión de usuarios, roles y permisos.
 
-![Usuarios](capturas/usuarios.png) 
+| | |
+|---|---|
+| ![Usuarios 1](capturas/usuarios%20(1).png) | ![Usuarios 2](capturas/usuarios%20(2).png) |
+<p align="center"><img src="capturas/usuarios%20(3).png" alt="Usuarios 3"></p>
 
 ### Pagos
 Registro y consulta de pagos por reserva.
 
 | | |
 |---|---|
-| ![Pagos](capturas/pagos.png) | ![Pagos 2](capturas/pagos1.png) |
+| ![Pagos 1](capturas/pagos%20(1).png) | ![Pagos 2](capturas/pagos%20(2).png) |
+
+### Incidencias
+Registro, seguimiento y resolución de incidencias por habitación.
+
+| | |
+|---|---|
+| ![Incidencias 1](capturas/incidencias%20(1).png) | ![Incidencias 2](capturas/incidencias%20(2).png) |
+
+### Áreas
+Administración de áreas y departamentos del hotel.
+
+| | |
+|---|---|
+| ![Áreas 1](capturas/areas%20(1).png) | ![Áreas 2](capturas/areas%20(2).png) |
+<p align="center"><img src="capturas/areas%20(3).png" alt="Áreas 3"></p>
+
+### Horarios
+Gestión de horarios y turnos del personal.
+
+| | |
+|---|---|
+| ![Horarios 1](capturas/horarios%20(1).png) | ![Horarios 2](capturas/horarios%20(2).png) |
+<p align="center"><img src="capturas/horarios%20(3).png" alt="Horarios 3"></p>
+
+### Consultas
+Buzón de consultas y mensajes de huéspedes.
+
+| | |
+|---|---|
+| ![Consultas 1](capturas/consultas%20(1).png) | ![Consultas 2](capturas/consultas%20(2).png) |
 
 ### Reportes
 Reportes de ocupación, ingresos y estadísticas.
 
 | | |
 |---|---|
-| ![Reportes](capturas/reportes.png) | ![Reportes 2](capturas/reportes1.png) |
+| ![Reportes 1](capturas/reportes%20(1).png) | ![Reportes 2](capturas/reportes%20(2).png) |
 
 ## Chatbot DViBot
 
@@ -89,69 +132,6 @@ Asistente virtual integrado en el frontend que permite a los huéspedes:
 - Crear, cancelar y consultar reservas
 - Obtener información de contacto y ubicación
 - Navegación por menús interactivos
-
----
-
-## CI/CD
-
-### GitHub Actions
-
-| Workflow | Descripción | Trigger |
-|---|---|---|
-| **Backend CI** | `mvn clean test` + `mvn package` | Push a `main`/`develop` (cambios en `backend/` o `pom.xml`) |
-| **Frontend CI** | `npm ci` → `npm run lint` → `npx tsc --noEmit` → `npm run build` | Push a `main`/`develop` (cambios en `frontend/`) |
-| **Chatbot CI** | Tests con pytest | Push a `main`/`develop` (cambios en `chatBot/`) |
-| **PDF Server CI** | Tests del servidor Express | Push a `main`/`develop` (cambios en `pdfServer/`) |
-| **Integration CI** | Verifica que todos los módulos compilen | Push a `main` |
-| **Keep Alive** | Ping a `/api/actuator/health` cada 10 min | Schedule (cron) |
-
-### Despliegue
-
-| Servicio | Plataforma | Build | URL |
-|---|---|---|---|
-| Frontend | Vercel | Automático desde GitHub | `https://dvita-hospedaje.vercel.app` |
-| Backend | Render | `mvn package` → `java -jar` | `https://d-vita-backend.onrender.com` |
-| PDF Server | Render | Docker (Puppeteer) | `https://d-vita-pdf-server.onrender.com` |
-| Chatbot | Render | `uvicorn main:app` | `https://d-vita-chatbot.onrender.com` |
-
-### PDF Server (Puppeteer)
-
-El servicio de PDF (`servidor/`) usa Puppeteer con Chromium. Para Render se incluye un `Dockerfile` que instala las dependencias del navegador:
-
-```dockerfile
-FROM node:20-slim
-RUN apt-get install -y chromium
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-```
-
-**Al crear el Web Service en Render:**
-- Runtime: **Docker**
-- Root Directory: `servidor`
-- Health Check Path: `/`
-
-### Variables de Entorno
-
-**Desarrollo local** (`.env.development`):
-```
-VITE_API_URL=http://localhost:8080
-```
-
-**Producción (Vercel)**: si no se define `VITE_API_URL`, el frontend usa rutas relativas `/api/*` y Vercel las redirige al backend en Render mediante `vercel.json`:
-
-```json
-{
-  "rewrites": [{ "source": "/api/(.*)", "destination": "https://d-vita-backend.onrender.com/api/$1" }]
-}
-```
-
-Para usar llamadas directas al backend (sin rewrite), define `VITE_API_URL` como variable de entorno en el dashboard de Vercel.
-
-### Keep Alive
-
-Render en capa gratuita hiberna tras 15 min de inactividad. El workflow `keep-alive.yml` hace ping cada 10 min al health endpoint del backend y al chatbot para mantenerlos activos.
-
----
 
 ## Equipo
 
