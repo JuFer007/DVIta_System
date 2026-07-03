@@ -251,7 +251,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
             </p>
             <div className="flex gap-3.5 flex-wrap">
               <button
-                onClick={onLogin}
+                onClick={() => openModal()}
                 className="px-9 py-[15px] bg-[#C9A96E] text-brand-950 text-[12px] font-bold tracking-[0.12em] uppercase rounded-sm hover:bg-[#E8D5A0] transition-all duration-200 hover:-translate-y-px"
               >
                 Reservar ahora
@@ -346,7 +346,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
                         <span className="text-gray-400 text-xs ml-1 font-light">/ noche</span>
                       </div>
                       <button
-                        onClick={onLogin}
+                        onClick={() => openModal()}
                         className={`px-5 py-2.5 text-[11px] font-bold tracking-[0.1em] uppercase rounded-sm transition-all duration-200 ${
                           room.featured
                             ? "bg-[#C9A96E] text-brand-950 hover:bg-[#E8D5A0]"
@@ -379,7 +379,7 @@ export default function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
           <div className="flex gap-3 flex-wrap">
             <button
-              onClick={onLogin}
+              onClick={() => openModal()}
               className="px-9 py-[15px] bg-brand-600 text-white text-[12px] font-bold tracking-[0.12em] uppercase rounded-sm hover:bg-brand-500 hover:-translate-y-px transition-all duration-200"
             >
               Reservar directamente

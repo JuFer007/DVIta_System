@@ -3,6 +3,7 @@ import com.systemWeb.DVita.Model.Permisos;
 import com.systemWeb.DVita.Model.Usuario;
 import com.systemWeb.DVita.Model.enums.CargoEmpleado;
 import com.systemWeb.DVita.Repository.PermisosRepository;
+import com.systemWeb.DVita.Repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.Set;
 
 public class PermisosService {
     private final PermisosRepository moduloPermisoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public static final List<String> MODULOS = List.of(
         "CLIENTES", "EMPLEADOS", "HABITACIONES", "TIPOS_HABITACION",
@@ -52,10 +54,13 @@ public class PermisosService {
 
     @Transactional
     public void actualizarPermisos(Long idUsuario, List<Permisos> permisos) {
+        Usuario usuario = usuarioRepository.getReferenceById(idUsuario);
         moduloPermisoRepository.findByUsuario_IdUsuario(idUsuario)
                 .forEach(p -> moduloPermisoRepository.delete(p));
+        moduloPermisoRepository.flush();
         for (Permisos p : permisos) {
             p.setIdModuloPermiso(null);
+            p.setUsuario(usuario);
             moduloPermisoRepository.save(p);
         }
     }

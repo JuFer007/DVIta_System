@@ -54,13 +54,11 @@ public class Incidencia {
     @Column(name = "descripcion", nullable = false, length = 500)
     private String descripcion;
 
-    @NotNull(message = "La prioridad es obligatoria")
     @Enumerated(EnumType.STRING)
     @Column(name = "prioridad", nullable = false, length = 10)
     @Builder.Default
     private Prioridad prioridad = Prioridad.MEDIA;
 
-    @NotNull(message = "El estado es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
     @Builder.Default

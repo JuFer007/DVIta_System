@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BriefcaseBusiness, Pencil, Power, Phone, FileText } from "lucide-react";
 import DataTable from "../../components/DataTable";
-import EntityModal, { type ModalField } from "../../components/EntityModal";
+import EntityModal, { type ModalField, type SelectOption } from "../../components/EntityModal";
 import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
 import { empleadosService, downloadPdf } from "../../services/api";
@@ -17,6 +17,7 @@ const mapEmpleado = (e: any) => ({
   apellidoM: e.apellidoM,
   dni: e.dni,
   telefono: e.telefono,
+  cargo: e.cargo,
   activo: e.activo !== false,
   _raw: e,
 });
@@ -26,12 +27,22 @@ const DEMO: any[] = [
   { id: 2, nombre: "Rosa Condori", apellidoP: "Condori", apellidoM: "Lima",   dni: "22334455", telefono: "923456789", _raw: {} },
 ];
 
+const CARGO_OPTIONS: SelectOption[] = [
+  { value: "ADMINISTRADOR", label: "Administrador" },
+  { value: "GERENTE",       label: "Gerente" },
+  { value: "RECEPCIONISTA", label: "Recepcionista" },
+  { value: "MANTENIMIENTO", label: "Mantenimiento" },
+  { value: "LIMPIEZA",      label: "Limpieza" },
+  { value: "CHATBOT",       label: "Chatbot" },
+];
+
 const FIELDS: ModalField[] = [
-  { key: "nombre",    label: "Nombre",          required: true, maxLength: 50, placeholder: "Ej: Pedro" },
-  { key: "apellidoP", label: "Apellido Paterno", required: true, maxLength: 50, placeholder: "Ej: Huamán" },
-  { key: "apellidoM", label: "Apellido Materno", required: true, maxLength: 50, placeholder: "Ej: García" },
-  { key: "dni",       label: "DNI",              required: true, pattern: "\\d{8}", placeholder: "12345678", hint: "8 dígitos exactos", maxLength: 8 },
-  { key: "telefono",  label: "Teléfono",         required: true, pattern: "\\d{9}", placeholder: "912345678", hint: "9 dígitos exactos", maxLength: 9 },
+  { key: "nombre",    label: "Nombre",            required: true, maxLength: 50, placeholder: "Ej: Pedro" },
+  { key: "apellidoP", label: "Apellido Paterno",   required: true, maxLength: 50, placeholder: "Ej: Huamán" },
+  { key: "apellidoM", label: "Apellido Materno",   required: true, maxLength: 50, placeholder: "Ej: García" },
+  { key: "dni",       label: "DNI",                required: true, pattern: "\\d{8}", placeholder: "12345678", hint: "8 dígitos exactos", maxLength: 8 },
+  { key: "telefono",  label: "Teléfono",           required: true, pattern: "\\d{9}", placeholder: "912345678", hint: "9 dígitos exactos", maxLength: 9 },
+  { key: "cargo",     label: "Cargo",              type: "select", required: true, options: CARGO_OPTIONS },
 ];
 
 export default function EmpleadosPage() {
@@ -41,7 +52,7 @@ export default function EmpleadosPage() {
 
   const getFormData = (row: any) =>
     row
-      ? { nombre: row.nombre, apellidoP: row.apellidoP, apellidoM: row.apellidoM, dni: row.dni, telefono: row.telefono }
+      ? { nombre: row.nombre, apellidoP: row.apellidoP, apellidoM: row.apellidoM, dni: row.dni, telefono: row.telefono, cargo: row.cargo }
       : null;
 
   const handleSave = async (form: any) => {
@@ -59,7 +70,7 @@ export default function EmpleadosPage() {
     }
     const payload = {
       nombre: form.nombre, apellidoP: form.apellidoP, apellidoM: form.apellidoM,
-      dni: form.dni, telefono: form.telefono,
+      dni: form.dni, telefono: form.telefono, cargo: form.cargo,
     };
     const esNuevo = !m.editing;
     const ok = esNuevo ? await crud.create(payload) : await crud.update(m.editing.id, payload);
@@ -118,6 +129,10 @@ export default function EmpleadosPage() {
           {
             key: "telefono", label: "Teléfono",
             render: (v: string) => v ? <span className="inline-flex items-center gap-1.5 text-gray-600"><Phone className="w-3 h-3 text-gray-400" />{v}</span> : "—",
+          },
+          {
+            key: "cargo", label: "Cargo",
+            render: (v: string) => v ? <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-brand-100 text-brand-700">{v}</span> : "—",
           },
           {
             key: "activo", label: "Estado",

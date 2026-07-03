@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Controller;
 import com.systemWeb.DVita.Model.Pago;
+import com.systemWeb.DVita.Model.enums.EstadoPago;
 import com.systemWeb.DVita.Model.enums.MetodoPago;
 import com.systemWeb.DVita.Service.PagoService;
 import com.systemWeb.DVita.Service.MicroServicios.PagoPdfService;
@@ -55,7 +56,7 @@ public class PagoController {
     public ResponseEntity<byte[]> descargarTicket(@PathVariable Long id) {
         Pago pago = pagoService.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Pago no encontrado: " + id));
-        if (!"COMPLETADO".equals(pago.getEstado())) {
+        if (pago.getEstado() != EstadoPago.COMPLETADO) {
             return ResponseEntity.badRequest().body(("El pago debe estar COMPLETADO para generar el ticket").getBytes());
         }
         byte[] pdf = ticketPdfService.generarTicket(id);

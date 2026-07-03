@@ -6,7 +6,9 @@ import com.systemWeb.DVita.Model.Habitacion;
 import com.systemWeb.DVita.Model.Pago;
 import com.systemWeb.DVita.Model.Reserva;
 import com.systemWeb.DVita.Model.enums.EstadoHabitacion;
+import com.systemWeb.DVita.Model.enums.EstadoPago;
 import com.systemWeb.DVita.Model.enums.EstadoReserva;
+import com.systemWeb.DVita.Model.enums.MetodoPago;
 import com.systemWeb.DVita.Repository.ClienteRepository;
 import com.systemWeb.DVita.Repository.EmpleadoRepository;
 import com.systemWeb.DVita.Repository.HabitacionRepository;
@@ -162,6 +164,8 @@ public class ReservaService {
                 .reserva(reserva)
                 .monto(monto)
                 .fechaPago(LocalDate.now())
+                .metodoPago(MetodoPago.EFECTIVO)
+                .estado(EstadoPago.PENDIENTE)
                 .build();
 
         pagoRepository.save(pago);

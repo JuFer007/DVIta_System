@@ -1,5 +1,6 @@
 package com.systemWeb.DVita.Service;
 import com.systemWeb.DVita.Model.Empleado;
+import com.systemWeb.DVita.Model.enums.CargoEmpleado;
 import com.systemWeb.DVita.Repository.EmpleadoRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ public class EmpleadoService {
         empleado.setApellidoM(upper(empleado.getApellidoM()));
         empleado.setDni(     upper(empleado.getDni()));
         empleado.setTelefono(upper(empleado.getTelefono()));
+        if (empleado.getActivo() == null)   empleado.setActivo(true);
+        if (empleado.getCargo() == null)    empleado.setCargo(CargoEmpleado.RECEPCIONISTA);
         Empleado saved = empleadoRepository.save(empleado);
         usuarioService.crearDesdeEmpleado(saved);
         return saved;

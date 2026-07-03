@@ -99,7 +99,7 @@ export default function IncidenciasPage() {
     [crud.data]
   );
 
-  const areaOptions = areasCrud.data.map((a: any) => ({ value: a.id, label: a.label }));
+  const areaOptions = areasCrud.data.map((a: any) => ({ value: a.value, label: a.label }));
 
   const fields: ModalField[] = [
     {
@@ -337,25 +337,20 @@ export default function IncidenciasPage() {
       />
 
       {resolveRow && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ backgroundColor: "rgba(20,8,2,0.65)", backdropFilter: "blur(4px)" }}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
           onClick={() => { if (!resolveSending) setResolveRow(null); }}>
-          <div className="relative w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden"
-            onClick={e => e.stopPropagation()}
-            style={{ boxShadow: "0 32px 80px rgba(29,13,4,0.35)" }}>
-            <div className="flex items-center gap-3 px-6 py-4 bg-green-700">
-              <div className="w-9 h-9 rounded-lg bg-green-600/50 flex items-center justify-center text-green-200">
-                <CheckCheck className="w-5 h-5" />
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6"
+            onClick={e => e.stopPropagation()}>
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCheck className="w-6 h-6 text-green-600" />
               </div>
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-green-300">Resolver Incidencia</p>
-                <h2 className="font-display text-[18px] font-bold text-white leading-tight">#{resolveRow.id}</h2>
-              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Resolver Incidencia #{resolveRow.id}</h3>
+              <p className="text-sm text-gray-500">{resolveRow.descripcion}</p>
             </div>
-            <div className="p-6 space-y-4">
-              <p className="text-[13px] text-neutral-600">{resolveRow.descripcion}</p>
+            <div className="mt-5 space-y-4">
               <div>
-                <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   ¿Cómo se solucionó? <span className="text-green-600">*</span>
                 </label>
                 <textarea
@@ -363,11 +358,11 @@ export default function IncidenciasPage() {
                   value={resolveSolucion}
                   onChange={e => setResolveSolucion(e.target.value)}
                   placeholder="Describe la solución aplicada…"
-                  className="w-full px-3.5 py-2.5 border border-neutral-200 rounded-lg text-[13px] text-neutral-800 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-50 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 resize-none"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-bold tracking-[0.16em] uppercase text-neutral-500 mb-1.5">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Notas para auditoría (opcional)
                 </label>
                 <textarea
@@ -375,18 +370,18 @@ export default function IncidenciasPage() {
                   value={resolveNotas}
                   onChange={e => setResolveNotas(e.target.value)}
                   placeholder="Ej: factura #1234, autorizado por gerencia…"
-                  className="w-full px-3.5 py-2.5 border border-neutral-200 rounded-lg text-[13px] text-neutral-800 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-50 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 resize-none"
                 />
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50">
+            <div className="flex gap-3 mt-6">
               <button onClick={() => setResolveRow(null)} disabled={resolveSending}
-                className="px-5 py-2 border border-neutral-200 text-neutral-600 text-[12px] font-semibold rounded-lg hover:border-neutral-300 hover:bg-white transition-colors disabled:opacity-50">
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50">
                 Cancelar
               </button>
               <button onClick={handleConfirmResolve} disabled={!resolveSolucion.trim() || resolveSending}
-                className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-500 text-white text-[12px] font-bold tracking-[0.08em] uppercase rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
-                {resolveSending ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Guardando…</> : <><CheckCheck className="w-4 h-4" /> Resolver</>}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                {resolveSending ? <><Loader2 className="w-3.5 h-3.5 animate-spin inline mr-1" /> Guardando…</> : "Resolver"}
               </button>
             </div>
           </div>

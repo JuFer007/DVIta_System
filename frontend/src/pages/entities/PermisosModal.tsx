@@ -35,7 +35,7 @@ export default function PermisosModal({ open, usuarioId, usuarioNombre, readOnly
       try {
         const data = await permisosService.getByUsuario(usuarioId);
         const map: Record<string, boolean> = {};
-        (data || []).forEach((p: any) => { map[p.modulo] = p.activo; });
+        (data || []).forEach((p: any) => { map[p.modulo] = p.puedeAcceder; });
         setPermisos(map);
       } catch {
         setPermisos({});
@@ -52,7 +52,7 @@ export default function PermisosModal({ open, usuarioId, usuarioNombre, readOnly
   const handleGuardar = async () => {
     setSaving(true);
     try {
-      const payload = MODULOS.map((m) => ({ modulo: m.key, activo: permisos[m.key] !== false }));
+      const payload = MODULOS.map((m) => ({ usuario: { idUsuario: usuarioId }, modulo: m.key, puedeAcceder: permisos[m.key] !== false }));
       await permisosService.update(usuarioId, payload);
       toast.showToast("success", "Permisos actualizados", `Permisos de ${usuarioNombre} guardados`);
       onClose();
