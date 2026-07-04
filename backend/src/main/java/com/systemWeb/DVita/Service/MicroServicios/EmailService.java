@@ -30,7 +30,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("juniorfernandozumaetagolac@gmail.com");
+            helper.setFrom("codemail855@gmail.com");
             helper.setTo(para);
             helper.setSubject(asunto);
             helper.setText(html, true);
@@ -91,7 +91,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom("juniorfernandozumaetagolac@gmail.com");
+            helper.setFrom("codemail855@gmail.com");
             helper.setTo(para);
             helper.setSubject(asunto);
             helper.setText(html, true);
