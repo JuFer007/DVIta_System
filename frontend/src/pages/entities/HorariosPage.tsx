@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Clock, Plus, Search, ChevronDown, AlertCircle, X, Save, Loader2, Trash2, FileText } from "lucide-react";
 import { useCrud } from "../../hooks/useCrud";
 import { useModalState } from "../../hooks/useModalState";
-import { empleadosService, getAuthToken, downloadPdf } from "../../services/api";
+import { empleadosService, getAuthToken, downloadPdf, BASE_URL } from "../../services/api";
 import { useToast } from "../../components/Toast";
 
 const authHeaders = (): Record<string, string> => {
@@ -13,10 +13,10 @@ const authHeaders = (): Record<string, string> => {
 };
 
 const horariosService = {
-  getAll:  () => fetch("/api/horarios", { headers: authHeaders() }).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-  create:  (data: any) => fetch("/api/horarios", { method: "POST", headers: authHeaders(), body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
-  update:  (id: number, data: any) => fetch(`/api/horarios/${id}`, { method: "PUT", headers: authHeaders(), body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
-  delete:  (id: number) => fetch(`/api/horarios/${id}`, { method: "DELETE", headers: authHeaders() }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); }),
+  getAll:  () => fetch(`${BASE_URL}/horarios`, { headers: authHeaders() }).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
+  create:  (data: any) => fetch(`${BASE_URL}/horarios`, { method: "POST", headers: authHeaders(), body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+  update:  (id: number, data: any) => fetch(`${BASE_URL}/horarios/${id}`, { method: "PUT", headers: authHeaders(), body: JSON.stringify(data) }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+  delete:  (id: number) => fetch(`${BASE_URL}/horarios/${id}`, { method: "DELETE", headers: authHeaders() }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); }),
 };
 
 const mapEmpleado = (e: any) => ({
@@ -385,7 +385,7 @@ export default function HorariosPage() {
             </p>
           </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => downloadPdf("/api/horarios/pdf/reporte", "horarios.pdf")}
+              <button onClick={() => downloadPdf(`${BASE_URL}/horarios/pdf/reporte`, "horarios.pdf")}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
                 <FileText className="w-3.5 h-3.5" /> PDF General
               </button>

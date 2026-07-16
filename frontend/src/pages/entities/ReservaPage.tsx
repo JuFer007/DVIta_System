@@ -3,7 +3,7 @@ import { CalendarCheck, Search, Loader2, User, CheckCircle2, AlertCircle, X, Che
 import DataTable from "../../components/DataTable";
 import StatusBadge from "../../components/StatusBadge";
 import { useCrud } from "../../hooks/useCrud";
-import { reservasService, clientesService, habitacionesService, tiposService, reniecService, downloadPdf } from "../../services/api";
+import { reservasService, clientesService, habitacionesService, tiposService, reniecService, downloadPdf, BASE_URL } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 import { useToast } from "../../components/Toast";
 import { useConfirm } from "../../hooks/useConfirm";
@@ -278,7 +278,7 @@ export default function ReservasPage() {
             : b.ingreso.localeCompare(a.ingreso);
         })}
         headerExtra={
-          <button onClick={() => downloadPdf("/api/reservas/pdf/reporte?desde=2020-01-01&hasta=" + new Date().toISOString().split("T")[0], "reporte-reservas.pdf")}
+          <button onClick={() => downloadPdf(`${BASE_URL}/reservas/pdf/reporte?desde=2020-01-01&hasta=` + new Date().toISOString().split("T")[0], "reporte-reservas.pdf")}
             className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
             <FileText className="w-3.5 h-3.5" /> PDF
           </button>

@@ -4,7 +4,7 @@ import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField } from "../../components/EntityModal";
 import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
-import { habitacionesService, tiposService, downloadPdf } from "../../services/api";
+import { habitacionesService, tiposService, downloadPdf, BASE_URL } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 import { useToast } from "../../components/Toast";
 import { useAuth } from "../../context/AuthContext";
@@ -220,7 +220,7 @@ export default function HabitacionesPage() {
         ]}
         onNew={puedeEscribir ? m.openNew : undefined}
         headerExtra={
-          <button onClick={() => downloadPdf("/api/habitaciones/pdf/reporte", "habitaciones.pdf")}
+          <button onClick={() => downloadPdf(`${BASE_URL}/habitaciones/pdf/reporte`, "habitaciones.pdf")}
             className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
             <FileText className="w-3.5 h-3.5" /> PDF General
           </button>

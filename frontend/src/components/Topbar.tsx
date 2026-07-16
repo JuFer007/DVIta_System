@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { LogOut, ChevronRight, Bell, X, Mail, Calendar, Send, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { consultasService } from "../services/api";
+import { consultasService, BASE_URL } from "../services/api";
 
 const PAGE_NAMES: Record<string, string> = {
   dashboard:    "Dashboard",
@@ -137,7 +137,7 @@ export default function Topbar({ page, onLogout }: Props) {
     }
     setSending(true);
     try {
-      await fetch("/api/email/enviar", {
+      await fetch(`${BASE_URL}/email/enviar`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}) },
         body: JSON.stringify({

@@ -4,7 +4,7 @@ import DataTable from "../../components/DataTable";
 import EntityModal, { type ModalField, type SelectOption } from "../../components/EntityModal";
 import ConfirmModal from "../../components/ConfirmModal";
 import { useCrud } from "../../hooks/useCrud";
-import { empleadosService, downloadPdf } from "../../services/api";
+import { empleadosService, downloadPdf, BASE_URL } from "../../services/api";
 import { useModalState } from "../../hooks/useModalState";
 import { useToast } from "../../components/Toast";
 
@@ -94,7 +94,7 @@ export default function EmpleadosPage() {
       const t = (await import("../../services/api")).getAuthToken();
       const h: Record<string, string> = { "Content-Type": "application/json" };
       if (t) h["Authorization"] = `Bearer ${t}`;
-      const res = await fetch(`/api/empleados/${togglingEmpleado.id}/toggle-activo`, { method: "PATCH", headers: h });
+      const res = await fetch(`${BASE_URL}/empleados/${togglingEmpleado.id}/toggle-activo`, { method: "PATCH", headers: h });
       if (res.ok) {
         toast.showToast("success", "Estado actualizado", `${togglingEmpleado.nombre?.toUpperCase()} ${togglingEmpleado.apellidoP?.toUpperCase()}`);
         crud.refetch();
@@ -164,7 +164,7 @@ export default function EmpleadosPage() {
         ]}
         onNew={m.openNew}
         headerExtra={
-          <button onClick={() => downloadPdf("/api/empleados/pdf/reporte", "empleados.pdf")}
+          <button onClick={() => downloadPdf(`${BASE_URL}/empleados/pdf/reporte`, "empleados.pdf")}
             className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
             <FileText className="w-3.5 h-3.5" /> PDF General
           </button>

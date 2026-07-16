@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { downloadPdf, getAuthToken } from "../services/api";
+import { downloadPdf, getAuthToken, BASE_URL } from "../services/api";
 import {
   BarChart2, TrendingUp, DollarSign, BedDouble,
   Calendar, RefreshCw, AlertCircle, ArrowUp, ArrowDown, Minus,
@@ -263,10 +263,10 @@ function EstadoRow({ estado, count, total }: { estado: string; count: number; to
 }
 
 export default function ReportesPage() {
-  const [meses,   loadM,  demoM]  = useData<MesData[]>("/api/dashboard/ingresos-mensuales", DEMO_MESES);
-  const [metodos, loadMt, demoMt] = useData<MetodoData[]>("/api/dashboard/metodos-pago", DEMO_METODOS);
-  const [ocup,    loadO,  demoO]  = useData<OcupData[]>("/api/dashboard/ocupacion-por-tipo", DEMO_OCUP);
-  const [estados, loadE,  demoE]  = useData<EstadoMap>("/api/dashboard/reservas-por-estado", DEMO_ESTADOS);
+  const [meses,   loadM,  demoM]  = useData<MesData[]>(`${BASE_URL}/dashboard/ingresos-mensuales`, DEMO_MESES);
+  const [metodos, loadMt, demoMt] = useData<MetodoData[]>(`${BASE_URL}/dashboard/metodos-pago`, DEMO_METODOS);
+  const [ocup,    loadO,  demoO]  = useData<OcupData[]>(`${BASE_URL}/dashboard/ocupacion-por-tipo`, DEMO_OCUP);
+  const [estados, loadE,  demoE]  = useData<EstadoMap>(`${BASE_URL}/dashboard/reservas-por-estado`, DEMO_ESTADOS);
 
   const loading = loadM || loadMt || loadO || loadE;
   const isDemo  = demoM || demoMt || demoO || demoE;
@@ -315,7 +315,7 @@ export default function ReportesPage() {
             {today}
           </div>
           <button
-            onClick={() => downloadPdf("/api/dashboard/pdf/reporte-financiero", "reporte-financiero.pdf")}
+            onClick={() => downloadPdf(`${BASE_URL}/dashboard/pdf/reporte-financiero`, "reporte-financiero.pdf")}
             className="flex items-center gap-1.5 px-4 py-2 text-rose-700 bg-rose-100 hover:bg-rose-200 text-[12px] font-semibold rounded-sm transition-colors shadow-sm"
           >
             <FileText className="w-3.5 h-3.5" />

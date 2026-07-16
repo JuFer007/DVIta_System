@@ -6,7 +6,7 @@ import {
   PhoneCall, MapPin, Gift, Clock, type LucideIcon,
 } from "lucide-react";
 
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_CHATBOT_URL || "http://localhost:8000";
 
 interface Message {
   id: number;

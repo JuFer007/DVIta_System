@@ -228,7 +228,7 @@ export default function IncidenciasPage() {
       <DataTable
         title="Incidencias" data={sortedData} loading={crud.loading} error={crud.error}
         headerExtra={
-          <button onClick={() => downloadPdf("/api/incidencias/pdf/reporte?desde=2020-01-01&hasta=" + new Date().toISOString().split("T")[0], "reporte-incidencias.pdf")}
+          <button onClick={() => downloadPdf(`${BASE_URL}/incidencias/pdf/reporte?desde=2020-01-01&hasta=` + new Date().toISOString().split("T")[0], "reporte-incidencias.pdf")}
             className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-lg transition-colors">
             <FileText className="w-3.5 h-3.5" /> PDF Reporte
           </button>
