@@ -10,10 +10,6 @@
   ![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
   ![Python](https://img.shields.io/badge/Python-FFD43B?logo=python&logoColor=3776AB)
   ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
-  <span style="display:inline-flex; align-items:center; gap:3px; padding:1px 6px; margin-top:-12px; background:white; border:1px solid #d0d7de; border-radius:4px; vertical-align:middle;">
-    <img src="./frontend/public/ollama.png" alt="Ollama" height="10">
-    <span style="color:black; font-size:12px; font-weight:semi-bold;">Ollama</span>
-  </span>
 </div>
 
 ---
