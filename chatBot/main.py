@@ -73,7 +73,7 @@ async def clear_chat(session_id: str):
     clear_session_data(session_id)
     return {"ok": True}
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health():
     return {"status": "ok", "sessions": len(_sessions)}
 
