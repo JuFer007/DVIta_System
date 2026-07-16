@@ -267,6 +267,8 @@ export default function ReservasPage() {
     <>
       <DataTable
         title="Reservas"
+        loading={crud.loading}
+        error={crud.error}
         data={[...crud.data].sort((a, b) => {
           const hoy = new Date().toISOString().split("T")[0];
           const aFuturo = a.ingreso >= hoy;

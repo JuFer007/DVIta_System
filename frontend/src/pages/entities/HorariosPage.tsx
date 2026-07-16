@@ -451,7 +451,10 @@ export default function HorariosPage() {
               </thead>
               <tbody>
                 {crud.loading ? (
-                  <tr><td colSpan={8} className="px-4 py-10 text-center text-neutral-400">Cargando…</td></tr>
+                  <tr><td colSpan={8} className="px-4 py-10 text-center">
+                    <Loader2 className="w-6 h-6 animate-spin text-brand-500 mx-auto mb-2" />
+                    <p className="text-sm text-gray-400">Cargando datos…</p>
+                  </td></tr>
                 ) : filtered.length === 0 ? (
                   <tr><td colSpan={8} className="px-4 py-10 text-center text-neutral-400">Sin registros</td></tr>
                 ) : filtered.map((g: any) => (
