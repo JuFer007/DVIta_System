@@ -35,7 +35,9 @@ public class SecurityConfig {
                 corsConfig.setAllowedOrigins(List.of(
                         "http://localhost:5173",
                         "http://localhost:3000",
-                        "http://127.0.0.1:5173"));
+                        "http://127.0.0.1:5173",
+                        "https://dv-ita-system.vercel.app",
+                        "https://dvita-system.vercel.app"));
                 corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                 corsConfig.setAllowedHeaders(List.of("*"));
                 corsConfig.setAllowCredentials(true);
