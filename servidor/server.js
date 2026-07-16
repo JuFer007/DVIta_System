@@ -445,6 +445,10 @@ app.post("/generar-reporte-consultas", async (req, res) => {
   }
 });
 
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log(`D'Vita PDF Service running on port ${PORT}`);
