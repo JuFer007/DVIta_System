@@ -12,7 +12,7 @@ jobs:
       - name: Ping Backend Health
         run: |
           curl -sSf -o /dev/null \
-            "https://d-vita-backend.onrender.com/api/actuator/health" \
+            "https://d-vita-backend.onrender.com/health" \
             || echo "Backend not reachable"
       - name: Ping Chatbot
         run: |

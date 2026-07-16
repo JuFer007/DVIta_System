@@ -71,6 +71,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/reniec/**").authenticated()
                     .requestMatchers("/api/chat/**").authenticated()
                     .requestMatchers("/actuator/health").permitAll()
+                    .requestMatchers("/health").permitAll()
                     .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated()
             )
